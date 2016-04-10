@@ -1,0 +1,325 @@
+/*
+ * Base structure
+ */
+
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+  padding-top: 50px;
+}
+
+
+/*
+ * Global add-ons
+ */
+
+.sub-header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/*
+ * Top navigation
+ * Hide default border to remove 1px line.
+ */
+.navbar-fixed-top {
+  border: 0;
+}
+.admin-navbar{
+	background-color: #428bca;
+}
+.admin-navbar a{
+	color: #ffffff;
+}
+
+/*
+ * Sidebar
+ */
+
+/* Hide for mobile, show later */
+.sidebar {
+  display: none;
+}
+@media (min-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 51px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+  /*  background-color: #f5f5f5; */
+    border-right: 1px solid #eee;
+    padding-top: 20px;
+    padding-left:0;
+    padding-right:0;
+  }
+  
+}
+
+/* Sidebar navigation */
+.nav-sidebar {
+  margin-right: -21px; /* 20px padding + 1px border */
+  margin-bottom: 20px;
+  margin-left: -20px;
+}
+.nav-sidebar > li > a {
+  padding-right: 20px;
+  padding-left: 20px;
+}
+.nav-sidebar > .active > a,
+.nav-sidebar > .active > a:hover,
+.nav-sidebar > .active > a:focus {
+  color: #fff;
+  background-color: #428bca;
+}
+.accordionHeader{
+  background-color: #428bca;
+  color: #fff;
+}
+
+/*
+ * Main content
+ */
+
+.main {
+  padding: 20px;
+}
+@media (min-width: 768px) {
+  .main {
+    padding-right: 40px;
+    padding-left: 40px;
+  }
+}
+.main .page-header {
+  margin-top: 0;
+}
+
+
+/*
+ * Placeholder dashboard ideas
+ */
+
+.placeholders {
+  margin-bottom: 30px;
+  text-align: center;
+}
+.placeholders h4 {
+  margin-bottom: 0;
+}
+.placeholder {
+  margin-bottom: 20px;
+}
+.placeholder img {
+  display: inline-block;
+  border-radius: 50%;
+}
+
+.barcodeScanner{
+	width: 100%;
+	height: 300px;
+	overflow: auto;
+}
+
+.addedHeight{
+  height: 600px;
+}
+
+.barcodeScanner table{
+
+	width: 100%;
+
+}
+.barcodeScanner th,th{
+	font-weight: bold;
+	/*
+  color: #fff;
+  background-color: #428bca;
+  */
+  background-color: #F5F5F5;
+ padding: 0.5%;
+  text-align: center;
+ }
+.barcodeScanner td{
+	background-color: white;
+	text-align: center;
+	border: solid #F5F5F5;
+  padding: 0.5%;
+
+}
+input.barcode, input.table_field{
+	width:100%; 
+	margin:0;
+	border:0;
+	padding: 0px;
+	box-shadow: none;
+	text-align: center;
+	}
+input.barcode:hover,input.table_field:hover{
+	box-shadow: none;
+}
+input.barcode:focus,input.table_field:hover{
+	box-shadow: none;
+}
+
+
+.accordion-group .accordion-heading a{
+ text-align: left;
+  font-weight: bold;
+  border-radius: 0;
+ }
+.accordion-inner{
+  margin:5%;
+}
+
+.cursor-pointer:hover{
+cursor: pointer;
+}
+
+.no-padding{
+  padding: 0;
+}
+/*
+#accordion .panel{
+  margin:0;
+  padding: 0;
+}
+#428dcf
+*/
+.panel-heading{
+	background-color: #428bca !important;
+	color: #ffffff !important;
+}
+.adjust-bottom{
+  padding-bottom:0px;
+}
+
+.form-group .left{
+  text-align: left;
+}
+
+.simple{
+  background-color:transparent;
+  padding:0;
+}
+.pull-center{
+  text-align: center;
+}
+.columns_center td{
+text-align: center;
+}
+
+    .onoffswitch {
+    position: relative; width: 54px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+    }
+    .onoffswitch-checkbox {
+    display: none;
+    }
+    .onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #909690; border-radius: 0px;
+    }
+    .onoffswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    -moz-transition: margin 0.3s ease-in 0s; -webkit-transition: margin 0.3s ease-in 0s;
+    -o-transition: margin 0.3s ease-in 0s; transition: margin 0.3s ease-in 0s;
+    }
+    .onoffswitch-inner:before, .onoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 15px; padding: 0; line-height: 15px;
+    font-size: 12px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+    }
+    .onoffswitch-inner:before {
+    content: "ON";
+    padding-left: 15px;
+    background-color: #4CD96F; color: #FFFFFF;
+    }
+    .onoffswitch-inner:after {
+    content: "OFF";
+    padding-right: 15px;
+    background-color: #D93434; color: #FFFFFF;
+    text-align: right;
+    }
+    .onoffswitch-switch {
+    display: block; width: 5px; margin: 5px;
+    background: #FFFFFF;
+    border: 2px solid #909690; border-radius: 0px;
+    position: absolute; top: 0; bottom: 0; right: 35px;
+    -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
+    -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s;
+    }
+    .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+    }
+    .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px;
+    }
+    .tagsinput{
+      border: 0;
+      border-width: 0;
+      
+      -webkit-appearance: none;
+    }
+    .models{
+      border: 1px solid black;
+      margin-top: 10%;
+    }
+
+    .model{
+      width: 100%;
+      padding: 2%;
+    }
+    .header{
+      width: 100%;
+    }
+    .header .name{
+      float:left;
+      text-align: center;
+      width: 25%;
+    }
+     .header .automation{
+      float:left;
+      text-align: center;
+      width: 25%;
+    }
+     .header .last_update{
+      float:left;
+      text-align: center;
+      width: 25%;
+    }
+    .header .update{
+      float:left;
+      text-align: center;
+      width: 25%;
+    }
+    .model .content{
+      max-height: 400px;
+      overflow: auto;
+      display: none;
+    }
+    .client-modal-body{
+      width: 98%;
+      min-height: 400px;
+      max-height: 400px;
+      height: 400px;
+      text-align: center;
+      margin-left: 1%;
+      overflow: auto;
+    }
+    .client-modal-body table tbody{
+      height: 350px;
+    }
+    .selectable:hover{
+      cursor: pointer;
+    }
+    .selected{
+      background-color: #F5F5F5;
+    }
+    .selected td{
+      background-color: #F5F5F5;
+    }
+    .selected:hover{
+      cursor: pointer;
+    }

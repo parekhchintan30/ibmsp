@@ -1,0 +1,136 @@
+﻿#accordion {
+    visibility:hidden;
+}
+
+/* root UL */
+#accordion ul {
+    padding:0;
+    margin:0;
+    list-style:none;
+     
+
+}
+
+/* sub UL */
+#accordion ul ul {
+    
+    padding:0px 0;
+    background-color: #FFFFFF;
+    
+
+}
+
+/*---------- Indents ------*/
+
+/*top-level*/
+#accordion .top > a, #accordion .top > div { 
+    padding-left:16px;
+    padding-top:12px;padding-bottom:12px;
+    font-size:12;
+}
+
+/*2nd-level*/
+#accordion li li > a, #accordion li li > div {
+    padding-left:30px;
+    padding-top:8px;padding-bottom:8px;
+    font-size: 12;
+    
+}
+
+/*3rd-level*/
+#accordion li li li > a, #accordion li li li > div { padding-left:50px; }
+
+
+/*---------- Other styles ------*/
+
+/* headings */
+#accordion li > div{
+    font-family: 'Arial', Geneva, Candara, sans-serif;
+    /*text-transform:uppercase;*/
+    letter-spacing:3px;
+    font-weight:bold;
+    color:#9D9D9D;
+
+}
+#accordion .active > div{
+    color:black;
+}
+
+
+#accordion li {
+    font-family:Arial;
+    font-size:13px;
+	padding: 0;
+    margin:0;
+    overflow:hidden;
+	cursor: pointer;
+    border-top: 2px solid #F5F5F5;
+}
+
+/* Add borders to the top LIs */
+#accordion .top {
+	border-top: 1px solid #9D9D9D;
+    border-width: 2%;
+
+ 
+}
+
+/* links */
+#accordion a {
+    color:black;
+    font-weight:normal;
+    font-size:12px;
+    text-decoration:none;
+    display:block;
+    line-height:1;
+    transition:color 0.3s;
+
+}
+#accordion a:hover {
+    color:black;
+    border-radius: 20px;
+    background-color: #bfbfbf;
+}
+#accordion a.active {
+    border-radius: 20px;
+    color:white;
+    background-color: #222222;
+    
+}
+
+
+
+/* carets */
+#accordion .caret {
+    color:inherit;
+    display:inline-block; /*float:right;*/
+    margin-bottom:0px;
+    margin-right:12px;
+    width: 0;
+    height: 0;
+    overflow:hidden;/*for IE6*/
+    border-style:solid;
+    border-width:6px;
+    position:relative;
+    border-bottom:6px solid transparent;
+    border-right: none;
+    border-left-color:initial;
+    border-top-color: transparent;
+}  
+
+#accordion div.caret.active {
+    margin-bottom:3px;
+    margin-right:6px;
+    border-bottom:none;
+    border-right: 6px solid transparent;
+    border-left-color: transparent;
+    border-top-color:initial;
+}
+
+#accordion li {
+    -ms-user-select:none;
+    -mos-user-select:none;
+    -webkit-user-select:none;
+    -o-user-select:none;
+    user-select:none;
+}

@@ -1,0 +1,68 @@
+.mainNav {
+			background: #222;
+			width: 25%;
+		}
+			/* First Level */
+			.mainNav ul {
+				margin: 0;
+				padding: 0;
+				list-style: none;
+				border-bottom: 1px solid #444
+			}
+			.mainNav ul li {
+				border-top: 1px solid #444;
+			}
+			.mainNav ul li a {
+				color: #FFFFFF;
+				display: block;
+				font-size: 1.1em;
+				line-height: normal;
+				padding:12px 20px;
+				text-decoration:none;
+			}
+			.mainNav ul li a:hover {
+				background: #333;
+				text-decoration: none;
+			}
+				/* Second Level */
+				.mainNav ul ul {
+					border-bottom: none
+				}
+				.mainNav ul ul li {
+					border-top: 1px solid #222;
+					background: #111;
+				}
+				.mainNav ul ul li a {
+					color: #FFFFFF;
+					display: block;
+					font-size: 1em;
+					line-height: normal;
+					padding: 0.5em 1em 0.5em 2.5em;
+				}
+				.mainNav ul ul li a:hover {
+					background: #333;
+				}
+						/* Third Level */
+				.mainNav ul ul ul {
+					border-top:1px solid #222;
+				}
+				.mainNav ul ul ul li {
+					border:none;
+				}
+				.mainNav ul ul ul li a {
+					padding-left:3.5em; 
+					padding-top:0.25em; 
+					padding-bottom:0.25em;
+				}
+			/* Accordion Button */
+			ul li.has-subnav .accordion-btn {
+				color:#fff; 
+				background:rgba(255,255,255, 0.15); font-size:16px;
+			}
+		
+		@media screen and (max-width: 1024px) {
+			.mainNav {width: 40%;}
+		}
+		@media screen and (max-width: 700px) {
+			.mainNav {width: 100%;}
+		}
