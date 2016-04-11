@@ -19,7 +19,7 @@
 |
 */
 
-require __DIR__.'/../ibms-code/kraftiny/bootstrap/autoload.php';
+require __DIR__.'/../../ibms-code/kraftiny/bootstrap/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +33,7 @@ require __DIR__.'/../ibms-code/kraftiny/bootstrap/autoload.php';
 |
 */
 
-$app = require_once __DIR__.'/../ibms-code/kraftiny/bootstrap/app.php';
+$app = require_once __DIR__.'/../../ibms-code/kraftiny/bootstrap/app.php';
 
 /*
 |--------------------------------------------------------------------------
