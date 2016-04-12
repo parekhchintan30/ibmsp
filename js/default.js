@@ -483,7 +483,7 @@ function pB(key, value, date_string){
  	var category= value['category'];
     if(odd){
     qz.append('B325,0,0,1A,2,2,70,B,"'+key+'"\n');
-    qz.append('A325,105,0,3,1,1,N,"VAMAS '+category+'"\n');
+    qz.append('A325,105,0,3,1,1,N,"DESIGNER '+category+'"\n');
     qz.append('A325,130,0,4,1,1,N,"'+design+'"\n');
     qz.append('A325,162,0,3,1,1,N,"'+color+'"\n');
     qz.append('A545,162,0,3,1,1,N,"'+size+'"\n');
@@ -506,8 +506,8 @@ function pB(key, value, date_string){
         qz.append('B0,0,0,1A,2,2,70,B,"'+key+'"\n');
         qz.append('B325,0,0,1A,2,2,70,B,"'+key+'"\n');
 
-        qz.append('A0,105,0,3,1,1,N,"VAMAS '+category+'"\n');
-        qz.append('A325,105,0,3,1,1,N,"VAMAS '+category+'"\n');
+        qz.append('A0,105,0,3,1,1,N,"DESIGNER '+category+'"\n');
+        qz.append('A325,105,0,3,1,1,N,"DESIGNER '+category+'"\n');
         
         qz.append('A0,130,0,4,1,1,N,"'+design+'"\n');
         qz.append('A325,130,0,4,1,1,N,"'+design+'"\n');
@@ -538,7 +538,7 @@ function pB(key, value, date_string){
       if(remaining || Math.floor(quantity/2)==0  ){
         qz.append('\nN\n');  
         qz.append('B0,0,0,1A,2,2,70,B,"'+key+'"\n');
-        qz.append('A0,105,0,3,1,1,N,"VAMAS '+category+'"\n');
+        qz.append('A0,105,0,3,1,1,N,"DESIGNER '+category+'"\n');
         qz.append('A0,130,0,4,1,1,N,"'+design+'"\n');
         qz.append('A0,162,0,3,1,1,N,"'+color+'"\n');
         qz.append('A190,162,0,3,1,1,N,"'+size+'"\n');
