@@ -417,10 +417,10 @@ function copyOrdersContent(event){
 
  function printBarcodes() {
  	if(qz){
- 		qz.findPrinter('TSC');
+ 		qz.findPrinter('TSC TTP-247');
  	}else{
  		qz = document.getElementById('qz');
- 		qz.findPrinter('TSC');
+ 		qz.findPrinter('TSC TTP-247');
  	}
 
  	var date = new Date();
@@ -474,7 +474,7 @@ function copyOrdersContent(event){
 }
 
 function pB(key, value, date_string){
-	var quantity = value['quantity'];
+		var quantity = value['quantity'];
 	var design = value['design'];
     var color = value['color'];
     var size = value['size'];
@@ -482,15 +482,15 @@ function pB(key, value, date_string){
  	var identifier= value['identifier'];
  	var category= value['category'];
     if(odd){
-    qz.append('B325,0,0,1A,2,2,70,B,"'+key+'"\n');
-    qz.append('A325,105,0,3,1,1,N,"DESIGNER '+category+'"\n');
-    qz.append('A325,130,0,4,1,1,N,"'+design+'"\n');
-    qz.append('A325,162,0,3,1,1,N,"'+color+'"\n');
-    qz.append('A545,162,0,3,1,1,N,"'+size+'"\n');
- 	qz.append('A325,185,0,3,1,1,N,"'+identifier+'"\n');
-    qz.append('A325,210,0,3,1,1,N,"M.R.P. Rs. '+mrp+'"\n');
-    qz.append('A325,232,0,2,1,1,N,"(Inclu. of all taxes)"\n');
-    qz.append('A325,255,0,1,1,1,N,"Pcs 1 Pkd. Dt: '+date_string+'"\n');
+    qz.append('B325,20,0,1A,2,2,70,B,"'+key+'"\n');
+    qz.append('A325,125,0,3,1,1,N,"DESIGNER '+category+'"\n');
+    qz.append('A325,150,0,4,1,1,N,"'+design+'"\n');
+    qz.append('A325,182,0,3,1,1,N,"'+color+'"\n');
+    qz.append('A545,182,0,3,1,1,N,"'+size+'"\n');
+ 	qz.append('A325,205,0,3,1,1,N,"'+identifier+'"\n');
+    qz.append('A325,230,0,3,1,1,N,"M.R.P. Rs. '+mrp+'"\n');
+    qz.append('A325,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
+    qz.append('A325,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: '+date_string+'"\n');
     qz.append('\nP1,1\n');
     total_barcodes_printed++;
     total_print_documents++;
@@ -503,32 +503,32 @@ function pB(key, value, date_string){
         var set = Math.floor(quantity/2);  
         var remaining = quantity % 2;
         qz.append('\nN\n');  
-        qz.append('B0,0,0,1A,2,2,70,B,"'+key+'"\n');
-        qz.append('B325,0,0,1A,2,2,70,B,"'+key+'"\n');
+        qz.append('B0,20,0,1A,2,2,70,B,"'+key+'"\n');
+        qz.append('B325,20,0,1A,2,2,70,B,"'+key+'"\n');
 
-        qz.append('A0,105,0,3,1,1,N,"DESIGNER '+category+'"\n');
-        qz.append('A325,105,0,3,1,1,N,"DESIGNER '+category+'"\n');
+        qz.append('A0,125,0,3,1,1,N,"DESIGNER '+category+'"\n');
+        qz.append('A325,125,0,3,1,1,N,"DESIGNER '+category+'"\n');
         
-        qz.append('A0,130,0,4,1,1,N,"'+design+'"\n');
-        qz.append('A325,130,0,4,1,1,N,"'+design+'"\n');
+        qz.append('A0,150,0,4,1,1,N,"'+design+'"\n');
+        qz.append('A325,150,0,4,1,1,N,"'+design+'"\n');
         
-        qz.append('A0,162,0,3,1,1,N,"'+color+'"\n');
-        qz.append('A325,162,0,3,1,1,N,"'+color+'"\n');
+        qz.append('A0,182,0,3,1,1,N,"'+color+'"\n');
+        qz.append('A325,182,0,3,1,1,N,"'+color+'"\n');
 
-        qz.append('A190,162,0,3,1,1,N,"'+size+'"\n');
-        qz.append('A545,162,0,3,1,1,N,"'+size+'"\n');
+        qz.append('A190,182,0,3,1,1,N,"'+size+'"\n');
+        qz.append('A545,182,0,3,1,1,N,"'+size+'"\n');
 
-        qz.append('A0,185,0,3,1,1,N,"'+identifier+'"\n');
-        qz.append('A325,185,0,3,1,1,N,"'+identifier+'"\n');
+        qz.append('A0,205,0,3,1,1,N,"'+identifier+'"\n');
+        qz.append('A325,205,0,3,1,1,N,"'+identifier+'"\n');
 
-        qz.append('A0,210,0,3,1,1,N,"M.R.P. Rs. '+mrp+'"\n');
-        qz.append('A325,210,0,3,1,1,N,"M.R.P. Rs. '+mrp+'"\n');
+        qz.append('A0,230,0,3,1,1,N,"M.R.P. Rs. '+mrp+'"\n');
+        qz.append('A325,230,0,3,1,1,N,"M.R.P. Rs. '+mrp+'"\n');
 
-        qz.append('A0,232,0,2,1,1,N,"(Inclu. of all taxes)"\n');
-        qz.append('A325,232,0,2,1,1,N,"(Inclu. of all taxes)"\n');
+        qz.append('A0,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
+        qz.append('A325,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
         
-        qz.append('A0,255,0,1,1,1,N,"Pcs 1 Pkd. Dt: '+date_string+'"\n');
-        qz.append('A325,255,0,1,1,1,N,"Pcs 1 Pkd. Dt: '+date_string+'"\n');
+        qz.append('A0,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: '+date_string+'"\n');
+        qz.append('A325,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: '+date_string+'"\n');
         qz.append('\nP'+set+',1\n');
         total_barcodes_printed += set*2;
         total_print_documents++;
@@ -537,16 +537,16 @@ function pB(key, value, date_string){
       
       if(remaining || Math.floor(quantity/2)==0  ){
         qz.append('\nN\n');  
-        qz.append('B0,0,0,1A,2,2,70,B,"'+key+'"\n');
-        qz.append('A0,105,0,3,1,1,N,"DESIGNER '+category+'"\n');
-        qz.append('A0,130,0,4,1,1,N,"'+design+'"\n');
-        qz.append('A0,162,0,3,1,1,N,"'+color+'"\n');
-        qz.append('A190,162,0,3,1,1,N,"'+size+'"\n');
-   		qz.append('A0,185,0,3,1,1,N,"'+identifier+'"\n');
+        qz.append('B0,20,0,1A,2,2,70,B,"'+key+'"\n');
+        qz.append('A0,125,0,3,1,1,N,"DESIGNER '+category+'"\n');
+        qz.append('A0,150,0,4,1,1,N,"'+design+'"\n');
+        qz.append('A0,182,0,3,1,1,N,"'+color+'"\n');
+        qz.append('A190,182,0,3,1,1,N,"'+size+'"\n');
+   		qz.append('A0,205,0,3,1,1,N,"'+identifier+'"\n');
     
-        qz.append('A0,210,0,3,1,1,N,"M.R.P. Rs. '+mrp+'"\n');
-        qz.append('A0,232,0,2,1,1,N,"(Inclu. of all taxes)"\n');
-        qz.append('A0,255,0,1,1,1,N,"Pcs 1 Pkd. Dt: '+date_string+'"\n');
+        qz.append('A0,230,0,3,1,1,N,"M.R.P. Rs. '+mrp+'"\n');
+        qz.append('A0,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
+        qz.append('A0,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: '+date_string+'"\n');
 
         
         total_barcodes_printed++;
