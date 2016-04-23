@@ -1,5 +1,6 @@
 var delay = (function(){
 var timer = 0;
+var total_pages = 0;
 return function(callback, ms){
     clearTimeout (timer);
     timer = setTimeout(callback, ms);
@@ -30,6 +31,8 @@ console.log('Callback')
 });
 }
 /* End of accordion menu initalization */
+
+
 
 
 var now = new Date();
@@ -78,6 +81,33 @@ calculateTotal();
 $('body').delegate('.barcode', 'change', function () {
 calculateTotal();
 });
+
+$("body").delegate(".pagination a", "click", function () {
+    var page = $(this).data('page');
+    if(page == "disabled"){
+    }else if(page == "previous"){
+    var current_page = $(".active a").data('page');
+    if (typeof current_page == "undefined" || current_page == "" || current_page == 0)
+        current_page = 1;
+        $(".active").toggleClass("active");
+        current_page--;
+        organizePagination(total_pages,current_page);
+        updateContent();
+    }else if(page == "next"){
+    var current_page = $(".active a").data('page');
+    if (typeof current_page == "undefined" || current_page == "" || current_page == 0)
+        current_page = 1;
+        $(".active").toggleClass("active");
+        current_page++;
+        organizePagination(total_pages,current_page);
+        updateContent();
+    }else{
+    $(".active").toggleClass("active");
+    $(this).closest("li").toggleClass("active");
+    updateContent();
+    } 
+});
+
 
 $('body').delegate('.view_entries_table .options', 'click', function () {
     var id = $(this).closest('tr').data('id');
@@ -718,18 +748,35 @@ function reload_page(){
 }
 
 function organizePagination(pages,page){
+	var count = $('#count option:selected').text();
 	if(pages > 1){
           var paginationRows = "";
-          paginationRows += '<li><a href="#" data-page="previous"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>'; 
-          if(pages>10)
-            pages =10;
-          for(i=1;i<pages;i++){
+          var current_page = page;
+          var total_pages = pages;
+          
+          var current_first = page - (page%5);
+          var current_last = page + (5 - (page%5));
+          if(current_first<1)
+          	current_first = 1;
+          if(current_last>total_pages)
+          	current_last = total_pages;
+          if(current_page > 1)
+          	paginationRows += '<li><a href="#" data-page="previous"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>'; 
+          else
+          	paginationRows += '<li class="disabled"><a href="javascript:void(0)" data-page="disabled"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>'; 
+
+          for(i=current_first;i<current_last+1;i++){
             if(i == page) 
               paginationRows += '<li class="active"><a href="#" data-page="'+i+'">'+i+'</a></li>';
             else
               paginationRows += '<li><a href="#" data-page="'+i+'">'+i+'</a></li>';
           }
-          paginationRows += '<li><a href="#" data-page="next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>';
+          if(current_page < total_pages)
+         	 paginationRows += '<li><a href="javascript:void(0)" data-page="next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>';
+          else
+          	 paginationRows += '<li class="disabled"><a href="javascript:void(0)" data-page="disabled"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>';
+          
+          //$('.pagination-message').html((current_first)+" to "+ (parseInt(current_first) + +count) + " of "+ (pages*count)  )
           $('.pagination:last').empty();
           $('.pagination:last').append(paginationRows);
           }
