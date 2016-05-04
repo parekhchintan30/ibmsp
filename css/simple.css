@@ -69,6 +69,14 @@ body {
   color: #fff;
   background-color: #428bca;
 }
+
+.nav-sidebar > .disabled > a,
+.nav-sidebar > .disabled > a:hover,
+.nav-sidebar > .disabled > a:focus {
+  cursor: default;
+  background-color: grey;
+}
+
 .accordionHeader{
   background-color: #428bca;
   color: #fff;
