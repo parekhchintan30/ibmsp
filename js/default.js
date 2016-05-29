@@ -749,7 +749,7 @@ function reload_page(){
 
 function organizePagination(pages,page){
 	var count = $('#count option:selected').text();
-	if(pages > 1){
+	if(pages > 0){
           var paginationRows = "";
           var current_page = page;
           var total_pages = pages;
@@ -779,6 +779,8 @@ function organizePagination(pages,page){
           //$('.pagination-message').html((current_first)+" to "+ (parseInt(current_first) + +count) + " of "+ (pages*count)  )
           $('.pagination:last').empty();
           $('.pagination:last').append(paginationRows);
+          }else{
+          	$('.pagination:last').empty();
           }
 }
 
