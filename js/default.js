@@ -64,8 +64,11 @@ $('.to-datetimepicker').datetimepicker(
 {
      defaultDate: to
 });
-
-
+$('#billing_date').datetimepicker(
+{
+     defaultDate: to,
+     maxDate:now
+});
 
 
 $('#unstitched, #against_h_form').change(function() {
