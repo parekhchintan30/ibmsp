@@ -231,6 +231,7 @@ function calculateTotal(){
 		var ethnicity_percentage = $("#ethnicity_percentage").val();
 		var ethnicity_amount = parseFloat(sum * ethnicity_percentage / 100).toFixed(2);
 		$("#ethnicity_amount").val(ethnicity_amount);
+		$("#ethnicity_amount_t").val(ethnicity_amount);
 		total = parseFloat(sum) - parseFloat(ethnicity_amount);
 	}
 
