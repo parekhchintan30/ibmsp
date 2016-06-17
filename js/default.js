@@ -69,7 +69,11 @@ $('#billing_date').datetimepicker(
      defaultDate: to,
      maxDate:now
 });
-
+$('.return-datetimepicker').datetimepicker(
+{
+     defaultDate: to,
+     minDate:to
+});
 
 $('#unstitched, #against_h_form').change(function() {
 calculateTotal();
