@@ -19,7 +19,7 @@
 |
 */
 
-require __DIR__.'/../../ibms-code/vamasfashion/rdkm/autoload.php';
+require __DIR__.'/../../ibms-code/rdkm/bootstrap/autoload.php';
 
 
 /*
