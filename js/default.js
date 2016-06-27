@@ -85,7 +85,7 @@ $('#discount_percentage').keyup(function() {
 calculateTotal();
 });
 
-$('body').delegate('.barcode', 'change', function () {
+$('body').delegate('.barcodeScanner .barcode', 'change', function () {
 calculateTotal();
 });
 
