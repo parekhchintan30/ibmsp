@@ -64,9 +64,16 @@ $('.to-datetimepicker').datetimepicker(
 {
      defaultDate: to
 });
-
-
-
+$('#billing_date').datetimepicker(
+{
+     defaultDate: to,
+     maxDate:now
+});
+$('.return-datetimepicker').datetimepicker(
+{
+     defaultDate: to,
+     minDate:to
+});
 
 $('#unstitched, #against_h_form').change(function() {
 calculateTotal();
@@ -78,7 +85,7 @@ $('#discount_percentage').keyup(function() {
 calculateTotal();
 });
 
-$('body').delegate('.barcode', 'change', function () {
+$('body').delegate('.barcodeScanner .barcode', 'change', function () {
 calculateTotal();
 });
 
@@ -228,6 +235,7 @@ function calculateTotal(){
 		var ethnicity_percentage = $("#ethnicity_percentage").val();
 		var ethnicity_amount = parseFloat(sum * ethnicity_percentage / 100).toFixed(2);
 		$("#ethnicity_amount").val(ethnicity_amount);
+		$("#ethnicity_amount_t").val(ethnicity_amount);
 		total = parseFloat(sum) - parseFloat(ethnicity_amount);
 	}
 
@@ -749,7 +757,7 @@ function reload_page(){
 
 function organizePagination(pages,page){
 	var count = $('#count option:selected').text();
-	if(pages > 1){
+	if(pages > 0){
           var paginationRows = "";
           var current_page = page;
           var total_pages = pages;
@@ -779,6 +787,8 @@ function organizePagination(pages,page){
           //$('.pagination-message').html((current_first)+" to "+ (parseInt(current_first) + +count) + " of "+ (pages*count)  )
           $('.pagination:last').empty();
           $('.pagination:last').append(paginationRows);
+          }else{
+          	$('.pagination:last').empty();
           }
 }
 
