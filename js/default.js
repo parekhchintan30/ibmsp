@@ -10,6 +10,11 @@ var odd = 0;
 var total_print_documents = 0;
 var total_barcodes_printed = 0;
 var finished = true;
+var allowedColors = ["AliceBlue","AntiqueWhite","Aqua","Aquamarine","Azure","Beige","Bisque","Black","BlanchedAlmond","Blue","BlueViolet","Brown","BurlyWood","CadetBlue","Chartreuse","Chocolate","Coral","CornflowerBlue","Cornsilk","Crimson","Cyan","DarkBlue","DarkCyan","DarkGoldenRod","DarkGray","DarkGrey","DarkGreen","DarkKhaki","DarkMagenta","DarkOliveGreen","DarkOrange","DarkOrchid","DarkRed","DarkSalmon","DarkSeaGreen","DarkSlateBlue","DarkSlateGray","DarkSlateGrey","DarkTurquoise","DarkViolet","DeepPink","DeepSkyBlue","DimGray","DimGrey","DodgerBlue","FireBrick","FloralWhite","ForestGreen","Fuchsia","Gainsboro","GhostWhite","Gold","GoldenRod","Gray","Grey","Green","GreenYellow","HoneyDew","HotPink","IndianRed ","Indigo ","Ivory","Khaki","Lavender","LavenderBlush","LawnGreen","LemonChiffon","LightBlue","LightCoral","LightCyan","LightGoldenRodYellow","LightGray","LightGrey","LightGreen","LightPink","LightSalmon","LightSeaGreen","LightSkyBlue","LightSlateGray","LightSlateGrey","LightSteelBlue","LightYellow","Lime","LimeGreen","Linen","Magenta","Maroon","MediumAquaMarine","MediumBlue","MediumOrchid","MediumPurple","MediumSeaGreen","MediumSlateBlue","MediumSpringGreen","MediumTurquoise","MediumVioletRed","MidnightBlue","MintCream","MistyRose","Moccasin","NavajoWhite","Navy","OldLace","Olive","OliveDrab","Orange","OrangeRed","Orchid","PaleGoldenRod","PaleGreen","PaleTurquoise","PaleVioletRed","PapayaWhip","PeachPuff","Peru","Pink","Plum","PowderBlue","Purple","RebeccaPurple","Red","RosyBrown","RoyalBlue","SaddleBrown","Salmon","SandyBrown","SeaGreen","SeaShell","Sienna","Silver","SkyBlue","SlateBlue","SlateGray","SlateGrey","Snow","SpringGreen","SteelBlue","Tan","Teal","Thistle","Tomato","Turquoise","Violet","Wheat","White","WhiteSmoke","Yellow","YellowGreen"];
+var allowedSizes = ["30","32","34","36","38","40","42","44","46","48","50","52","54","56","58","L","XL","XXL","M","S","XS","XXS","XXXL","28"];
+
+         
+
 var selectedSubOrders = new Array;	
 jQuery(function($) {
 
@@ -32,8 +37,10 @@ console.log('Callback')
 }
 /* End of accordion menu initalization */
 
-
-
+$('body').delegate('.barcode', 'keypress', function (e) {
+    if(e.which == 13)
+        return false;
+});
 
 var now = new Date();
 var from = new Date();
@@ -392,13 +399,12 @@ function copyInwardsContent(){
 	}
 	while(design!="" && design!=null)
 	{			
-		var default_size_array = ["30","32","34","36","38","40","42","44","46","48","50","52","54","56","58","L","XL","XXL","M","S","XS","XXS","XXXL","28"];
 		var color = $("#element-"+i+" .color");
 		var size = $("#element-"+i+" .size");
 		var quantity = $("#element-"+i+" .quantity");
 		var billing_amount = $("#element-"+i+" .billing_amount");
 		if(highlightIfEmpty(color) && highlightIfEmpty(size) && highlightIfEmpty(billing_amount) && highlightIfEmpty(quantity)){
-		if(default_size_array.indexOf(size.text()) < 0){
+		if(allowedSizes.indexOf(size.text()) < 0){
 			$("#error-feedback").show().delay(5000).fadeOut();
 			$("#error-feedback").html("Please fill in a valid size on line "+i+ " to process");
 			return false;
