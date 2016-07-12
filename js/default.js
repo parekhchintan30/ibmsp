@@ -37,7 +37,7 @@ console.log('Callback')
 }
 /* End of accordion menu initalization */
 
-$('body').delegate('.barcode', 'keypress', function (e) {
+$('body').on('keypress', function (e) {
     if(e.which == 13)
         return false;
 });
