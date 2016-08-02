@@ -296,7 +296,7 @@ function calculateTotal(){
 	total = parseFloat(total) - parseFloat(credit_amount);
 	//alert(total);
 	}
-
+	total = total.toFixed(2);
 	$('#total').val(total);
 	
 
