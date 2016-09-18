@@ -392,7 +392,7 @@ function copyAlterationsContent() {
 		}
 		i++;
 
-		barcode1 = $("#element-"+i+" .barcode-2").val();
+		barcode1 = $("#element-"+i+" .barcode-1").val();
 	}
 	return true;
 }

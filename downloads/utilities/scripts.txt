@@ -24,6 +24,40 @@ ALTER TABLE `sales`
   DROP `margin_agent_4_percentage`;
 
 
+ALTER TABLE `company_settings` ADD `vat_percentage` DECIMAL(10,2) NOT NULL DEFAULT '5.5' AFTER `tally_url`;
+ALTER TABLE `company_settings` ADD `cst_with_form` DECIMAL(10,2) NOT NULL DEFAULT '2' AFTER `tally_url`;
+ALTER TABLE `company_settings` ADD `cst_without_form` DECIMAL(10,2) NOT NULL DEFAULT '5.5' AFTER `tally_url`;
+
+
+
+
+
+
+ALTER TABLE `sales` ADD `created_by` TINYINT NULL AFTER `updated_by`, ADD `edited_by` TINYINT NULL AFTER `created_by`, ADD `cancelled_by` TINYINT NULL AFTER `edited_by`, ADD `tallied_by` TINYINT NULL AFTER `cancelled_by`;
+
+ALTER TABLE `sales_retail` ADD `created_by` TINYINT NULL AFTER `updated_by`, ADD `edited_by` TINYINT NULL AFTER `created_by`, ADD `cancelled_by` TINYINT NULL AFTER `edited_by`, ADD `tallied_by` TINYINT NULL AFTER `cancelled_by`;
+
+ALTER TABLE `sales_ecommerce` ADD `created_by` TINYINT NULL AFTER `updated_by`, ADD `edited_by` TINYINT NULL AFTER `created_by`, ADD `cancelled_by` TINYINT NULL AFTER `edited_by`, ADD `tallied_by` TINYINT NULL AFTER `cancelled_by`;
+
+
+ALTER TABLE `sales` ADD `edited_at` TIMESTAMP NULL AFTER `tallied_by`, ADD `cancelled_at` TIMESTAMP NULL AFTER `edited_at`, ADD `tallied_at` TIMESTAMP NULL AFTER `cancelled_at`;
+
+ALTER TABLE `sales_retail` ADD `edited_at` TIMESTAMP NULL AFTER `tallied_by`, ADD `cancelled_at` TIMESTAMP NULL AFTER `edited_at`, ADD `tallied_at` TIMESTAMP NULL AFTER `cancelled_at`;
+
+ALTER TABLE `sales_ecommerce` ADD `edited_at` TIMESTAMP NULL AFTER `tallied_by`, ADD `cancelled_at` TIMESTAMP NULL AFTER `edited_at`, ADD `tallied_at` TIMESTAMP NULL AFTER `cancelled_at`;
+
+ALTER TABLE `sale_stack` ADD `selling_price_without_margin` DECIMAL(10,2) NOT NULL DEFAULT '0' AFTER `selling_price_with_discount`, ADD `margin` DECIMAL(10,2) NOT NULL DEFAULT '0' AFTER `selling_price_without_margin`, ADD `selling_price_with_margin` DECIMAL(10,2) NOT NULL DEFAULT '0' AFTER `margin`;
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -679,9 +713,37 @@ SET @count = 142943;
 UPDATE `sale_stack` SET `sale_stack`.`id` = @count:= @count + 1
 WHERE `sale_stack`.`id`>341770;
 
-143643
+UPDATE `goods_return` SET `billing_amount` = `billing_amount` ,
+`discount` = `discount_percentage` * 0.01 * `billing_amount` ,
+`tax` = `tax_percentage` * 0.01 * ( `billing_amount` - `discount` ) ,
+`total` = `billing_amount` - `discount` + `tax` WHERE created_at > "2016-09-17"
 
-300001
+UPDATE  goods_return c
+        INNER JOIN
+        (
+            SELECT  goods_return_id,
+                    COUNT(*) AS ProductCount
+            FROM goods_return_stack
+            GROUP BY goods_return_id
+        ) p
+            ON c.id = p.goods_return_id
+SET c.quantity = p.ProductCount
+WHERE
+c.created_at > "2016-09-17"
+
+UPDATE  goods_return c
+        INNER JOIN
+        (
+            SELECT  goods_return_id,
+                    SUM(selling_price_without_discount) AS ProductCount
+            FROM goods_return_stack
+            GROUP BY goods_return_id
+        ) p
+            ON c.id = p.goods_return_id
+SET c.billing_amount = p.ProductCount
+WHERE
+c.created_at > "2016-09-17"
+
 
 SELECT stock.barcode, stock.quantity, new_product_master.design, new_product_master.color, new_product_master.size
 FROM stock
