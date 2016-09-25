@@ -28,7 +28,8 @@ ALTER TABLE `company_settings` ADD `vat_percentage` DECIMAL(10,2) NOT NULL DEFAU
 ALTER TABLE `company_settings` ADD `cst_with_form` DECIMAL(10,2) NOT NULL DEFAULT '2' AFTER `tally_url`;
 ALTER TABLE `company_settings` ADD `cst_without_form` DECIMAL(10,2) NOT NULL DEFAULT '5.5' AFTER `tally_url`;
 
-
+ALTER TABLE `sales_retail` ADD `sales_person_name` VARCHAR(50) NULL DEFAULT NULL AFTER `note`;
+ALTER TABLE `inward_stack` ADD `return_status` TINYINT NOT NULL DEFAULT '0' AFTER `billing_amount`;
 
 
 
