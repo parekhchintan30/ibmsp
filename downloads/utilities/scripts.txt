@@ -1,0 +1,756 @@
+ALTER TABLE `sales` ADD `cancellation_reason` VARCHAR(200) NULL AFTER `status`;
+ALTER TABLE `sales_retail` ADD `uniqid` MEDIUMTEXT NULL AFTER `status`;
+ALTER TABLE `sales_retail` ADD `cancellation_reason` VARCHAR(200) NULL AFTER `status`;
+ALTER TABLE `sales` ADD `cancellation_datetime` TIMESTAMP NULL AFTER `cancellation_reason`;
+ALTER TABLE `user_rights` ADD `cancellation_rights` TINYINT NOT NULL DEFAULT '0' AFTER `outlet_order_management`, ADD `editing_rights` TINYINT NOT NULL DEFAULT '0' AFTER `cancellation_rights`;
+ALTER TABLE `alteration_stack` ADD `original_sku` VARCHAR(100) NOT NULL AFTER `orignal_barcode`, ADD `altered_sku` VARCHAR(100) NOT NULL AFTER `original_sku`;
+ALTER TABLE `new_product_master` ADD INDEX(`barcode`);
+ALTER TABLE `inwards` ADD `uniqid` MEDIUMTEXT NULL AFTER `add_to_stock`;
+
+ALTER TABLE `sales`
+  DROP `agent_3`,
+  DROP `margin_agent_3`,
+  DROP `margin_agent_3_percentage`,
+  DROP `agent_4`,
+  DROP `margin_agent_4`,
+  DROP `margin_agent_4_percentage`;
+
+  ALTER TABLE `goods_return`
+  DROP `agent_3`,
+  DROP `margin_agent_3`,
+  DROP `margin_agent_3_percentage`,
+  DROP `agent_4`,
+  DROP `margin_agent_4`,
+  DROP `margin_agent_4_percentage`;
+
+
+ALTER TABLE `company_settings` ADD `vat_percentage` DECIMAL(10,2) NOT NULL DEFAULT '5.5' AFTER `tally_url`;
+ALTER TABLE `company_settings` ADD `cst_with_form` DECIMAL(10,2) NOT NULL DEFAULT '2' AFTER `tally_url`;
+ALTER TABLE `company_settings` ADD `cst_without_form` DECIMAL(10,2) NOT NULL DEFAULT '5.5' AFTER `tally_url`;
+
+ALTER TABLE `sales_retail` ADD `sales_person_name` VARCHAR(50) NULL DEFAULT NULL AFTER `note`;
+ALTER TABLE `inward_stack` ADD `return_status` TINYINT NOT NULL DEFAULT '0' AFTER `billing_amount`;
+
+
+
+
+ALTER TABLE `sales` ADD `created_by` TINYINT NULL AFTER `updated_by`, ADD `edited_by` TINYINT NULL AFTER `created_by`, ADD `cancelled_by` TINYINT NULL AFTER `edited_by`, ADD `tallied_by` TINYINT NULL AFTER `cancelled_by`;
+
+ALTER TABLE `sales_retail` ADD `created_by` TINYINT NULL AFTER `updated_by`, ADD `edited_by` TINYINT NULL AFTER `created_by`, ADD `cancelled_by` TINYINT NULL AFTER `edited_by`, ADD `tallied_by` TINYINT NULL AFTER `cancelled_by`;
+
+ALTER TABLE `sales_ecommerce` ADD `created_by` TINYINT NULL AFTER `updated_by`, ADD `edited_by` TINYINT NULL AFTER `created_by`, ADD `cancelled_by` TINYINT NULL AFTER `edited_by`, ADD `tallied_by` TINYINT NULL AFTER `cancelled_by`;
+
+
+ALTER TABLE `sales` ADD `edited_at` TIMESTAMP NULL AFTER `tallied_by`, ADD `cancelled_at` TIMESTAMP NULL AFTER `edited_at`, ADD `tallied_at` TIMESTAMP NULL AFTER `cancelled_at`;
+
+ALTER TABLE `sales_retail` ADD `edited_at` TIMESTAMP NULL AFTER `tallied_by`, ADD `cancelled_at` TIMESTAMP NULL AFTER `edited_at`, ADD `tallied_at` TIMESTAMP NULL AFTER `cancelled_at`;
+
+ALTER TABLE `sales_ecommerce` ADD `edited_at` TIMESTAMP NULL AFTER `tallied_by`, ADD `cancelled_at` TIMESTAMP NULL AFTER `edited_at`, ADD `tallied_at` TIMESTAMP NULL AFTER `cancelled_at`;
+
+ALTER TABLE `sale_stack` ADD `selling_price_without_margin` DECIMAL(10,2) NOT NULL DEFAULT '0' AFTER `selling_price_with_discount`, ADD `margin` DECIMAL(10,2) NOT NULL DEFAULT '0' AFTER `selling_price_without_margin`, ADD `selling_price_with_margin` DECIMAL(10,2) NOT NULL DEFAULT '0' AFTER `margin`;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ALTER TABLE `stock` ADD `vendor_id` TINYINT NOT NULL DEFAULT '0' AFTER `stock_owner`;
+UPDATE `stock` INNER JOIN vendors ON SUBSTR(stock.barcode,1,3) = vendors.prefix
+SET
+stock.vendor_id = vendors.id
+
+UPDATE `stock`
+INNER JOIN new_product_master ON stock.barcode = new_product_master.barcode
+SET stock.vendor_id = new_product_master.vendor_id
+WHERE 1
+
+SELECT inwards.id, inwards.bill_number, inward_stack.barcode, inward_stack.design, inward_stack.color, inward_stack.size, inwards.add_to_stock, inwards.created_at
+FROM `inwards`
+INNER JOIN inward_stack ON inwards.id = inward_stack.inward_id
+WHERE inwards.created_at > "2016-05-01"
+AND inwards.created_at < "2016-05-31"
+AND inward_stack.design LIKE "a-%"
+
+
+SELECT sales_retail.invoice_no, clients.name, sales_retail_stack.barcode, sales_retail.created_at
+FROM `sales_retail`
+INNER JOIN clients ON clients.id = sales_retail.id_location
+INNER JOIN sales_retail_stack ON sales_retail_stack.sale_retail_id = sales_retail.id
+WHERE sales_retail.created_at > "2016-08-01"
+
+SELECT approvals.invoice_no, clients.name, approval_stack.barcode, approvals.created_at
+FROM `approvals`
+INNER JOIN clients ON clients.id = approvals.id_client
+INNER JOIN approval_stack ON approval_stack.approval_id = approvals.id
+WHERE approvals.created_at > "2016-07-26"
+AND clients.type = "outlet"
+
+SELECT approvals.invoice_no, clients.name, approval_stack.barcode, approvals.created_at
+FROM `approvals`
+INNER JOIN clients ON clients.id = approvals.id_client
+INNER JOIN approval_stack ON approval_stack.approval_id = approvals.id
+WHERE approvals.created_at > "2016-07-26"
+AND clients.type = "outlet"
+
+SET @DATABASE_NAME = 'ibms_kraftiny';
+
+SELECT  CONCAT('ALTER TABLE `', table_name, '` CHANGE `updated_by` `updated_by` INT (10) UNSIGNED NOT NULL;') AS sql_statements
+FROM    information_schema.COLUMNS
+WHERE COLUMN_NAME IN ('updated_by')
+        AND TABLE_SCHEMA=@DATABASE_NAME;
+
+SET @DATABASE_NAME = 'ibms_kraftiny';
+
+SELECT  CONCAT('ALTER TABLE `', table_name, '` ADD INDEX (`updated_by`);') AS sql_statements
+FROM    information_schema.COLUMNS
+WHERE COLUMN_NAME IN ('updated_by')
+        AND TABLE_SCHEMA=@DATABASE_NAME;
+
+SET @DATABASE_NAME = 'ibms_kraftiny';
+
+SELECT  CONCAT('ALTER TABLE `', table_name, '` ADD CONSTRAINT `fk_',table_name,'_user_id` FOREIGN KEY ( `updated_by` ) REFERENCES `',@DATABASE_NAME,'`.`users` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ; ') AS sql_statements
+FROM    information_schema.COLUMNS
+WHERE COLUMN_NAME IN ('updated_by')
+        AND TABLE_SCHEMA=@DATABASE_NAME;
+
+
+SET @DATABASE_NAME = 'name_of_your_db';
+
+SELECT  CONCAT('ALTER TABLE `', table_name, '` ENGINE=InnoDB;') AS sql_statements
+FROM    information_schema.tables AS tb
+WHERE   table_schema = @DATABASE_NAME
+AND     `ENGINE` = 'MyISAM'
+AND     `TABLE_TYPE` = 'BASE TABLE'
+ORDER BY table_name DESC;
+
+ALTER TABLE `agents` ENGINE = InnoDB;
+ALTER TABLE `alterations` ENGINE = InnoDB;
+ALTER TABLE `alteration_stack` ENGINE = InnoDB;
+ALTER TABLE `users` ENGINE = InnoDB;
+
+ALTER TABLE `alterations` CHANGE `updated_by` `updated_by` INT( 10 ) UNSIGNED NOT NULL ;
+ALTER TABLE `alterations` ADD INDEX ( `approval_id` ) ;
+
+ALTER TABLE `alteration_stack` ADD INDEX ( `alteration_id` ) ;
+ALTER TABLE `agents` ADD CONSTRAINT `fk_agents_user_id` FOREIGN KEY ( `updated_by` ) REFERENCES `ibms_vamasfashion`.`users` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+ALTER TABLE `alterations` ADD CONSTRAINT `fk_alterations_user_id` FOREIGN KEY ( `updated_by` ) REFERENCES `ibms_vamasfashion`.`users` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+ALTER TABLE `alteration_stack` ADD INDEX ( `alteration_id` ) ;
+ALTER TABLE `alteration_stack` ADD CONSTRAINT `fk_alteration_id` FOREIGN KEY ( `alteration_id` ) REFERENCES `ibms_vamasfashion`.`alterations` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+
+
+
+ALTER TABLE `approval_stack` ADD INDEX ( `approval_id` ) ;
+ALTER TABLE `approval_stack` ENGINE = InnoDB;
+ALTER TABLE `approvals` ENGINE = InnoDB;
+
+ALTER TABLE `approval_stack` ADD CONSTRAINT `fk_approval_id` FOREIGN KEY ( `approval_id` ) REFERENCES `ibms_vamasfashion`.`approvals` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+ALTER TABLE `approvals` ADD INDEX ( `updated_by` ) ;
+
+ALTER TABLE `approvals` ADD CONSTRAINT `fk_approvals_user_id` FOREIGN KEY ( `updated_by` ) REFERENCES `ibms_vamasfashion`.`users` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+ALTER TABLE `approvals` ADD CONSTRAINT `fk_approvals_client_id` FOREIGN KEY ( `id_client` ) REFERENCES `ibms_vamasfashion`.`clients` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+ALTER TABLE `approval_return_stack` ADD INDEX ( `approval_return_id` ) ;
+ALTER TABLE `approval_return_stack` ENGINE = InnoDB;
+ALTER TABLE `approval_return` ENGINE = InnoDB;
+
+ALTER TABLE `approval_return_stack` ADD CONSTRAINT `fk_approval_return_id` FOREIGN KEY ( `approval_return_id` ) REFERENCES `ibms_vamasfashion`.`approvals` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+ALTER TABLE `approval_return` ADD INDEX ( `updated_by` ) ;
+
+ALTER TABLE `approval_return` ADD CONSTRAINT `fk_approval_return_user_id` FOREIGN KEY ( `updated_by` ) REFERENCES `ibms_vamasfashion`.`users` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+ALTER TABLE `approval_return` ADD CONSTRAINT `fk_approval_return_client_id` FOREIGN KEY ( `id_client` ) REFERENCES `ibms_vamasfashion`.`clients` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+ALTER TABLE `clients` ADD INDEX ( `updated_by` ) ;
+
+ALTER TABLE `clients` ADD CONSTRAINT `fk_clients_user_id` FOREIGN KEY ( `updated_by` ) REFERENCES `ibms_vamasfashion`.`users` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+ALTER TABLE `company_accounts` ADD INDEX ( `updated_by` ) ;
+
+ALTER TABLE `company_accounts` ADD CONSTRAINT `fk_company_accounts_user_id` FOREIGN KEY ( `updated_by` ) REFERENCES `ibms_vamasfashion`.`users` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+ALTER TABLE `customers_ecommerce` ADD INDEX ( `updated_by` ) ;
+
+ALTER TABLE `customers_ecommerce` ADD CONSTRAINT `fk_customers_ecommerce_user_id` FOREIGN KEY ( `updated_by` ) REFERENCES `ibms_vamasfashion`.`users` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+ALTER TABLE `customers_retail` ADD INDEX ( `updated_by` ) ;
+
+ALTER TABLE `customers_retail` ADD CONSTRAINT `fk_customers_retail_user_id` FOREIGN KEY ( `updated_by` ) REFERENCES `ibms_vamasfashion`.`users` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+
+ALTER TABLE `ecommerce_payments` ADD INDEX ( `updated_by` ) ;
+ALTER TABLE `ecommerce_payments` ADD INDEX ( `ecommerce_sale_id` ) ;
+ALTER TABLE `ecommerce_payments` CHANGE `ecommerce_sale_id` `ecommerce_sale_id` INT( 10 ) UNSIGNED NOT NULL ;
+ALTER TABLE `sales_ecommerce` ENGINE = InnoDB;
+ALTER TABLE `ecommerce_payments` CHANGE `updated_by` `updated_by` INT( 10 ) UNSIGNED NOT NULL ;
+
+ALTER TABLE `ecommerce_payments` ADD CONSTRAINT `fk_ecommerce_sale_id` FOREIGN KEY ( `ecommerce_sale_id` ) REFERENCES `ibms_vamasfashion`.`sales_ecommerce` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+ALTER TABLE `ecommerce_payments` ADD CONSTRAINT `fk_ecommerce_payments_user_id` FOREIGN KEY ( `updated_by` ) REFERENCES `ibms_vamasfashion`.`users` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+
+
+ALTER TABLE `goods_return_stack` ADD INDEX ( `goods_return_id` ) ;
+ALTER TABLE `goods_return_stack` ENGINE = InnoDB;
+ALTER TABLE `goods_return` ENGINE = InnoDB;
+ALTER TABLE `goods_return` ADD INDEX ( `updated_by` ) ;
+ALTER TABLE `goods_return` ADD CONSTRAINT `fk_goods_return_client_id` FOREIGN KEY ( `id_client` ) REFERENCES `ibms_vamasfashion`.`clients` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+ALTER TABLE `goods_return` ADD CONSTRAINT `fk_goods_return_user_id` FOREIGN KEY ( `updated_by` ) REFERENCES `ibms_vamasfashion`.`users` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+
+ALTER TABLE `goods_return_stack` DROP FOREIGN KEY `fk_goods_return_id` ;
+
+ALTER TABLE `goods_return_stack` ADD CONSTRAINT `fk_goods_return_id` FOREIGN KEY ( `goods_return_id` ) REFERENCES `ibms_vamasfashion`.`goods_return` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+ALTER TABLE `goods_return_retail` ADD INDEX ( `updated_by` ) ;
+
+ALTER TABLE `goods_return_retail` ADD CONSTRAINT `fk_goods_return_retail_user_id` FOREIGN KEY ( `updated_by` ) REFERENCES `ibms_vamasfashion`.`users` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+ALTER TABLE `goods_return_retail_stack` ENGINE = InnoDB;
+ALTER TABLE `goods_return_retail_stack` ADD INDEX ( `goods_return_id` ) ;
+
+ALTER TABLE `goods_return_retail_stack` ADD CONSTRAINT `fk_goods_return_retail_id` FOREIGN KEY ( `goods_return_id` ) REFERENCES `ibms_vamasfashion`.`goods_return_retail` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+ALTER TABLE `inwards` ENGINE = InnoDB;
+ALTER TABLE `inwards` ADD INDEX ( `updated_by` ) ;
+ALTER TABLE `inwards` ADD CONSTRAINT `fk_inwards_user_id` FOREIGN KEY ( `updated_by` ) REFERENCES `ibms_vamasfashion`.`users` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+ALTER TABLE `inward_stack` ENGINE = InnoDB;
+
+ALTER TABLE `inward_stack` ADD CONSTRAINT `fk_inwards_id` FOREIGN KEY ( `inward_id` ) REFERENCES `ibms_vamasfashion`.`inwards` (
+`id`
+) ON DELETE RESTRICT ON UPDATE CASCADE ;
+
+
+CREATE VIEW ecommerce_margins AS
+   SELECT
+  DISTINCT(p.`id`) AS "ecommerce_sale_id",
+  ROUND(SUM(pl.payment_amount),2) AS "payment_received",
+  ROUND(((p.total - SUM(pl.payment_amount))/p.total)*100,0) AS website_margin
+FROM
+  `sales_ecommerce` AS p
+   INNER JOIN ecommerce_payments AS pl
+    ON pl.`ecommerce_sale_id` = p.`id`
+   GROUP BY p.`id`
+   ORDER By website_margin DESC;
+
+
+chmod -R u+rwX,go+rX,go-w vamasfashion/
+
+mysql -u [username] -p newdatabase < [database name].sql
+
+mysql -u ibms_ibms -p ibms_vamasfashion < ibms.sql
+mysql -u ibms_ibms -p ibms_vamas < inventory.sql
+
+INSERT INTO ibms_kraftiny.new_product_master
+(`id`, `barcode`, `design`, `color`, `size`, `manufacturing_price`, `wholesale_price`, `other_website_price`,`discounted_price`, `mrp`, `identifier`, `category`, `active`, `sample`, `updated_by`, `created_at`, `updated_at`)
+VALUES
+(NEW.id,NEW.barcode,NEW.design,NEW.color,NEW.size,NEW.manufacturing_price,NEW.wholesale_price,NEW.other_website_price,NEW.discounted_price,NEW.mrp,NEW.identifier,NEW.category,NEW.active,NEW.sample,NEW.updated_by,NEW.created_at,NEW.updated_at)
+
+
+DELETE FROM `goods_return` WHERE created_at > "2016-07-01"
+
+SELECT sale_stack.barcode FROM `sales_ecommerce`
+INNER JOIN sales_ecommerce_stack
+ON sales_ecommerce.id = sales_ecommerce_stack.ecommerce_sale_id
+AND sales_ecommerce.`return_date` >  "2016-04-01" AND sales_ecommerce.return_date < "2016-07-01"
+AND sales_ecommerce.wrong_return = 0
+SELECT * FROM `goods_return_stack` WHERE created_at> "2016-04-01" AND created_at < "2016-07-01"
+
+
+
+UPDATE ibms_vamas.new_product_master SET
+`barcode`=NEW.barcode,
+`design`=NEW.design,
+`color`=NEW.color,
+`size`=NEW.size,
+`manufacturing_price`=NEW.manufacturing_price,
+`wholesale_price`=NEW.wholesale_price,
+`other_website_price`=NEW.other_website_price,
+`mrp`=NEW.mrp,
+`discounted_price`=NEW.discounted_price,
+`identifier`=NEW.identifier,
+`category`=NEW.category,
+`active`=NEW.active,
+`sample`=NEW.sample,
+`updated_by`=NEW.updated_by,
+`created_at`=NEW.created_at,
+`updated_at`=NEW.updated_at
+
+where id=NEW.id
+
+
+
+
+CREATE VIEW ecommerce_proper_margins AS
+   SELECT
+  DISTINCT(p.`id`) AS "ecommerce_sale_id",
+  SUM(pl.payment_amount) AS "payment_received",
+  ROUND(((p.total - SUM(pl.payment_amount))/p.total)*100,0) AS website_margin
+FROM
+  `sales_ecommerce` AS p
+   INNER JOIN ecommerce_payments AS pl
+    ON pl.`ecommerce_sale_id` = p.`id`
+WHERE p.status = 1 AND p.return_status =0
+   GROUP BY p.`id`
+   ORDER By website_margin DESC;
+
+
+
+
+CREATE VIEW ecommerce_margins AS
+   SELECT
+  DISTINCT(p.`id`) AS "ecommerce_sale_id",
+  SUM(pl.payment_amount) AS "payment_received",
+  ROUND(((p.total - SUM(pl.payment_amount))/p.total)*100,0) AS website_margin
+FROM
+  `sales_ecommerce` AS p
+   INNER JOIN ecommerce_payments AS pl
+    ON pl.`ecommerce_sale_id` = p.`id`
+WHERE p.status = 1 AND p.return_status =0
+   GROUP BY p.`id`
+   ORDER By website_margin DESC;
+
+
+SELECT
+  DISTINCT(p.`id`) AS "ecommerce_sale_id",
+  SUM(pl.payment_amount) AS "payment_received",
+  ROUND(((p.total - SUM(pl.payment_amount))/p.total)*100,0) AS website_margin
+FROM
+  `sales_ecommerce` AS p
+   INNER JOIN ecommerce_payments AS pl
+    ON pl.`ecommerce_sale_id` = p.`id`
+WHERE p.status = 1 AND p.return_status =0
+   GROUP BY p.`id`
+   HAVING  margin > 30
+   ORDER By website_margin DESC;
+
+
+CREATE VIEW ecommerce_high_margins AS
+SELECT
+  DISTINCT(p.`id`) AS "id",
+  SUM(pl.payment_amount) AS "Payment Received",
+  ROUND(((p.total - SUM(pl.payment_amount))/p.total)*100,0) AS margin
+FROM
+  `sales_ecommerce` AS p
+   INNER JOIN ecommerce_payments AS pl
+    ON pl.`ecommerce_sale_id` = p.`id`
+WHERE p.status = 1 AND p.return_status =0
+   GROUP BY p.`id`
+   HAVING  margin > 30
+   ORDER By margin DESC;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE VIEW ecommerce_high_margins AS
+SELECT
+  DISTINCT(p.`id`) AS "id",
+  SUM(pl.payment_amount) AS "Payment Received",
+  ROUND(((p.total - SUM(pl.payment_amount))/p.total)*100,0) AS margin
+FROM
+  `sales_ecommerce` AS p
+   INNER JOIN ecommerce_payments AS pl
+    ON pl.`ecommerce_sale_id` = p.`id`
+WHERE p.status = 1 AND p.return_status =0
+   GROUP BY p.`id`
+   HAVING  margin > 30
+   ORDER By margin DESC;
+
+
+SELECT
+  DISTINCT(p.`id`) AS "ecommerce_sale_id",
+  SUM(pl.payment_amount) AS "payment_received",
+  ROUND(((p.total - SUM(pl.payment_amount))/p.total)*100,0) AS margin
+FROM
+  `sales_ecommerce` AS p
+   INNER JOIN ecommerce_payments AS pl
+    ON pl.`ecommerce_sale_id` = p.`id`
+WHERE p.status = 1 AND p.return_status =0
+   GROUP BY p.`id`
+   HAVING  margin > 25
+   ORDER By margin DESC;
+
+
+
+
+SELECT
+  DISTINCT(p.`invoice_no`) AS ProductID,
+  SUM(pl.payment_amount) AS Cash,
+FROM
+  `sales_ecommerce` AS p
+  LEFT JOIN sales_ecommerce_stack AS pl
+    ON pl.`ecommerce_sale_id` = p.`id`
+  GROUP BY p.`invoice_no` ;
+
+
+SELECT
+  DISTINCT(p.`id`) AS Sale Id,
+  p.invoice_no as Invoice Number,
+  SUM(pl.payment_amount) AS Payment Received,
+  ((p.total - SUM(pl.payment_amount))/p.total)*100 AS Margin(%)
+FROM
+  `sales_ecommerce` AS p
+   INNER JOIN ecommerce_payments AS pl
+    ON pl.`ecommerce_sale_id` = p.`id`
+  GROUP BY p.`id` ;
+
+ SELECT
+  DISTINCT(p.`id`) AS "Sale Id",
+  p.invoice_no as "Invoice Number",
+  p.total as "Product Value",
+  SUM(pl.payment_amount) AS "Payment Received",
+  ROUND(((p.total - SUM(pl.payment_amount))/p.total)*100,0) AS margin
+FROM
+  `sales_ecommerce` AS p
+   INNER JOIN ecommerce_payments AS pl
+    ON pl.`ecommerce_sale_id` = p.`id`
+WHERE p.status = 1 AND p.return_status =0
+   GROUP BY p.`id`
+   HAVING  margin > 30
+   ORDER By margin DESC
+   ;
+
+
+   SELECT SUM(`quantity`),
+SUM(`total`)
+
+FROM `sales_ecommerce` WHERE `website_id`=2 AND `created_at`>"2015-07-01" AND `created_at`<"2015-08-01" AND `status` = 1
+
+
+SELECT SUM(`quantity`),
+SUM(`total`)
+
+FROM `sales_ecommerce` WHERE `website_id`=2 AND `created_at`>"2015-07-01" AND `created_at`<"2015-08-01" AND `return` = 1
+
+SELECT SUM( `quantity` ) , SUM( `total` )
+FROM `sales_ecommerce`
+INNER JOIN customers_ecommerce ON sales_ecommerce.`ecommerce_customer_id` = customers_ecommerce.id
+WHERE sales_ecommerce.website_id =2
+AND sales_ecommerce.created_at > "2015-07-01"
+AND sales_ecommerce.created_at < "2015-08-01"
+AND sales_ecommerce.return =1
+AND customers_ecommerce.state != "Maharashtra"
+
+SELECT SUM( `quantity` ) , SUM( `total` )
+FROM `sales_ecommerce`
+INNER JOIN customers_ecommerce ON sales_ecommerce.`ecommerce_customer_id` = customers_ecommerce.id
+WHERE sales_ecommerce.website_id =2
+AND sales_ecommerce.created_at > "2015-08-01"
+AND sales_ecommerce.created_at < "2015-09-01"
+AND sales_ecommerce.return =1
+AND customers_ecommerce.state = "Maharashtra"
+
+SELECT SUM( `quantity` ) , SUM( `total` )
+FROM `sales_ecommerce`
+INNER JOIN customers_ecommerce ON sales_ecommerce.`ecommerce_customer_id` = customers_ecommerce.id
+WHERE sales_ecommerce.website_id =2
+AND sales_ecommerce.created_at > "2015-10-01"
+AND sales_ecommerce.created_at < "2015-11-01"
+AND sales_ecommerce.status =1
+AND customers_ecommerce.state != "Maharashtra"
+
+
+//SALE
+
+UPDATE `new_product_master` SET
+`discounted_price` = 525
+
+WHERE
+`design` IN ("6", "214", "107SL", "107 SL K", "1073/4SL", "107HT", "107NS", "222BR", "222R", "222SL", "81NS", "81PLT", "81SL", "86B", "86BNS", "86BPD", "A", "AJP-30", "AL-K", "CT-1", "CT-2", "CT-3", "CT-4", "MIX-1", "X-113NS", "X-219", "X-18", "X-154", "X-243", "X-243K", "LEC-164", "X-130SL", "X-130SL K", "X-130NS", "X-130NS K", "LEC-104", "LEC-165", "X-271SL", "X-35NS", "X-35SL", "X-49", "X-59", "X-81NS", "X-81NSCRS", "X-115NS", "X-93NS", "X-174", "MIX-1NS", "MIX-3", "X-49N", "81SL.MB", "81SL3/4", "86B-K", "X-193.3/4", "X-193SL")
+
+
+UPDATE `new_product_master` SET
+`discounted_price` = 800
+
+WHERE
+`design` IN ("26", "39", "107LB", "KP-4", "KP-5", "KP-62", "KP-8", "M-5", "M-6", "R-5", "R-5SL", "R-6", "X-101NS", "X-101NS2H", "X-101SL", "X-101SL2H", "X-101SL3H", "X-101SL5H", "LEC-164", "CR-11", "CR-11K", "CR-8", "CR-04", "CR-05", "X-107", "X-108NS", "X-116", "X-118", "X-122", "X-128NS", "X-128SL", "X-135", "X-140", "X-141NS", "X-141SL", "X-144", "X-144S", "X-150", "X-151NS", "X-153SL", "X-162NS", "X-166", "X-168", "X-176NS", "X-178", "X-181", "X-181K", "X-183", "LEC-165", "X-169", "CR-06.EFO", "X-94", "X-94SL", "X-191", "X-226", "X-235", "X-244", "X-261", "X-292", "X-307NS", "X-309", "X-315", "X-329", "X-81SL", "X-165", "LEC-162", "X-66", "R-5P", "X-126", "X-131", "X-153NS", "X-104")
+
+UPDATE `new_product_master` SET
+`discounted_price` = 1050
+
+WHERE
+`design` IN ("X-214", "LEC-174", "LEC-85NS", "X-177", "X-107CRS", "X-110", "X-110F", "X-121", "X-125", "X-134", "X-139", "X-162SL", "X-167", "X-182", "X-186", "X-196", "X-206", "X-224NS", "X-225", "X-230", "X-239", "X-24HF", "X-24", "X-252", "X-253", "X-283", "X-285", "X-316", "X-332", "X-40", "X-48", "X-68", "X-80NS", "X-80SL", "X-114", "231", "JK-06", "JK-07", "JK-08", "JK-11", "JK-17", "JK-18", "KP-22HT", "KP-22NS", "KP-22SL", "KP-55NS", "M-23", "KP-61", "KP-85", "MAYA-9", "X-217", "X-102", "X-24SL", "X-110SL", "X-24NS")
+
+UPDATE `new_product_master` SET
+`discounted_price` = 1600
+WHERE
+`design` IN ("JK-16", "KP-10", "KP-18F", "KP-19", "KP-30", "KP-44SL", "KP-50", "KP-50.EFO", "KP-6", "KP-68", "KP-77", "KP-79", "X-15", "X-185NS", "X-199", "X-220", "X-220.EFO", "X-248", "X-295", "X-296", "X-76", "X-79")
+
+
+UPDATE `new_product_master` SET
+`discounted_price` = 2100
+WHERE
+`design` IN ("KP-39", "KP-41F", "KP-43F", "KP-43HF", "KP-51", "KP-78", "KP-86", "X-227"
+)
+
+UPDATE `new_product_master` SET
+`discounted_price` = 2650
+WHERE
+`design` IN ("KP-23", "KP-24", "KP-25", "KP-38", "KP-40", "KP-42", "KP-46", "KP-47HT", "KP-48", "KP-52", "KP-53", "KP-76NS", "LEC-167", "KP-47SL")
+
+UPDATE `new_product_master` SET
+`discounted_price` = 3150
+WHERE
+`design` IN ("KP-74SL", "KP-80", "KP-82", "KP-98", "JK-04")
+
+UPDATE `new_product_master` SET
+`discounted_price` = 4200
+WHERE
+`design` IN ("KP-56", "KP-57", "KP-57SL", "KP-58", "KP-58SL", "KP-59", "KP-70", "KP-70SL", "KP-64")
+
+
+
+SET @i = 1000;
+UPDATE `sales_retail` SET
+`invoice_no` = CONCAT( "VPGR",  DATE_FORMAT(created_at, '%m'), DATE_FORMAT(created_at, '%y'),  @i:=@i+1)
+WHERE created_at > "2016-03-01"
+AND created_at < "2016-04-01"
+AND id_location = 194;
+
+SELECT SUM( quantity )
+FROM `stock`
+WHERE `party_id` =504
+
+SET @i = 0;
+UPDATE `stock` SET id = @i:=@i+1
+WHERE 1
+
+
+SET @i = 1000;
+UPDATE `sales_retail` SET
+`invoice_no` = CONCAT( "VPGR",  DATE_FORMAT(created_at, '%m'), DATE_FORMAT(created_at, '%y'),  @i:=@i+1)
+WHERE created_at > "2016-02-01"
+AND created_at < "2016-03-01"
+AND id_location = 194;
+
+
+SET @i = 1000;
+UPDATE `sales_retail` SET
+`invoice_no` = CONCAT( "VPGR",  DATE_FORMAT(created_at, '%m'), DATE_FORMAT(created_at, '%y'),  @i:=@i+1)
+WHERE created_at > "2016-01-01"
+AND created_at < "2016-02-01"
+AND id_location = 194;
+
+
+
+SET @i = 1000;
+UPDATE `sales_retail` SET
+`invoice_no` = CONCAT( "VP/GR/",  DATE_FORMAT(created_at, '%m'),"/", DATE_FORMAT(created_at, '%y'), "/", @i:=@i+1)
+WHERE created_at > "2015-12-01"
+AND created_at < "2016-01-01"
+AND id_location = 194;
+
+
+
+SET @i = 1000;
+UPDATE `sales_retail` SET
+`invoice_no` = CONCAT( "VP/GR/",  DATE_FORMAT(created_at, '%m'),"/", DATE_FORMAT(created_at, '%y'), "/", @i:=@i+1)
+WHERE created_at > "2015-11-01"
+AND created_at < "2015-12-01"
+AND id_location = 194;
+
+SET @i = 1000;
+UPDATE `sales_retail` SET
+`invoice_no` = CONCAT( "VP/GR/",  DATE_FORMAT(created_at, '%m'),"/", DATE_FORMAT(created_at, '%y'), "/", @i:=@i+1)
+WHERE created_at > "2015-10-01"
+AND created_at < "2015-11-01"
+AND id_location = 194;
+
+
+SET @i = 1000;
+UPDATE `sales_retail` SET
+`invoice_no` = CONCAT( "VP/GR/",  DATE_FORMAT(created_at, '%m'),"/", DATE_FORMAT(created_at, '%y'), "/", @i:=@i+1)
+WHERE created_at > "2015-09-01"
+AND created_at < "2015-10-01"
+AND id_location = 194;
+
+SET @i = 1000;
+UPDATE `sales_retail` SET
+`invoice_no` = CONCAT( "VP/GR/",  DATE_FORMAT(created_at, '%m'),"/", DATE_FORMAT(created_at, '%y'), "/", @i:=@i+1)
+WHERE created_at > "2015-08-01"
+AND created_at < "2015-09-01"
+AND id_location = 194;
+
+SET @i = 1000;
+UPDATE `sales_retail` SET
+`invoice_no` = CONCAT( "VP/GR/",  DATE_FORMAT(created_at, '%m'),"/", DATE_FORMAT(created_at, '%y'), "/", @i:=@i+1)
+WHERE created_at > "2015-07-01"
+AND created_at < "2015-08-01"
+AND id_location = 194;
+
+SET @i = 1000;
+UPDATE `sales_retail` SET
+`invoice_no` = CONCAT( "VP/GR/",  DATE_FORMAT(created_at, '%m'),"/", DATE_FORMAT(created_at, '%y'), "/", @i:=@i+1)
+WHERE created_at > "2015-06-01"
+AND created_at < "2015-07-01"
+AND id_location = 194;
+
+SET @i = 1000;
+UPDATE `sales_retail` SET
+`invoice_no` = CONCAT( "VP/GR/",  DATE_FORMAT(created_at, '%m'),"/", DATE_FORMAT(created_at, '%y'), "/", @i:=@i+1)
+WHERE created_at > "2015-05-01"
+AND created_at < "2015-06-01"
+AND id_location = 194;
+
+SET @i = 1000;
+UPDATE `sales_retail` SET
+`invoice_no` = CONCAT( "VP/GR/",  DATE_FORMAT(created_at, '%m'),"/", DATE_FORMAT(created_at, '%y'), "/", @i:=@i+1)
+WHERE created_at > "2015-04-01"
+AND created_at < "2015-05-01"
+AND id_location = 194;
+
+ALTER TABLE `sales_retail_stack` ADD `return_status` TINYINT NOT NULL DEFAULT '0' AFTER `quantity`;
+ALTER TABLE `sales_retail` ADD `return_status` TINYINT NOT NULL DEFAULT '0' AFTER `quantity`;
+ALTER TABLE `goods_return_retail` ADD `customized` TINYINT NOT NULL DEFAULT '0' AFTER `discount`, ADD `customization_amount` DECIMAL(10,2) NOT NULL DEFAULT '0' AFTER `customized`, ADD `note` VARCHAR(100) NULL AFTER `customization_amount`, ADD `reference_no` VARCHAR(100) NULL AFTER `note`;
+ALTER TABLE `goods_return_retail` ADD `gr_type` TINYINT NOT NULL DEFAULT '0' AFTER `quantity`;
+ALTER TABLE `alterations` ADD `id_location` INT NOT NULL DEFAULT '0' AFTER `uniqid`;
+ALTER TABLE  `goods_return_retail` ADD  `against_sale_retail_id` INT NOT NULL AFTER  `invoice_no` ;
+ALTER TABLE `sales_retail` CHANGE `total` `total` DECIMAL(10,2) NOT NULL, CHANGE `tax` `tax` DECIMAL(10,2) NULL DEFAULT NULL;
+ALTER TABLE `sales_retail` CHANGE `discount` `discount` DECIMAL(10,2) NULL DEFAULT NULL;
+
+ALTER TABLE `goods_return_retail` CHANGE `total` `total` DECIMAL(10,2) NOT NULL, CHANGE `tax` `tax` DECIMAL(10,2) NULL DEFAULT NULL;
+ALTER TABLE `goods_return_retail` CHANGE `discount` `discount` DECIMAL(10,2) NULL DEFAULT NULL;
+
+
+  SELECT barcode FROM `sales_ecommerce_stack`
+INNER JOIN sales_ecommerce  ON
+sales_ecommerce.id = sales_ecommerce_stack.`ecommerce_sale_id`
+AND sales_ecommerce.return_date < "2016-07-01"
+AND sales_ecommerce.return_status = 1
+AND sales_ecommerce.wrong_return = 0
+UPDATE `sales` SET
+discount = 0.40*billing_amount,
+discount_percentage = 40,
+tax = (billing_amount - discount) * 0.055,
+total = billing_amount - discount + tax
+WHERE id = 4853
+AND created_at < "2016-07-01"
+
+SET @count = 0;
+UPDATE `sales_ecommerce_stack` SET `sales_ecommerce_stack`.`id` = @count:= @count + 1;
+3349
+
+SET @count = 33500;
+UPDATE `sales` SET `sales`.`id` = @count:= @count + 1
+WHERE `sales`.`id`>341771;
+
+142943
+
+SET @count = 142943;
+UPDATE `sale_stack` SET `sale_stack`.`id` = @count:= @count + 1
+WHERE `sale_stack`.`id`>3417710;
+
+SET @count = 142943;
+UPDATE `sale_stack` SET `sale_stack`.`id` = @count:= @count + 1
+WHERE `sale_stack`.`id`>341770;
+
+UPDATE `goods_return` SET `billing_amount` = `billing_amount` ,
+`discount` = `discount_percentage` * 0.01 * `billing_amount` ,
+`tax` = `tax_percentage` * 0.01 * ( `billing_amount` - `discount` ) ,
+`total` = `billing_amount` - `discount` + `tax` WHERE created_at > "2016-09-17"
+
+UPDATE  goods_return c
+        INNER JOIN
+        (
+            SELECT  goods_return_id,
+                    COUNT(*) AS ProductCount
+            FROM goods_return_stack
+            GROUP BY goods_return_id
+        ) p
+            ON c.id = p.goods_return_id
+SET c.quantity = p.ProductCount
+WHERE
+c.created_at > "2016-09-17"
+
+UPDATE  goods_return c
+        INNER JOIN
+        (
+            SELECT  goods_return_id,
+                    SUM(selling_price_without_discount) AS ProductCount
+            FROM goods_return_stack
+            GROUP BY goods_return_id
+        ) p
+            ON c.id = p.goods_return_id
+SET c.billing_amount = p.ProductCount
+WHERE
+c.created_at > "2016-09-17"
+
+
+SELECT stock.barcode, stock.quantity, new_product_master.design, new_product_master.color, new_product_master.size
+FROM stock
+INNER JOIN new_product_master ON new_product_master.barcode = stock.barcode
+
+SELECT stock.barcode, stock.quantity, new_product_master.design, new_product_master.color, new_product_master.size
+FROM stock
+INNER JOIN new_product_master ON new_product_master.barcode = stock.barcode
+WHERE `warehouse` =1
