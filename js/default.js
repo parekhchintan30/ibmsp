@@ -97,8 +97,8 @@ calculateTotal();
 });
 
 $("body").delegate(".pagination a", "click", function () {
-    var page = $(this).data('page');
-    if(page == "disabled"){
+	var page = $(this).data('page');
+	if(page == "disabled"){
     }else if(page == "previous"){
     var current_page = $(".active a").data('page');
     if (typeof current_page == "undefined" || current_page == "" || current_page == 0)
@@ -129,7 +129,7 @@ $('body').delegate('.view_entries_table .options', 'click', function () {
     if($(this).attr('data-edit'))
       document.location.href = $('#route_path').val()+'/'+id ;
     else
-      document.location.href = $('#route_path').val()+'/'+id + '/edit';
+      document.location.href = $('#route_path').val()+'/'+id ;
   });
 
 
@@ -227,19 +227,29 @@ function calculateTotal(){
 	var i = 1;
 	var sum = 0;
 	var quantity = 0;
+	var ethnicity_amount = 0;
+	var ethnicity_percentage = $("#ethnicity_percentage").val();
+
 	while(barcode!="" && barcode!=null)
 	{
 		var mrp = $("#element-"+i+" .mrp").html();
 		sum = sum + parseFloat(mrp);
 		i++;	
 		quantity++;
+		if($('#ethnicity_percentage').length){
+			var local_ethnicity_amount = parseFloat(mrp * ethnicity_percentage / 100).toFixed(2);
+			ethnicity_amount += parseFloat(local_ethnicity_amount);
+		}
 		barcode = $("#element-"+i+" .barcode").val();
 	}
+	if(isNaN(sum))
+		sum = 0;
+
+
 	$('#billing_amount').val(sum);
 	$('#quantity').val(quantity);
 	var total = parseFloat(sum).toFixed(2); 
 	if($('#ethnicity_percentage').length){
-		var ethnicity_percentage = $("#ethnicity_percentage").val();
 		var ethnicity_amount = parseFloat(sum * ethnicity_percentage / 100).toFixed(2);
 		$("#ethnicity_amount").val(ethnicity_amount);
 		$("#ethnicity_amount_t").val(ethnicity_amount);
@@ -296,7 +306,7 @@ function calculateTotal(){
 	total = parseFloat(total) - parseFloat(credit_amount);
 	//alert(total);
 	}
-	total = total.toFixed(2);
+	total = parseFloat(total).toFixed(2);
 	$('#total').val(total);
 	
 
@@ -310,8 +320,10 @@ function reinitializeFields(){
 	$("#billing_amounts").val("");
 	$("#quantities").val("");
 	$("#notes").val("");
-
-
+	$("#old_barcodes").val("");
+	$("#new_barcodes").val("");
+	$("#old_skus").val("");
+	$("#new_skus").val("");
 }
 
 function copySalesContent() {
@@ -351,6 +363,40 @@ function copySalesContent() {
 	$("#quantity").val(i-1);
 	return true;
 }
+
+function copyAlterationsContent() {
+	reinitializeFields();
+	var barcode1 = $("#element-1 .barcode-1").val();
+	var i = 1;
+	if(barcode1 == "" || barcode1 == null){
+		$("#error-feedback").show().delay(5000).fadeOut();
+		$("#error-feedback").html("You need to scan atleast one barcode to process your order");
+		return false;
+	}
+	while(barcode1!="" && barcode1!=null)
+	{
+		var original_sku = $("#element-"+i+" .original_sku");
+		var altered_sku = $("#element-"+i+" .altered_sku");
+		var barcode2 = $("#element-"+i+" .barcode-2");
+		if(highlightIfEmpty(original_sku) && highlightIfEmpty(altered_sku))
+		{
+			$("#old_barcodes").val($("#old_barcodes").val() + "" + barcode1 + ";");
+			$("#new_barcodes").val($("#new_barcodes").val()+ "" + barcode2.val()+ ";");
+			$("#old_skus").val($("#old_skus").val()+  "" + original_sku.text()+ ";");
+			$("#new_skus").val($("#new_skus").val()+  "" + altered_sku.text()+ ";");
+		}
+		else{
+			$("#error-feedback").show().delay(5000).fadeOut();
+			$("#error-feedback").html("We are sorry but you have not scanned your barcodes properly. <br /> Please try again...");
+			return false;
+		}
+		i++;
+
+		barcode1 = $("#element-"+i+" .barcode-1").val();
+	}
+	return true;
+}
+
 
 
 function copyWorkersContent(){
@@ -399,6 +445,7 @@ function copyInwardsContent(){
 	}
 	while(design!="" && design!=null)
 	{			
+		var barcode = $("#element-"+i+" .barcode");
 		var color = $("#element-"+i+" .color");
 		var size = $("#element-"+i+" .size");
 		var quantity = $("#element-"+i+" .quantity");
@@ -409,6 +456,7 @@ function copyInwardsContent(){
 			$("#error-feedback").html("Please fill in a valid size on line "+i+ " to process");
 			return false;
 		}
+		$("#barcodes").val($("#barcodes").val() + "" + barcode.text() + ";");
 		$("#designs").val($("#designs").val() + "" + design + ";");
 		$("#colors").val($("#colors").val() + "" + color.text() + ";");
 		$("#sizes").val($("#sizes").val() + "" + size.text() + ";");
