@@ -257,7 +257,7 @@ function calculateTotal(){
 	}
 
 	var discount = 0;
-		if ($('#discount_val').length && $('#discount_val').val() != "") {
+		if ($('#discount_val').length && $('#discount_val').val() != "" ) {
                     discount = parseFloat($('#discount_val').val());
                     $('#discount').val(discount);
                     total = parseFloat(total) - parseFloat(discount);
@@ -362,6 +362,24 @@ function copySalesContent() {
 	}
 	$("#quantity").val(i-1);
 	return true;
+}
+
+function copyDebitNotesContent()
+{
+	//reinitializeFields all fields commented all fields getting empty;
+	//$("#client").val("");
+	//$("#amount").val("");
+    //$("#date_received").val("");
+	//$("#narration").val("");
+	//$("#additional_description").val("");
+
+	var client=$('#client').val();
+    var amount=$('#amount').val();
+    var date_received=$('#date_received').val();
+    var narration=$('#narration').val();
+    var additional_description=$('#additional_description').val();
+
+    return true;
 }
 
 function copyAlterationsContent() {
@@ -506,8 +524,8 @@ function copyOrdersContent(event){
 	return true;	
 }
 
-
  function printBarcodes() {
+
  	if(qz){
  		qz.findPrinter('TSC TTP-247');
  	}else{
@@ -517,7 +535,7 @@ function copyOrdersContent(event){
 
  	var date = new Date();
 	var date_string = date.getDate() + "." + parseInt(parseInt(date.getMonth())+1) + "." + date.getFullYear();
-	var   totalBarcodes = 0;
+	var totalBarcodes = 0;
 	var subTotal = 0;
 	var print = print_array;
 	qz.append("N\n");
