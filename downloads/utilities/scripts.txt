@@ -585,6 +585,14 @@ SET @i = 0;
 UPDATE `stock` SET id = @i:=@i+1
 WHERE 1
 
+SET @i = 1000000;
+UPDATE `sales_ecommerce` SET `return_invoice_number` = CONCAT("KRECGR" ,@i:=@i+1)
+WHERE return_status = 1 ORDER BY return_received_date
+
+SET @i = 1000000;
+UPDATE `goods_return` SET invoice_no = CONCAT("VFGR", @i:=@i+1) WHERE 1 ORDER BY created_at
+
+
 
 SET @i = 1000;
 UPDATE `sales_retail` SET
@@ -842,3 +850,37 @@ UPDATE sales
 INNER JOIN sale_stack ON sales.id = sale_stack.sale_id
 AND sales.id_client = 620 AND sales.created_at > "2016-07-01" AND sales.created_at < "2016-10-01"
 SET sale_stack.return_status = 0
+
+UPDATE goods_return o INNER JOIN (
+SELECT goods_return_id, SUM( selling_price_without_discount ) 'sumu'
+FROM goods_return_stack
+GROUP BY goods_return_id
+)i ON o.id = i.goods_return_id
+SET o.billing_amount = i.sumu WHERE o.id_client =620
+
+
+
+ALTER TABLE `user_rights` ADD `ware_debit_notes` TINYINT NOT NULL DEFAULT '0' AFTER `ware_payments`;
+
+CREATE TABLE `debit_notes` (
+  `id` int(11) NOT NULL,
+  `id_client` int(11) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `date_received` date NOT NULL,
+  `narration` varchar(100) NOT NULL,
+  `additional_description` varchar(200) NOT NULL,
+  `tally_sync_count` int(11) NOT NULL DEFAULT '0',
+  `tally_sync_date` timestamp NULL DEFAULT NULL,
+  `tally_sync_by` tinyint(4) DEFAULT NULL,
+  `tally_sync_status` tinyint(4) NOT NULL DEFAULT '0',
+  `updated_by` int(10) unsigned NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `sales` ADD `agent_3` INT NULL AFTER `margin_agent_2_percentage` ,
+ADD `margin_agent_3` DECIMAL( 10, 2 ) NULL AFTER `agent_3` ,
+ADD `margin_agent_3_percentage` DECIMAL( 10, 2 ) NULL AFTER `margin_agent_3` ;
+ALTER TABLE `sale_stack` ADD `sale_status` TINYINT NOT NULL DEFAULT '0' AFTER `return_status` ;
+ALTER TABLE `local_sales` ADD `billing_date` TIMESTAMP NOT NULL AFTER `updated_by` ;
+ALTER TABLE `local_goods_return` ADD `billing_date` TIMESTAMP NOT NULL AFTER `updated_by` ;
