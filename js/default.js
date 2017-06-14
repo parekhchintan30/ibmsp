@@ -83,17 +83,31 @@ $('.return-datetimepicker').datetimepicker(
 });
 
 $('#unstitched, #against_h_form').change(function() {
-calculateTotal();
+
+	if($("#fabric_sale").val() == 1)
+      	calculateTotalFabric();
+  	else
+		calculateTotal();
+
+
 });
 
-
-
 $('#discount_percentage').keyup(function() {
-calculateTotal();
+	
+	if($("#fabric_sale").val() == 1)
+      	calculateTotalFabric();
+  	else
+		calculateTotal();
+
 });
 
 $('body').delegate('.barcodeScanner .barcode', 'change', function () {
-calculateTotal();
+	
+	if($("#fabric_sale").val() == 1)
+      	calculateTotalFabric();
+  	else
+		calculateTotal();
+
 });
 
 $("body").delegate(".pagination a", "click", function () {
@@ -257,7 +271,7 @@ function calculateTotal(){
 	}
 
 	var discount = 0;
-		if ($('#discount_val').length && $('#discount_val').val() != "") {
+		if ($('#discount_val').length && $('#discount_val').val() != "" ) {
                     discount = parseFloat($('#discount_val').val());
                     $('#discount').val(discount);
                     total = parseFloat(total) - parseFloat(discount);
@@ -312,6 +326,105 @@ function calculateTotal(){
 
 }
 
+
+/**
+ * Function for fabric sale to calculate
+ * @return {[type]} [description]
+ */
+function calculateTotalFabric() {
+    var barcode = $("#element-1 .barcode").val();
+    var i = 1;
+    var sum = 0;
+    var quantity = 0;
+    var total_quantity = 0;
+    var ethnicity_amount = 0;
+    var ethnicity_percentage = $("#ethnicity_percentage").val();
+
+    while (barcode != "" && barcode != null) {
+        var mrp = $("#element-" + i + " .total").html();
+        var q = $("#element-" + i + " .quantity").html();
+        sum = sum + parseFloat(mrp);
+        total_quantity = total_quantity + parseFloat(q);
+        i++;
+        if ($('#ethnicity_percentage').length) {
+            var local_ethnicity_amount = parseFloat(mrp * ethnicity_percentage / 100).toFixed(2);
+            ethnicity_amount += parseFloat(local_ethnicity_amount);
+        }
+        barcode = $("#element-" + i + " .barcode").val();
+
+    }
+    if (isNaN(sum))
+        sum = 0
+    if (isNaN(total_quantity))
+        total_quantity = 0;
+
+    $('#billing_amount').val(sum);
+
+    var total_quantity1 = parseFloat(total_quantity).toFixed(2);
+
+
+    var total = parseFloat(sum).toFixed(2);
+
+    if ($('#ethnicity_percentage').length) {
+        var ethnicity_amount = parseFloat(sum * ethnicity_percentage / 100).toFixed(2);
+        $("#ethnicity_amount").val(ethnicity_amount);
+        $("#ethnicity_amount_t").val(ethnicity_amount);
+        total = parseFloat(sum) - parseFloat(ethnicity_amount);
+    }
+
+    var discount = 0;
+    if ($('#discount_val').length && $('#discount_val').val() != "") {
+        discount = parseFloat($('#discount_val').val());
+        $('#discount').val(discount);
+        total = parseFloat(total) - parseFloat(discount);
+    } else if ($('#discount_percentage').length && $('#discount_percentage').val() != "") {
+        discount_percentage = $('#discount_percentage').val();
+        discount = parseFloat((total * discount_percentage / 100)).toFixed(2);
+        $('#discount_percentage').val(discount_percentage);
+        $('#discount_info').text("DISCOUNT - " + discount_percentage + "%")
+        $('#discount').val(discount);
+        total = parseFloat(total) - parseFloat(discount);
+    }
+    var unstitched = $("#unstitched").val();
+    var against_h_form = $("#against_h_form").val();
+    if ($("#unstitched").is(':checked') || $("#against_h_form").is(':checked')) {
+        //do not add any taxes
+        $("#tax").val(0);
+        $("#tax_type").val(null);
+        $("#tax_percentage").val(null);
+        $("#taxRow").hide();
+
+    } else {
+        if ($('#vat').length && $('#vat').val() != "") {
+            $("#tax_type").val("vat");
+            $("#tax_percentage").val($('#vat').val());
+            var vat = parseFloat($('#vat').val()).toFixed(2);
+            var vatAmount = parseFloat((vat * total / 100)).toFixed(2);
+            $('#tax').val(vatAmount);
+            total = parseFloat(total) + parseFloat(vatAmount);
+        }
+
+        if ($('#cst').length && $('#cst').val() != "") {
+            $("#tax_type").val("cst");
+            $("#tax_percentage").val($('#cst').val());
+            var cst = parseFloat($('#cst').val()).toFixed(2);
+
+            var cstAmount = parseFloat((cst * total / 100)).toFixed(2);
+            $('#tax').val(cstAmount);
+            total = parseFloat(total) + parseFloat(cstAmount);
+        }
+    }
+
+    if ($('#credit_amount').length && $('#credit_amount').val() != "") {
+        var credit_amount = $('#credit_amount').val();
+        //$('.shopping_bag_credit_amount').text(credit_amount);
+        total = parseFloat(total) - parseFloat(credit_amount);
+    }
+    $('#total').val(total);
+    $('#quantity').val(total_quantity1);
+}
+
+
 function reinitializeFields(){
 	$("#barcodes").val("");
 	$("#designs").val("");
@@ -327,9 +440,15 @@ function reinitializeFields(){
 }
 
 function copySalesContent() {
+	alert("test");
 	reinitializeFields();
 	var barcode = $("#element-1 .barcode").val();
-	calculateTotal();
+	
+  	if($("#fabric_sale").val() == 1)
+      	calculateTotalFabric();
+  	else
+		calculateTotal();
+
 	var i = 1;
 	if(barcode == "" || barcode == null){
 		$("#error-feedback").show().delay(5000).fadeOut();
@@ -338,30 +457,94 @@ function copySalesContent() {
 	} 
 	while(barcode!="" && barcode!=null)
 	{
+		alert(barcode);
 		var design = $("#element-"+i+" .design");
 		var color = $("#element-"+i+" .color");
-		var size = $("#element-"+i+" .size");
-		var mrp = $("#element-"+i+" .mrp");
+		var fabric_sale= $("#fabric_sale").val();
+		var size = 0;
+		var quantity = 0;
 
-		if(highlightIfEmpty(design) && highlightIfEmpty(color) && highlightIfEmpty(size) && highlightIfEmpty(mrp))
-		{
-			$("#barcodes").val($("#barcodes").val() + "" + barcode + ";");
-			$("#designs").val($("#designs").val()+ "" + design.text()+ ";");
-   			$("#colors").val($("#colors").val()+  "" + color.text()+ ";");
-		    $("#sizes").val($("#sizes").val()+  "" + size.text()+ ";");
-		    $("#billing_amounts").val($("#billing_amounts").val()+ "" + mrp.text()+ ";");
-		}
-		else{
-		$("#error-feedback").show().delay(5000).fadeOut();
-		$("#error-feedback").html("We are sorry but you have not scanned your barcodes properly. <br /> Please try again...");
-		return false;
-		}		
+		if(fabric_sale != 1)
+     size = $("#element-"+i+" .size");
+    else
+     quantity = $("#element-"+i+" .quantity");
+    var mrp = $("#element-"+i+" .mrp");
+    
+
+
+	if(fabric_sale != 1){
+    if(highlightIfEmpty(design) && highlightIfEmpty(color) && highlightIfEmpty(size) && highlightIfEmpty(mrp))
+    {
+      $("#barcodes").val($("#barcodes").val() + "" + barcode + ";");
+      $("#designs").val($("#designs").val()+ "" + design.text()+ ";");
+      $("#colors").val($("#colors").val()+  "" + color.text()+ ";");
+
+      if(fabric_sale != 1)
+      $("#sizes").val($("#sizes").val()+  "" + size.text()+ ";");
+      else
+      $("#quantities").val($("#quantities").val()+  "" + quantity.text()+ ";");
+
+      $("#billing_amounts").val($("#billing_amounts").val()+ "" + mrp.text()+ ";");
+    }else{
+    $("#error-feedback").show().delay(5000).fadeOut();
+    $("#error-feedback").html("We are sorry but you have not scanned your barcodes properly. <br /> Please try again...");
+    return false;
+    }
+    }
+
+    if(fabric_sale != 0) {
+    if(highlightIfEmpty(design) && highlightIfEmpty(color) && highlightIfEmpty(quantity) && highlightIfEmpty(mrp))
+    {
+      $("#barcodes").val($("#barcodes").val() + "" + barcode + ";");
+      $("#designs").val($("#designs").val()+ "" + design.text()+ ";");
+      $("#colors").val($("#colors").val()+  "" + color.text()+ ";");
+
+      if(fabric_sale != 1)
+      $("#sizes").val($("#sizes").val()+  "" + size.text()+ ";");
+      else
+      $("#quantities").val($("#quantities").val()+  "" + quantity.text()+ ";");
+
+      $("#billing_amounts").val($("#billing_amounts").val()+ "" + mrp.text()+ ";");
+    }
+    else{
+    $("#error-feedback").show().delay(5000).fadeOut();
+    $("#error-feedback").html("We are sorry but you have not scanned your barcodes properly. <br /> Please try again...");
+    return false;
+    }
+    }
+
+    
+alert("In Loop : "+i)
+
+
+
 		i++;	
 
+alert("Starting Loop : "+i);
 		barcode = $("#element-"+i+" .barcode").val();
+		alert("Barcode: "+barcode);
 	}
+	alert("Final Barcode: "+barcode);
 	$("#quantity").val(i-1);
 	return true;
+}
+
+function copyDebitNotesContent()
+{
+	//reinitializeFields all fields commented all fields getting empty;
+	//$("#client").val("");
+	//$("#amount").val("");
+    //$("#date_received").val("");
+	//$("#narration").val("");
+	//$("#additional_description").val("");
+
+	var client=$('#client').val();
+    var amount=$('#amount').val();
+    var date_received=$('#date_received').val();
+    var narration=$('#narration').val();
+    var additional_description=$('#additional_description').val();
+
+    return true;
 }
 
 function copyAlterationsContent() {
@@ -506,8 +689,8 @@ function copyOrdersContent(event){
 	return true;	
 }
 
-
  function printBarcodes() {
+
  	if(qz){
  		qz.findPrinter('TSC TTP-247');
  	}else{
@@ -517,7 +700,7 @@ function copyOrdersContent(event){
 
  	var date = new Date();
 	var date_string = date.getDate() + "." + parseInt(parseInt(date.getMonth())+1) + "." + date.getFullYear();
-	var   totalBarcodes = 0;
+	var totalBarcodes = 0;
 	var subTotal = 0;
 	var print = print_array;
 	qz.append("N\n");

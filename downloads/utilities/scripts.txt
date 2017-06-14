@@ -585,6 +585,14 @@ SET @i = 0;
 UPDATE `stock` SET id = @i:=@i+1
 WHERE 1
 
+SET @i = 1000000;
+UPDATE `sales_ecommerce` SET `return_invoice_number` = CONCAT("KRECGR" ,@i:=@i+1)
+WHERE return_status = 1 ORDER BY return_received_date
+
+SET @i = 1000000;
+UPDATE `goods_return` SET invoice_no = CONCAT("VFGR", @i:=@i+1) WHERE 1 ORDER BY created_at
+
+
 
 SET @i = 1000;
 UPDATE `sales_retail` SET
@@ -754,3 +762,125 @@ SELECT stock.barcode, stock.quantity, new_product_master.design, new_product_mas
 FROM stock
 INNER JOIN new_product_master ON new_product_master.barcode = stock.barcode
 WHERE `warehouse` =1
+
+
+
+$goods_return_date = Carbon::now();
+                                            //if ($data[2] != "")
+                                             //   $goods_return_date = date("Y-m-d", strtotime(data[2]));
+
+                                            $gr_date = (new Carbon($goods_return_date))->hour(0)->minute(0)->second(0);
+                                            $datetime_6_months_old = $gr_date->subMonth(6);
+                                            $tt = $datetime_6_months_old;
+                                            if (array_key_exists($csv_barcode, $all_barcodes_count_sorted)) {
+                                                $count = $all_barcodes_count_sorted[$csv_barcode];
+                                                $count_in_db = \App\Models\SaleStack::join('sales', 'sale_stack.sale_id', '=', 'sales.id')->where('sales.created_at', '>=', $datetime_6_months_old)->where('sales.created_at', '<=', $gr_date)->where('return_status', '=', 0)->where('id_client', '=', $client)->where('barcode', '=', $csv_barcode)->orderBy('sales.created_at', 'asc')->count();
+                                                if ($count_in_db >= $count) $barcode_information = \App\Models\SaleStack::join('sales', 'sale_stack.sale_id', '=', 'sales.id')->where('sales.created_at', '>=', $datetime_6_months_old)->where('sales.created_at', '<=', $gr_date)->where('return_status', '=', 0)->where('id_client', '=', $client)->where('barcode', '=', $csv_barcode)->orderBy('sales.created_at', 'asc')->first(array('sale_stack.*'));
+                                                else $barcode_information = null;
+                                            } else $barcode_information = null;
+
+                                            $t = date("Y-m-d", strtotime("-6 month"));
+                                            $tt = (new Carbon($t))->hour(0)->minute(0)->second(0);
+                                            if (array_key_exists($csv_barcode, $all_barcodes_count_sorted)) {
+                                                $count = $all_barcodes_count_sorted[$csv_barcode];
+                                                $count_in_db = \App\Models\SaleStack::join('sales', 'sale_stack.sale_id', '=', 'sales.id')->where('sales.created_at', '>=', $tt)->where('return_status', '=', 0)->where('id_client', '=', $client)->where('barcode', '=', $csv_barcode)->orderBy('sales.created_at', 'asc')->count();
+                                                if ($count_in_db >= $count) $barcode_information = \App\Models\SaleStack::join('sales', 'sale_stack.sale_id', '=', 'sales.id')->where('sales.created_at', '>=', $tt)->where('return_status', '=', 0)->where('id_client', '=', $client)->where('barcode', '=', $csv_barcode)->orderBy('sales.created_at', 'asc')->first(array('sale_stack.*'));
+                                                else $barcode_information = null;
+                                            } else $barcode_information = null;
+
+
+
+                                            UPDATE `goods_return` SET
+created_at = "2016-11-09 16:23:33",
+updated_at = "2016-11-09 16:23:33"
+WHERE created_at > "2016-11-10";
+
+UPDATE `goods_return_stack` SET
+created_at = "2016-11-09 16:23:33",
+updated_at = "2016-11-09 16:23:33"
+WHERE created_at > "2016-11-10";
+
+UPDATE `sale_stack` SET
+updated_at = "2016-11-09 16:23:33"
+WHERE updated_at > "2016-11-10"
+AND return_status = 1;
+
+
+
+
+
+
+                                            UPDATE `goods_return` SET
+created_at = "2016-10-27 16:23:33",
+updated_at = "2016-10-27 16:23:33"
+WHERE id > 295 AND id < 297;
+
+UPDATE `goods_return_stack` SET
+created_at = "2016-10-27 16:23:33",
+updated_at = "2016-10-27 16:23:33"
+WHERE goods_return_id > 295 AND goods_return_id < 297;
+
+UPDATE `sale_stack` SET
+updated_at = "2016-10-27 16:23:33"
+WHERE id > 295 AND id < 297;
+AND return_status = 1;
+
+
+
+SELECT approval_return_stack.barcode
+FROM `approval_return`
+INNER JOIN approval_return_stack ON approval_return.id = approval_return_stack.approval_return_id
+WHERE approval_return.created_at > "2016-11-09"
+AND approval_return.created_at < "2016-11-10"
+AND approval_return.reception =1
+
+SELECT sale_stack.barcode
+FROM `sales`
+INNER JOIN sale_stack ON sales.id = sale_stack.sale_id
+WHERE sales.created_at > "2016-11-10"
+AND sales.created_at < "2016-11-11"
+AND sales.status =1
+
+SELECT SUM(sale_stack.return_status)
+FROM sales
+INNER JOIN sale_stack ON sales.id = sale_stack.sale_id
+WHERE sales.id_client = 620 AND sales.created_at > "2016-07-01" AND sales.created_at < "2016-10-01"
+
+UPDATE sales
+INNER JOIN sale_stack ON sales.id = sale_stack.sale_id
+AND sales.id_client = 620 AND sales.created_at > "2016-07-01" AND sales.created_at < "2016-10-01"
+SET sale_stack.return_status = 0
+
+UPDATE goods_return o INNER JOIN (
+SELECT goods_return_id, SUM( selling_price_without_discount ) 'sumu'
+FROM goods_return_stack
+GROUP BY goods_return_id
+)i ON o.id = i.goods_return_id
+SET o.billing_amount = i.sumu WHERE o.id_client =620
+
+
+
+ALTER TABLE `user_rights` ADD `ware_debit_notes` TINYINT NOT NULL DEFAULT '0' AFTER `ware_payments`;
+
+CREATE TABLE `debit_notes` (
+  `id` int(11) NOT NULL,
+  `id_client` int(11) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `date_received` date NOT NULL,
+  `narration` varchar(100) NOT NULL,
+  `additional_description` varchar(200) NOT NULL,
+  `tally_sync_count` int(11) NOT NULL DEFAULT '0',
+  `tally_sync_date` timestamp NULL DEFAULT NULL,
+  `tally_sync_by` tinyint(4) DEFAULT NULL,
+  `tally_sync_status` tinyint(4) NOT NULL DEFAULT '0',
+  `updated_by` int(10) unsigned NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `sales` ADD `agent_3` INT NULL AFTER `margin_agent_2_percentage` ,
+ADD `margin_agent_3` DECIMAL( 10, 2 ) NULL AFTER `agent_3` ,
+ADD `margin_agent_3_percentage` DECIMAL( 10, 2 ) NULL AFTER `margin_agent_3` ;
+ALTER TABLE `sale_stack` ADD `sale_status` TINYINT NOT NULL DEFAULT '0' AFTER `return_status` ;
+ALTER TABLE `local_sales` ADD `billing_date` TIMESTAMP NOT NULL AFTER `updated_by` ;
+ALTER TABLE `local_goods_return` ADD `billing_date` TIMESTAMP NOT NULL AFTER `updated_by` ;
