@@ -511,6 +511,58 @@ function copySalesContent() {
     return true;
 }
 
+function copyExciseSalesContent()
+{
+
+  reinitializeFields();
+
+  alert("tests");
+
+  var design = $("#element-1 .design").val();
+ 
+  exciseTotal();
+
+  var i = 1;
+  if(design == "" || design == null){
+    $("#error-feedback").show().delay(5000).fadeOut();
+    $("#error-feedback").html("You need to scan atleast one barcode to process your order");
+    return false;
+  } 
+  while(design!="" && design!=null)
+  {
+    var design = $("#element-"+i+" .design");
+    var color = $("#element-"+i+" .color");
+    var size = $("#element-"+i+" .size");
+    var quantity = $("#element-"+i+" .quantity");
+    var mrp = $("#element-"+i+" .mrp");
+   // var excise_mrp_total = $("#element-" +i+ " .excise_total");
+  
+
+  // if(highlightIfEmpty(design) && highlightIfEmpty(color) && highlightIfEmpty(size) && highlightIfEmpty(mrp))
+  //  {
+
+      $("#designs").val($("#designs").val()+ "" + design+ ";");
+      $("#colors").val($("#colors").val()+  "" + color.text()+ ";");
+      $("#sizes").val($("#sizes").val()+  "" + size.text()+ ";");
+      $("#quantities").val($("#quantities").val()+  "" + quantity.text()+ ";");
+      $("#billing_amounts").val($("#billing_amounts").val()+ "" + mrp.text()+ ";");
+     // $("#excisetotals").val($("#excisetotals").val() + "" + excise_mrp_total.val()+ ";");
+  //  }
+
+ /*   else{
+    $("#error-feedback").show().delay(5000).fadeOut();
+    $("#error-feedback").html("We are sorry but you have not scanned your barcodes properly. <br /> Please try again...");
+    return false;
+    }*/
+
+    i++;  
+    design = $("#element-"+i+" .design").val();
+  }
+
+  return true; 
+}
+
+
 function copyDebitNotesContent() {
     //reinitializeFields all fields commented all fields getting empty;
     //$("#client").val("");
