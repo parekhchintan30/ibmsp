@@ -1,0 +1,224 @@
+ALTER TABLE `alterations` ADD `invoice_no` VARCHAR(15) NOT NULL AFTER `id`;
+ALTER TABLE `alterations` CHANGE `invoice_no` `invoice_no` VARCHAR(15) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT 'CompanyCode/LocationCode/TypeofSale/100001(SequentialNumber)';
+ALTER TABLE `alterations` CHANGE `id` `id` INT(10) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `alteration_stack` CHANGE `id` `id` INT(10) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `alteration_stack` CHANGE `alteration_id` `alteration_id` INT(10) NOT NULL;
+ALTER TABLE `alteration_stack` CHANGE `orignal_barcode` `orignal_barcode` VARCHAR(8) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, CHANGE `altered_barcode` `altered_barcode` VARCHAR(8) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL;
+ALTER TABLE `alterations` CHANGE `created_at` `created_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00';
+ALTER TABLE `alteration_stack` CHANGE `created_at` `created_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00';
+ALTER TABLE `approvals` CHANGE `invoice_no` `invoice_no` VARCHAR(15) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT 'CompanyCode/LocationCode/TypeofSale/100001(SequentialNumber)';
+ALTER TABLE `approval_return` CHANGE `invoice_no` `invoice_no` VARCHAR(15) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT 'CompanyCode/LocationCode/TypeofSale/100001(SequentialNumber)';
+ALTER TABLE `approval_return` CHANGE `location` `id_location` INT(10) UNSIGNED NOT NULL;
+ALTER TABLE `approval_return` CHANGE `id_approval` `id_approval` INT(10) UNSIGNED NULL DEFAULT NOT NULL;
+ALTER TABLE `approval_return` ADD INDEX( `id_approval`, `id_location`);
+ALTER TABLE `approval_return` ADD  CONSTRAINT `fk_approval_return_approval_id` FOREIGN KEY (`id_approval`) REFERENCES `ibms_vamasfashion`.`approvals`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE `approval_return` ADD  CONSTRAINT `fk_approval_return_location_id` FOREIGN KEY (`id_location`) REFERENCES `ibms_vamasfashion`.`clients`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
+
+ALTER TABLE `approval_return_stack` ADD  CONSTRAINT `fk_approval_return_id` FOREIGN KEY (`approval_return_id`) REFERENCES `ibms_vamasfashion`.`approval_return`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `clients` ADD `gst` VARCHAR(64) NOT NULL AFTER `pan`;
+
+
+  ALTER TABLE `clients` CHANGE `account_manager` `account_manager` INT(10) UNSIGNED NULL;
+  ALTER TABLE `clients` ADD INDEX( `account_manager`);
+
+  ALTER TABLE `clients` ADD CONSTRAINT `fk_clients_account_manager` FOREIGN KEY (`account_manager`) REFERENCES `ibms_vamasfashion`.`users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+  ALTER TABLE `alterations` ADD UNIQUE(`invoice_no`);
+  ALTER TABLE `approvals` ADD UNIQUE(`invoice_no`);
+  ALTER TABLE `approval_return` ADD UNIQUE(`invoice_no`);
+  ALTER TABLE `sales` ADD UNIQUE(`invoice_no`);
+  ALTER TABLE `goods_return` ADD UNIQUE(`invoice_no`);
+  ALTER TABLE `sales_retail` ADD UNIQUE(`invoice_no`);
+  ALTER TABLE `sales_ecommerce` ADD UNIQUE(`invoice_no`);
+  ALTER TABLE `goods_return_retail` ADD UNIQUE(`invoice_no`);
+
+  ALTER TABLE `company_accounts` ADD UNIQUE(`account_number`);
+
+  ALTER TABLE `company_accounts` CHANGE `bank_name` `bank_name` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+
+  ALTER TABLE `company_accounts` ADD `ifsc_code` VARCHAR(45) NOT NULL AFTER `bank_name`;
+
+  ALTER TABLE `company_settings` CHANGE `vat_no` `gst_number` VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_bin NULL;
+
+  ALTER TABLE `company_settings` CHANGE `ethnicity_prefix` `ethnicity_prefix` VARCHAR(2) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL, CHANGE `franchise_prefix` `franchise_prefix` VARCHAR(2) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL, CHANGE `approval_prefix` `approval_prefix` VARCHAR(2) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL, CHANGE `approval_return_prefix` `approval_return_prefix` VARCHAR(2) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL, CHANGE `goods_return_prefix` `goods_return_prefix` VARCHAR(2) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL;
+
+  DROP TABLE excise_sales;
+  DROP TABLE excise_sale_stack;
+
+
+ALTER TABLE `goods_return` ADD  CONSTRAINT `fk_goods_return_client_id` FOREIGN KEY (`id_client`) REFERENCES `ibms_vamasfashion`.`clients`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+ALTER TABLE `goods_return` ADD  CONSTRAINT `fk_goods_return_user_id` FOREIGN KEY (`updated_by`) REFERENCES `ibms_vamasfashion`.`users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+ALTER TABLE `goods_return` ADD  CONSTRAINT `fk_goods_return_user_id` FOREIGN KEY (`updated_by`) REFERENCES `ibms_vamasfashion`.`users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+ALTER TABLE `goods_return` ADD  CONSTRAINT `fk_goods_return_user_id` FOREIGN KEY (`updated_by`) REFERENCES `ibms_vamasfashion`.`users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+
+ALTER TABLE `sale_stack` ADD `total` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+
+
+ALTER TABLE `sale_stack`
+  DROP `design`,
+  DROP `color`,
+  DROP `size`,
+  DROP `selling_price_without_discount`,
+  DROP `discount`,
+  DROP `selling_price_with_discount`;
+
+ALTER TABLE `sale_stack` ADD `total` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `tax_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `igst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `igst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `sgst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `sgst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `cgst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `cgst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `taxable_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `discount_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `discount_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `selling_price` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+
+
+
+ALTER TABLE `goods_return_stack`
+  DROP `design`,
+  DROP `color`,
+  DROP `size`,
+  DROP `selling_price_without_discount`,
+  DROP `discount`,
+  DROP `selling_price_with_discount`;
+
+ALTER TABLE `sales_retail_stack` ADD `total` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_retail_stack` ADD `tax_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_retail_stack` ADD `igst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_retail_stack` ADD `igst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_retail_stack` ADD `sgst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_retail_stack` ADD `sgst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_retail_stack` ADD `cgst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_retail_stack` ADD `cgst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_retail_stack` ADD `taxable_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_retail_stack` ADD `discount_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_retail_stack` ADD `discount_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_retail_stack` ADD `selling_price` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+
+ALTER TABLE `sales_retail_stack`
+  DROP `design`,
+  DROP `color`,
+  DROP `size`,
+  DROP `selling_price_without_discount`,
+  DROP `discount`,
+  DROP `selling_price_with_discount`;
+
+
+
+ALTER TABLE `goods_return_retail_stack` ADD `total` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_retail_stack` ADD `tax_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_retail_stack` ADD `igst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_retail_stack` ADD `igst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_retail_stack` ADD `sgst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_retail_stack` ADD `sgst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_retail_stack` ADD `cgst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_retail_stack` ADD `cgst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_retail_stack` ADD `taxable_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_retail_stack` ADD `discount_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_retail_stack` ADD `discount_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_retail_stack` ADD `selling_price` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+
+ALTER TABLE `goods_return_retail_stack`
+  DROP `design`,
+  DROP `color`,
+  DROP `size`,
+  DROP `billing_amount`;
+
+
+
+
+ALTER TABLE `sales_ecommerce_stack` ADD `total` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `tax_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `igst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `igst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `sgst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `sgst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `cgst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `cgst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `taxable_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `discount_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `discount_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `selling_price` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+
+ALTER TABLE `sales_ecommerce_stack`
+  DROP `design`,
+  DROP `color`,
+  DROP `size`,
+  DROP `selling_price_without_discount`,
+  DROP `discount`,
+  DROP `selling_price_with_discount`;
+
+
+  ALTER TABLE `sales`
+  DROP `excise_sale`,
+  DROP `excise_mrp_total`,
+  DROP `excise_val`,
+  DROP `unstitched`,
+  DROP `against_h_form`,
+  DROP `ethnicity_percentage`,
+  DROP `ethnicity_amount`,
+  DROP `ethnicity_edc`,
+  DROP `tax_type`,
+  DROP `tax_percentage`,
+  DROP `tax`,
+  DROP `c_form_received`,
+  DROP `discount_percentage`,
+  DROP `total`,
+  DROP `billing_amount`,
+  DROP `discount`;
+
+  ALTER TABLE `sales` DROP `courier_name`, DROP `courier_amount`;
+
+
+
+ALTER TABLE `sales_retail` ADD `total` DECIMAL(10,2) NOT NULL AFTER `credit_points_discount`;
+ALTER TABLE `sales_retail` ADD `tax_amount` DECIMAL(10,2) NOT NULL AFTER `credit_points_discount`;
+ALTER TABLE `sales_retail` ADD `igst_amount` DECIMAL(10,2) NOT NULL AFTER `credit_points_discount`;
+ALTER TABLE `sales_retail` ADD `sgst_amount` DECIMAL(10,2) NOT NULL AFTER `credit_points_discount`;
+ALTER TABLE `sales_retail` ADD `cgst_amount` DECIMAL(10,2) NOT NULL AFTER `credit_points_discount`;
+ALTER TABLE `sales_retail` ADD `taxable_amount` DECIMAL(10,2) NOT NULL AFTER `credit_points_discount`;
+ALTER TABLE `sales_retail` ADD `discount_amount` DECIMAL(10,2) NOT NULL AFTER `credit_points_discount`;
+ALTER TABLE `sales_retail` ADD `discount_rate` DECIMAL(10,2) NOT NULL AFTER `credit_points_discount`;
+ALTER TABLE `sales_retail` ADD `billing_amount` DECIMAL(10,2) NOT NULL AFTER `credit_points_discount`;
+
+
+
+ALTER TABLE `sales_retail`
+  DROP `billing_amount`,
+  DROP `discount_percentage`,
+  DROP `discount`,
+  DROP `total`,
+  DROP `tax_type`,
+  DROP `tax_percentage`,
+  DROP `tax`;
+
+ALTER TABLE `sales_retail_stack` CHANGE `igst_rate` `description` VARCHAR(200) NOT NULL;
+
+ALTER TABLE `sales_retail_stack`
+  DROP `igst_amount`,
+  DROP `tax_amount`;
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+
+
+
+
+
+
