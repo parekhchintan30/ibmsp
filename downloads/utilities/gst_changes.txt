@@ -205,8 +205,22 @@ ALTER TABLE `sales_retail_stack`
   DROP `igst_amount`,
   DROP `tax_amount`;
 
+ALTER TABLE `new_product_master` ADD `hsn` VARCHAR(4) NOT NULL DEFAULT '6206' AFTER `barcode`;
+
+  DROP TABLE sms;
 
 
+CREATE TABLE `sms` (
+  `id` int(10) NOT NULL,
+  `sale_id` int(11) NOT NULL,
+  `response_code` varchar(10) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `mobile` varchar(10) NOT NULL,
+  `message` varchar(1000) NOT NULL,
+  `status` varchar(10) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `updated_by` varchar(10) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 
 
