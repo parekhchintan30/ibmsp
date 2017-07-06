@@ -98,12 +98,10 @@ jQuery(function($) {
     });
 
     $('body').delegate('.barcodeScanner .barcode', 'change', function() {
-
-        if ($("#fabric_sale").val() == 1)
-            calculateTotalFabric();
-        else
+        if(sale)
             calculateTotal();
-
+        else
+            calculateTotalOld();
     });
 
     $("body").delegate(".pagination a", "click", function() {
@@ -224,8 +222,95 @@ function highlightIfEmpty2(element) {
     }
 }
 
+function calculateTotalOld() {
+    var barcode = $("#element-1 .barcode").val();
+    var i = 1;
+    var sum = 0;
+    var quantity = 0;
+    var ethnicity_amount = 0;
+    var ethnicity_percentage = $("#ethnicity_percentage").val();
+
+    while (barcode != "" && barcode != null) {
+        var mrp = $("#element-" + i + " .mrp").html();
+        sum = sum + parseFloat(mrp);
+        i++;
+        quantity++;
+        if ($('#ethnicity_percentage').length) {
+            var local_ethnicity_amount = parseFloat(mrp * ethnicity_percentage / 100).toFixed(2);
+            ethnicity_amount += parseFloat(local_ethnicity_amount);
+        }
+        barcode = $("#element-" + i + " .barcode").val();
+    }
+    if (isNaN(sum))
+        sum = 0;
+
+
+    $('#billing_amount').val(sum);
+    $('#quantity').val(quantity);
+    var total = parseFloat(sum).toFixed(2);
+    if ($('#ethnicity_percentage').length) {
+        var ethnicity_amount = parseFloat(sum * ethnicity_percentage / 100).toFixed(2);
+        $("#ethnicity_amount").val(ethnicity_amount);
+        $("#ethnicity_amount_t").val(ethnicity_amount);
+        total = parseFloat(sum) - parseFloat(ethnicity_amount);
+    }
+
+    var discount = 0;
+    if ($('#discount_val').length && $('#discount_val').val() != "") {
+        discount = parseFloat($('#discount_val').val());
+        $('#discount').val(discount);
+        total = parseFloat(total) - parseFloat(discount);
+    } else if ($('#discount_percentage').length && $('#discount_percentage').val() != "") {
+        discount_percentage = $('#discount_percentage').val();
+        discount = parseFloat((total * discount_percentage / 100)).toFixed(2);
+        $('#discount_percentage').val(discount_percentage);
+        $('#discount_info').text("DISCOUNT - " + discount_percentage + "%")
+        $('#discount').val(discount);
+        total = parseFloat(total) - parseFloat(discount);
+    }
+    var unstitched = $("#unstitched").val();
+    var against_h_form = $("#against_h_form").val();
+    if ($("#unstitched").is(':checked') || $("#against_h_form").is(':checked')) {
+        //do not add any taxes
+        $("#tax").val(0);
+        $("#tax_type").val(null);
+        $("#tax_percentage").val(null);
+        $("#taxRow").hide();
+
+    } else {
+        if ($('#vat').length && $('#vat').val() != "") {
+            $("#tax_type").val("vat");
+            $("#tax_percentage").val($('#vat').val());
+            var vat = parseFloat($('#vat').val()).toFixed(2);
+            var vatAmount = parseFloat((vat * total / 100)).toFixed(2);
+            $('#tax').val(vatAmount);
+            total = parseFloat(total) + parseFloat(vatAmount);
+        }
+
+        if ($('#cst').length && $('#cst').val() != "") {
+            $("#tax_type").val("cst");
+            $("#tax_percentage").val($('#cst').val());
+            var cst = parseFloat($('#cst').val()).toFixed(2);
+
+            var cstAmount = parseFloat((cst * total / 100)).toFixed(2);
+            $('#tax').val(cstAmount);
+            total = parseFloat(total) + parseFloat(cstAmount);
+        }
+    }
+
+    if ($('#credit_amount').length && $('#credit_amount').val() != "") {
+        var credit_amount = $('#credit_amount').val();
+        //$('.shopping_bag_credit_amount').text(credit_amount);
+        total = parseFloat(total) - parseFloat(credit_amount);
+        //alert(total);
+    }
+    total = parseFloat(total).toFixed(2);
+    $('#total').val(total);
+}
+
 
 function calculateTotal() {
+    alert("inside");
     var barcode = $("#element-1 .barcode").val();
     var i = 1;
     var sum = parseFloat(0);
@@ -244,20 +329,17 @@ function calculateTotal() {
     var quantity_sum = 0;
     var gst_type = $("#gst_type").text();
     var type_client = $("#type_client").val();
-    alert(type_client);
     while (barcode != "" && barcode != null) {
         mrp = parseFloat($("#element-" + i + " .mrp").data("val")).toFixed(2);
 
-
         discount_rate = $("#discount_percentage").val();
         discount = parseFloat(mrp * discount_rate / 100).toFixed(2);
-        
 
 
         if(discount < 1)                                         
             discount_rate = parseFloat(0).toFixed(2);    
 
-        if(type_client = "ethnicity"){
+        if(type_client == "ethnicity"){
             var retail = parseFloat($("#element-" + i + " .mrp").data("retail")).toFixed(2);
             discount = parseFloat(retail * discount_rate / 100).toFixed(2);
         }
@@ -291,6 +373,7 @@ function calculateTotal() {
             quantity = parseFloat(1).toFixed(2);
             net = (total * quantity).toFixed(2);
             //alertt(net);
+       
             $("#element-" + i + " .mrp").text(mrp);
             $("#element-" + i + " .discount_rate").text(discount_rate); 
             $("#element-" + i + " .discount").text(discount);  
@@ -350,6 +433,89 @@ function reinitializeFields() {
     $("#new_barcodes").val("");
     $("#old_skus").val("");
     $("#new_skus").val("");
+}
+
+function copySalesContentOld() {
+    //alert("test");
+    reinitializeFields();
+    var barcode = $("#element-1 .barcode").val();
+
+    calculateTotalOld();
+
+    var i = 1;
+    if (barcode == "" || barcode == null) {
+        $("#error-feedback").show().delay(5000).fadeOut();
+        $("#error-feedback").html("You need to scan atleast one barcode to process your order");
+        return false;
+    }
+    while (barcode != "" && barcode != null) {
+        //alert(barcode);
+        var design = $("#element-" + i + " .design");
+        var color = $("#element-" + i + " .color");
+        var fabric_sale = $("#fabric_sale").val();
+        var size = 0;
+        var quantity = 0;
+
+        if (fabric_sale != 1)
+            size = $("#element-" + i + " .size");
+        else
+            quantity = $("#element-" + i + " .quantity");
+        var mrp = $("#element-" + i + " .mrp");
+
+
+
+        if (fabric_sale != 1) {
+            if (highlightIfEmpty(design) && highlightIfEmpty(color) && highlightIfEmpty(size) && highlightIfEmpty(mrp)) {
+                $("#barcodes").val($("#barcodes").val() + "" + barcode + ";");
+                $("#designs").val($("#designs").val() + "" + design.text() + ";");
+                $("#colors").val($("#colors").val() + "" + color.text() + ";");
+
+                if (fabric_sale != 1)
+                    $("#sizes").val($("#sizes").val() + "" + size.text() + ";");
+                else
+                    $("#quantities").val($("#quantities").val() + "" + quantity.text() + ";");
+
+                $("#billing_amounts").val($("#billing_amounts").val() + "" + mrp.text() + ";");
+            } else {
+                $("#error-feedback").show().delay(5000).fadeOut();
+                $("#error-feedback").html("We are sorry but you have not scanned your barcodes properly. <br /> Please try again...");
+                return false;
+            }
+        }
+
+        if (fabric_sale != 0) {
+            if (highlightIfEmpty(design) && highlightIfEmpty(color) && highlightIfEmpty(quantity) && highlightIfEmpty(mrp)) {
+                $("#barcodes").val($("#barcodes").val() + "" + barcode + ";");
+                $("#designs").val($("#designs").val() + "" + design.text() + ";");
+                $("#colors").val($("#colors").val() + "" + color.text() + ";");
+
+                if (fabric_sale != 1)
+                    $("#sizes").val($("#sizes").val() + "" + size.text() + ";");
+                else
+                    $("#quantities").val($("#quantities").val() + "" + quantity.text() + ";");
+
+                $("#billing_amounts").val($("#billing_amounts").val() + "" + mrp.text() + ";");
+            } else {
+                $("#error-feedback").show().delay(5000).fadeOut();
+                $("#error-feedback").html("We are sorry but you have not scanned your barcodes properly. <br /> Please try again...");
+                return false;
+            }
+        }
+
+
+        //alert("In Loop : "+i)
+
+
+
+        i++;
+
+        //alert("Starting Loop : "+i);
+        barcode = $("#element-" + i + " .barcode").val();
+        //alert("Barcode: " + barcode);
+    }
+    //alert("Final Barcode: "+barcode);
+    $("#quantity").val(i - 1);
+    return true;
 }
 
 function copySalesContent() {
