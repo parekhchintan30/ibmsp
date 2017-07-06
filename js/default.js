@@ -226,7 +226,6 @@ function highlightIfEmpty2(element) {
 
 
 function calculateTotal() {
-
     var barcode = $("#element-1 .barcode").val();
     var i = 1;
     var sum = parseFloat(0);
@@ -244,19 +243,28 @@ function calculateTotal() {
     var igst_sum = 0;
     var quantity_sum = 0;
     var gst_type = $("#gst_type").text();
-    
+    var type_client = $("#type_client").val();
+    alert(type_client);
     while (barcode != "" && barcode != null) {
         mrp = parseFloat($("#element-" + i + " .mrp").data("val")).toFixed(2);
+
+
         discount_rate = $("#discount_percentage").val();
         discount = parseFloat(mrp * discount_rate / 100).toFixed(2);
-
-
+        
 
 
         if(discount < 1)                                         
             discount_rate = parseFloat(0).toFixed(2);    
 
+        if(type_client = "ethnicity"){
+            var retail = parseFloat($("#element-" + i + " .mrp").data("retail")).toFixed(2);
+            discount = parseFloat(retail * discount_rate / 100).toFixed(2);
+        }
+
+
             taxable_value = parseFloat(mrp - discount).toFixed(2);
+
             
             if(gst_type == "S"){
             if(taxable_value <= 1000)
@@ -279,8 +287,6 @@ function calculateTotal() {
             igst = parseFloat(taxable_value * gst_rate / 100).toFixed(2);
             total = (parseFloat(taxable_value) + parseFloat(igst)).toFixed(2);
             }
-
-            
 
             quantity = parseFloat(1).toFixed(2);
             net = (total * quantity).toFixed(2);
