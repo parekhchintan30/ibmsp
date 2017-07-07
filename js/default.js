@@ -88,13 +88,8 @@ jQuery(function($) {
 
     });
 
-    $('#discount_percentage').keyup(function() {
-
-        if ($("#fabric_sale").val() == 1)
-            calculateTotalFabric();
-        else
+    $('#discount_percentage').change(function() {
             calculateTotal();
-
     });
 
     $('body').delegate('.barcodeScanner .barcode', 'change', function() {
@@ -310,7 +305,6 @@ function calculateTotalOld() {
 
 
 function calculateTotal() {
-    alert("inside");
     var barcode = $("#element-1 .barcode").val();
     var i = 1;
     var sum = parseFloat(0);
@@ -338,8 +332,7 @@ function calculateTotal() {
 
         if(discount < 1)                                         
             discount_rate = parseFloat(0).toFixed(2);    
-
-        if(type_client == "ethnicity"){
+        if(type_client.toLowerCase() == "ethnicity"){
             var retail = parseFloat($("#element-" + i + " .mrp").data("retail")).toFixed(2);
             discount = parseFloat(retail * discount_rate / 100).toFixed(2);
         }
