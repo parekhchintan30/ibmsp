@@ -143,13 +143,19 @@ jQuery(function($) {
             var newRow = '<tr id="element-' + newId + '" data-id="' + newId + '">';
             newRow += '<td>' + newId + '</td>';
             newRow += '<td style="width:150px"><input type="text" class="barcode" id="barcode-' + newId + '" autocomplete="off" value=""></td>';
-            newRow += '<td contenteditable="true" class="design"></td>';
-            newRow += '<td contenteditable="true" class="color"></td>';
-            newRow += '<td contenteditable="true" class="size"></td>';
-            //newRow += '<td contenteditable="true" class="manufacturing_price" data-linked="manufacturing_prices"></td>';
-            //newRow += '<td contenteditable="true" class="wholesale_price" data-linked="wholesale_prices"></td>';
-            //newRow += '<td contenteditable="true" class="other_website_price" data-linked="other_website_prices"></td>';
-            newRow += '<td contenteditable="true" class="mrp"></td>';
+            newRow += '<td class="description"></td>';
+            newRow += '<td class="mrp"></td>';
+            newRow += '<td class="discount_rate"></td>';
+            newRow += '<td class="discount"></td>';
+            newRow += '<td class="taxable_value"></td>';    
+            newRow += '<td class="gst_rate"></td>';
+            newRow += '<td class="sgst"></td>';
+            newRow += '<td class="cgst"></td>';
+            newRow += '<td class="igst"></td>';
+            newRow += '<td class="total"></td>';
+            newRow += '<td class="quantity"></td>';
+            newRow += '<td class="net"></td>';
+            newRow += '<td class="original" style="display:none;"></td>';
             // alert(newRow);
             $('.barcodeScanner table').append(newRow);
             // alert(" Div End reached! "+$(this).offset().top);
@@ -321,7 +327,7 @@ function calculateTotal() {
     var cgst_sum = 0;
     var igst_sum = 0;
     var quantity_sum = 0;
-    var gst_type = $("#gst_type").text();
+    var gst_type = $("#gst_type").val();
     var type_client = $("#type_client").val();
     while (barcode != "" && barcode != null) {
         mrp = parseFloat($("#element-" + i + " .mrp").data("val")).toFixed(2);
@@ -339,8 +345,6 @@ function calculateTotal() {
 
 
             taxable_value = parseFloat(mrp - discount).toFixed(2);
-
-            
             if(gst_type == "S"){
             if(taxable_value <= 1000)
                 gst_rate = parseFloat(2.5).toFixed(2);
