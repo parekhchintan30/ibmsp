@@ -441,6 +441,14 @@ text-align: center;
           padding-top:0.25em; 
           padding-bottom:0.25em;
         }
+        .logo{
+          line-height: 40px;
+          vertical-align: middle;
+          color: white;
+          font-weight: bold;
+          font-size: 12px;
+        }
+
       /* Accordion Button */
       /*ul li.has-subnav .accordion-btn {
         color:#fff; 
