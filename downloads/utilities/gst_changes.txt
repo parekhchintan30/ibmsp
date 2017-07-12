@@ -225,6 +225,69 @@ CREATE TABLE `sms` (
 
 
 
+ALTER TABLE `sale_stack` ADD `total` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+
+
+ALTER TABLE `sale_stack`
+  DROP `design`,
+  DROP `color`,
+  DROP `size`,
+  DROP `selling_price_without_discount`,
+  DROP `discount`,
+  DROP `selling_price_with_discount`;
+
+ALTER TABLE `sale_stack` ADD `total` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `tax_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `igst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `igst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `sgst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `sgst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `cgst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `cgst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `taxable_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `discount_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `discount_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sale_stack` ADD `selling_price` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+
+
+
+ALTER TABLE `sales_ecommerce_stack`
+  DROP `design`,
+  DROP `color`,
+  DROP `size`,
+  DROP `selling_price_without_discount`,
+  DROP `discount`,
+  DROP `selling_price_with_discount`;
+ALTER TABLE `sales_ecommerce_stack` ADD `total` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `tax_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `igst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `igst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `sgst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `sgst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `cgst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `cgst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `taxable_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `discount_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `discount_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `sales_ecommerce_stack` ADD `selling_price` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+
+
+ ALTER TABLE `sales_ecommerce`
+  DROP `tax_type`,
+  DROP `tax_percentage`,
+  DROP `billing_amount`,
+  DROP `discount`,
+  DROP `total`;
+
+ALTER TABLE `sales_ecommerce` ADD `igst_amount` DECIMAL(10,2) NOT NULL AFTER `quantity`;
+ALTER TABLE `sales_ecommerce` ADD `sgst_amount` DECIMAL(10,2) NOT NULL AFTER `quantity`;
+ALTER TABLE `sales_ecommerce` ADD `cgst_amount` DECIMAL(10,2) NOT NULL AFTER `quantity`;
+ALTER TABLE `sales_ecommerce` ADD `taxable_amount` DECIMAL(10,2) NOT NULL AFTER `quantity`;
+ALTER TABLE `sales_ecommerce` ADD `discount_amount` DECIMAL(10,2) NOT NULL AFTER `quantity`;
+ALTER TABLE `sales_ecommerce` ADD `discount_rate` DECIMAL(10,2) NOT NULL AFTER `quantity`;
+ALTER TABLE `sales_ecommerce` ADD `billing_amount` DECIMAL(10,2) NOT NULL AFTER `quantity`;
+ALTER TABLE `sales_ecommerce_stack` ADD `description` VARCHAR(200) NOT NULL AFTER `barcode`;
+
 
   
   
