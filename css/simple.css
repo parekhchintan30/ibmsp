@@ -442,11 +442,13 @@ text-align: center;
           padding-bottom:0.25em;
         }
         .logo{
-          line-height: 40px;
-          vertical-align: middle;
+          position:absolute;
+          top:25px;
+          left:35px;
           color: white;
           font-weight: bold;
-          font-size: 12px;
+          font-size: 18px;
+          width: 150px;
         }
 
       /* Accordion Button */
