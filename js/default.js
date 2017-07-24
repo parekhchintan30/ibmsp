@@ -331,6 +331,7 @@ function calculateTotal() {
     var type_client = $("#type_client").val();
     while (barcode != "" && barcode != null) {
         mrp = parseFloat($("#element-" + i + " .mrp").data("val")).toFixed(2);
+        quantity = parseFloat($("#element-" + i + " .quantity").val()).toFixed(2);
 
         discount_rate = $("#discount_percentage").val();
         discount = parseFloat(mrp * discount_rate / 100).toFixed(2);
@@ -367,7 +368,7 @@ function calculateTotal() {
             total = (parseFloat(taxable_value) + parseFloat(igst)).toFixed(2);
             }
 
-            quantity = parseFloat(1).toFixed(2);
+            //quantity = parseFloat(1).toFixed(2);
             net = (total * quantity).toFixed(2);
             //alertt(net);
        
@@ -381,7 +382,7 @@ function calculateTotal() {
             $("#element-" + i + " .cgst").text(cgst);
             $("#element-" + i + " .igst").text(igst);
             $("#element-" + i + " .total").text(total);
-            $("#element-" + i + " .quantity").text(quantity);
+            $("#element-" + i + " .quantity").val(quantity);
             $("#element-" + i + " .net").text(net); 
 
 
@@ -391,7 +392,7 @@ function calculateTotal() {
         igst_sum = parseFloat(igst_sum) + parseFloat($("#element-" + i + " .igst").html());
         cgst_sum = parseFloat(cgst_sum) + parseFloat($("#element-" + i + " .cgst").html());
         net_sum = parseFloat(net_sum) + parseFloat($("#element-" + i + " .net").html());
-        quantity_sum = parseFloat(quantity_sum) + parseFloat($("#element-" + i + " .quantity").text());
+        quantity_sum = parseFloat(quantity_sum) + parseFloat($("#element-" + i + " .quantity").val());
         i++;
         barcode = $("#element-" + i + " .barcode").val();
     }
@@ -519,7 +520,6 @@ function copySalesContent() {
     reinitializeFields();
     var barcode = $("#element-1 .barcode").val();
     calculateTotal();
-
     var i = 1;
     if (barcode == "" || barcode == null) {
         $("#error-feedback").show().delay(5000).fadeOut();
@@ -536,7 +536,7 @@ function copySalesContent() {
         var mrp = $("#element-" + i + " .mrp");
         var taxable_amount = $("#element-" + i + " .taxable_value");
         var gst_rate = $("#element-" + i + " .gst_rate");
-        var quantity = 0;
+        var quantity = $("#element-" + i + " .quantity");
             if (highlightIfEmpty(mrp)) {
                 $("#barcodes").val($("#barcodes").val() + "" + barcode + ";");
                 $("#billing_amounts").val($("#billing_amounts").val() + "" + mrp.text() + ";");
@@ -553,6 +553,7 @@ function copySalesContent() {
                 $("#cgst_amounts").val($("#cgst_amounts").val() + "" + cgst.text() + ";");
                 $("#igst_amounts").val($("#igst_amounts").val() + "" + igst.text() + ";");
                 $("#discount_amounts").val($("#discount_amounts").val() + "" + discount.text() + ";");
+                $("#quantities").val($("#quantities").val() + "" + quantity.val() + ";");
                 $("#totals").val($("#totals").val() + "" + total.text() + ";");
             } else {
                 $("#error-feedback").show().delay(5000).fadeOut();
@@ -562,7 +563,7 @@ function copySalesContent() {
         i++;
         barcode = $("#element-" + i + " .barcode").val();
     }
-    $("#quantity").val(i - 1);
+    //$("#quantity").val(i - 1);
     return true;
 }
 
