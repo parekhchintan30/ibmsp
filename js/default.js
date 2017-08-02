@@ -327,14 +327,16 @@ function calculateTotal() {
     var cgst_sum = 0;
     var igst_sum = 0;
     var quantity_sum = 0;
+    var bill_sum = 0;
+    var bill_amt;
     var gst_type = $("#gst_type").val();
     var type_client = $("#type_client").val();
     while (barcode != "" && barcode != null) {
         mrp = parseFloat($("#element-" + i + " .mrp").data("val")).toFixed(2);
         quantity = parseFloat($("#element-" + i + " .quantity").val()).toFixed(2);
-
+        bill_amt = mrp * quantity;
         discount_rate = $("#discount_percentage").val();
-        discount = parseFloat(mrp * discount_rate / 100).toFixed(2);
+        discount = parseFloat(bill_amt * discount_rate / 100).toFixed(2);
 
 
         if(discount < 1)                                         
@@ -345,14 +347,14 @@ function calculateTotal() {
         }
 
 
-            taxable_value = parseFloat(mrp - discount).toFixed(2);
+            taxable_value = parseFloat(bill_amt - discount).toFixed(2);
             if(gst_type == "S"){
-            if(taxable_value <= 1000)
+            if(mrp <= 1000)
                 gst_rate = parseFloat(2.5).toFixed(2);
             else
                 gst_rate = parseFloat(6).toFixed(2);
             }else{
-                 if(taxable_value <= 1000)
+                 if(mrp <= 1000)
                 gst_rate = parseFloat(5).toFixed(2);
             else
                 gst_rate = parseFloat(12).toFixed(2);
@@ -369,15 +371,14 @@ function calculateTotal() {
             }
 
             //quantity = parseFloat(1).toFixed(2);
-            net = (total * quantity).toFixed(2);
+            net = total;
             //alertt(net);
        
             $("#element-" + i + " .mrp").text(mrp);
             $("#element-" + i + " .discount_rate").text(discount_rate); 
             $("#element-" + i + " .discount").text(discount);  
             $("#element-" + i + " .taxable_value").text(taxable_value);
-            $("#element-" + i + " .gst_rate").text(gst_rate
-                );
+            $("#element-" + i + " .gst_rate").text(gst_rate);
             $("#element-" + i + " .sgst").text(sgst);
             $("#element-" + i + " .cgst").text(cgst);
             $("#element-" + i + " .igst").text(igst);
@@ -393,10 +394,11 @@ function calculateTotal() {
         cgst_sum = parseFloat(cgst_sum) + parseFloat($("#element-" + i + " .cgst").html());
         net_sum = parseFloat(net_sum) + parseFloat($("#element-" + i + " .net").html());
         quantity_sum = parseFloat(quantity_sum) + parseFloat($("#element-" + i + " .quantity").val());
+        bill_sum = bill_sum + parseFloat(bill_amt);
         i++;
         barcode = $("#element-" + i + " .barcode").val();
     }
-    $('#billing_amount').val(sum.toFixed(2));
+    $('#billing_amount').val(bill_sum.toFixed(2));
     $('#quantity').val(quantity_sum.toFixed(2));
     $('#sgst').val(sgst_sum.toFixed(2));
     $('#cgst').val(cgst_sum.toFixed(2));
