@@ -889,3 +889,31 @@ ADD `margin_agent_3_percentage` DECIMAL( 10, 2 ) NULL AFTER `margin_agent_3` ;
 ALTER TABLE `sale_stack` ADD `sale_status` TINYINT NOT NULL DEFAULT '0' AFTER `return_status` ;
 ALTER TABLE `local_sales` ADD `billing_date` TIMESTAMP NOT NULL AFTER `updated_by` ;
 ALTER TABLE `local_goods_return` ADD `billing_date` TIMESTAMP NOT NULL AFTER `updated_by` ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ALTER TABLE `sales_group` ADD `sub_tax_type` VARCHAR(50) NULL AFTER `tax_type`;
+ALTER TABLE `sales_group` CHANGE `percentage` `percentage` DECIMAL(10,2) NULL DEFAULT NULL;
+
+
+
+
+
+
+
+
+
+
