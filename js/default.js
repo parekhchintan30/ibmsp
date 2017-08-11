@@ -337,7 +337,7 @@ function calculateTotal() {
         bill_amt = mrp * quantity;
         discount_rate = $("#discount_percentage").val();
         discount = parseFloat(bill_amt * discount_rate / 100).toFixed(2);
-
+        var selling_rate = parseFloat(mrp) - parseFloat(discount);
 
         if(discount < 1)                                         
             discount_rate = parseFloat(0).toFixed(2);    
@@ -349,12 +349,12 @@ function calculateTotal() {
 
             taxable_value = parseFloat(bill_amt - discount).toFixed(2);
             if(gst_type == "S"){
-            if(mrp <= 1000)
+            if(selling_rate <= 1000)
                 gst_rate = parseFloat(2.5).toFixed(2);
             else
                 gst_rate = parseFloat(6).toFixed(2);
             }else{
-                 if(mrp <= 1000)
+                 if(selling_rate <= 1000)
                 gst_rate = parseFloat(5).toFixed(2);
             else
                 gst_rate = parseFloat(12).toFixed(2);
