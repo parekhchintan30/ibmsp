@@ -288,6 +288,46 @@ ALTER TABLE `sales_ecommerce` ADD `discount_rate` DECIMAL(10,2) NOT NULL AFTER `
 ALTER TABLE `sales_ecommerce` ADD `billing_amount` DECIMAL(10,2) NOT NULL AFTER `quantity`;
 ALTER TABLE `sales_ecommerce_stack` ADD `description` VARCHAR(200) NOT NULL AFTER `barcode`;
 
+ALTER TABLE `goods_return_stack` ADD `total` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_stack` ADD `tax_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_stack` ADD `igst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_stack` ADD `igst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_stack` ADD `sgst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_stack` ADD `sgst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_stack` ADD `cgst_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_stack` ADD `cgst_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_stack` ADD `taxable_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_stack` ADD `discount_amount` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_stack` ADD `discount_rate` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_stack` ADD `selling_price` DECIMAL(10,2) NOT NULL AFTER `barcode`;
+ALTER TABLE `goods_return_stack` ADD `description` VARCHAR(100) NOT NULL AFTER `barcode`;
+
+
+ALTER TABLE `goods_return`
+  DROP `unstitched`,
+  DROP `against_h_form`,
+  DROP `ethnicity_percentage`,
+  DROP `ethnicity_amount`,
+  DROP `ethnicity_edc`,
+  DROP `tax_type`,
+  DROP `tax_percentage`,
+  DROP `tax`,
+  DROP `discount_percentage`,
+  DROP `total`,
+  DROP `billing_amount`,
+  DROP `discount`;
+
+
+ALTER TABLE `goods_return` ADD `total` DECIMAL(10,2) NOT NULL AFTER `quantity`;
+ALTER TABLE `goods_return` ADD `igst_amount` DECIMAL(10,2) NOT NULL AFTER `quantity`;
+ALTER TABLE `goods_return` ADD `sgst_amount` DECIMAL(10,2) NOT NULL AFTER `quantity`;
+ALTER TABLE `goods_return` ADD `cgst_amount` DECIMAL(10,2) NOT NULL AFTER `quantity`;
+ALTER TABLE `goods_return` ADD `taxable_amount` DECIMAL(10,2) NOT NULL AFTER `quantity`;
+ALTER TABLE `goods_return` ADD `discount_amount` DECIMAL(10,2) NOT NULL AFTER `quantity`;
+ALTER TABLE `goods_return` ADD `discount_rate` DECIMAL(10,2) NOT NULL AFTER `quantity`;
+ALTER TABLE `goods_return` ADD `billing_amount` DECIMAL(10,2) NOT NULL AFTER `quantity`;
+
+
 
   
   
