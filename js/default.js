@@ -381,7 +381,7 @@ function calculateTotal() {
        
             $("#element-" + i + " .mrp").text(mrp);
             $("#element-" + i + " .discount_rate").text(discount_rate); 
-            $("#element-" + i + " .discount").text(discount);  
+            $("#element-" + i + " .discount").text(discount_amt);  
             $("#element-" + i + " .taxable_value").text(taxable_value);
             $("#element-" + i + " .gst_rate").text(gst_rate);
             $("#element-" + i + " .sgst").text(sgst);
