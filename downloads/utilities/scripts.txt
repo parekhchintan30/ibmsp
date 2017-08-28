@@ -959,11 +959,365 @@ ALTER TABLE `sales_group` ADD `sub_tax_type` VARCHAR(50) NULL AFTER `tax_type`;
 ALTER TABLE `sales_group` CHANGE `percentage` `percentage` DECIMAL(10,2) NULL DEFAULT NULL;
 
 
+/home/vamas/public_html/vendor/magento/module-catalog/view/frontend/layout/catalog_product_view.xml
 
 
 
 
 
 
+SELECT clients.gst,  clients.name, sales.invoice_no, sales.created_at,  SUM(sale_stack.taxable_amount),SUM(sale_stack.taxable_amount),
+sale_stack.cgst_rate, SUM(sale_stack.cgst_amount), sale_stack.sgst_rate, SUM(sale_stack.sgst_amount), sale_stack.igst_rate, SUM(sale_stack.igst_amount),
+SUM(sale_stack.total)
+FROM `sales` 
+INNER JOIN 
+sale_stack ON sales.id = sale_stack.sale_id
+INNER JOIN clients ON sales.id_client = clients.id
+GROUP BY sale_stack.sale_id,sale_stack.cgst_rate,sale_stack.igst_rate
 
 
+SELECT customers_ecommerce.name,customers_ecommerce.state, sales_ecommerce.invoice_no, sales_ecommerce.created_at,  SUM(sales_ecommerce_stack.taxable_amount),SUM(sales_ecommerce_stack.taxable_amount),
+sales_ecommerce_stack.cgst_rate, SUM(sales_ecommerce_stack.cgst_amount), sales_ecommerce_stack.sgst_rate, SUM(sales_ecommerce_stack.sgst_amount), sales_ecommerce_stack.igst_rate, SUM(sales_ecommerce_stack.igst_amount),
+SUM(sales_ecommerce_stack.total)
+FROM `sales_ecommerce` 
+INNER JOIN 
+sales_ecommerce_stack ON sales_ecommerce.id = sales_ecommerce_stack.ecommerce_sale_id
+INNER JOIN customers_ecommerce ON sales_ecommerce.ecommerce_customer_id = customers_ecommerce.id
+GROUP BY sales_ecommerce_stack.ecommerce_sale_id,sales_ecommerce_stack.cgst_rate,sales_ecommerce_stack.igst_rate
+
+
+UPDATE `sale_stack` SET 
+`discount_rate` = 0,
+`discount_amount` = ROUND(`selling_price` * 0.01 * `discount_rate`,2),
+`taxable_amount` = (`selling_price` * quantity) - `discount_amount`
+WHERE sale_id IN (127) ;
+
+UPDATE `sale_stack` SET 
+`cgst_rate` = 0,
+`sgst_rate` = 0,
+`igst_rate` = 5
+WHERE 
+taxable_amount < 1000 AND
+sale_id IN (127) ;
+
+UPDATE `sale_stack` SET 
+`cgst_rate` = 0,
+`sgst_rate` = 0,
+`igst_rate` = 5
+WHERE 
+taxable_amount > 1000 AND
+sale_id IN (127) ;
+
+UPDATE `sale_stack` SET 
+`cgst_amount` = ROUND(`cgst_rate` * 0.01 * `taxable_amount`,2),
+`sgst_amount` = ROUND(`sgst_rate` * 0.01 * `taxable_amount`,2),
+`igst_amount` = ROUND(`igst_rate` * 0.01 * `taxable_amount`,2)
+WHERE sale_id IN (127) ;
+
+UPDATE `sale_stack` SET 
+`total` = taxable_amount + cgst_amount + sgst_amount + igst_amount
+WHERE sale_id IN (127) ;
+
+UPDATE sales s 
+INNER JOIN
+(
+   SELECT sale_id, discount_rate,
+   SUM(`selling_price`) as 'billing_amount',
+    SUM(`taxable_amount`) as 'taxable_amount',
+    SUM(`cgst_amount`) as 'cgst_amount',
+    SUM(`sgst_amount`) as 'sgst_amount',
+    SUM(`igst_amount`) as 'igst_amount',
+    SUM(`discount_amount`) as 'discount_amount',
+    SUM(`total`) as 'total'
+   FROM sale_stack 
+   GROUP BY sale_id
+) ss ON s.id = ss.sale_id
+SET 
+s.billing_amount = ss.billing_amount,
+s.taxable_amount = ss.taxable_amount,
+s.cgst_amount = ss.cgst_amount,
+s.sgst_amount = ss.sgst_amount,
+s.igst_amount = ss.igst_amount,
+s.discount_rate = ss.discount_rate,
+s.discount_amount = ss.discount_amount,
+s.total = ss.total
+WHERE s.id IN (127);
+
+
+set @bills = '263,264';
+
+UPDATE `sale_stack` SET 
+`discount_rate` = 40,
+`discount_amount` = ROUND((`selling_price` * quantity) * 0.01 * `discount_rate`,2)
+WHERE sale_id IN (@bills) ;
+
+UPDATE `sale_stack` SET 
+`taxable_amount` = (`selling_price` * quantity) - `discount_amount`
+WHERE sale_id IN (@bills) ;
+
+UPDATE `sale_stack` SET 
+`cgst_rate` = 2.5,
+`sgst_rate` = 2.5,
+`igst_rate` = 0
+WHERE 
+(selling_price - (`selling_price` * 0.01 *discount_rate)) < 1000 AND
+sale_id IN (@bills) ;
+
+UPDATE `sale_stack` SET 
+`cgst_rate` = 6,
+`sgst_rate` = 6,
+`igst_rate` = 0
+WHERE 
+(selling_price - (`selling_price` * 0.01 *discount_rate)) > 1000 AND
+sale_id IN (@bills) ;
+
+UPDATE `sale_stack` SET 
+`cgst_amount` = ROUND(`cgst_rate` * 0.01 * `taxable_amount`,2),
+`sgst_amount` = ROUND(`sgst_rate` * 0.01 * `taxable_amount`,2),
+`igst_amount` = ROUND(`igst_rate` * 0.01 * `taxable_amount`,2)
+WHERE sale_id IN (@bills) ;
+
+UPDATE `sale_stack` SET 
+`total` = taxable_amount + cgst_amount + sgst_amount + igst_amount
+WHERE sale_id IN (@bills) ;
+
+UPDATE sales s 
+INNER JOIN
+(
+   SELECT sale_id, discount_rate,
+   SUM(`selling_price`) as 'billing_amount',
+    SUM(`taxable_amount`) as 'taxable_amount',
+    SUM(`cgst_amount`) as 'cgst_amount',
+    SUM(`sgst_amount`) as 'sgst_amount',
+    SUM(`igst_amount`) as 'igst_amount',
+    SUM(`discount_amount`) as 'discount_amount',
+    SUM(`total`) as 'total'
+   FROM sale_stack 
+   GROUP BY sale_id
+) ss ON s.id = ss.sale_id
+SET 
+s.billing_amount = ss.billing_amount,
+s.taxable_amount = ss.taxable_amount,
+s.cgst_amount = ss.cgst_amount,
+s.sgst_amount = ss.sgst_amount,
+s.igst_amount = ss.igst_amount,
+s.discount_rate = ss.discount_rate,
+s.discount_amount = ss.discount_amount,
+s.total = ss.total
+WHERE s.id IN (@bills);
+
+
+
+
+UPDATE `sale_stack` SET 
+`discount_rate` = 42,
+`discount_amount` = ROUND(`selling_price` * 0.01 * `discount_rate`,2),
+`taxable_amount` = (`selling_price` * quantity) - `discount_amount`
+WHERE sale_id IN (259) ;
+
+UPDATE `sale_stack` SET 
+`cgst_rate` = 2.5,
+`sgst_rate` = 2.5,
+`igst_rate` = 0
+WHERE 
+(selling_price < 1000 AND
+sale_id IN (259) ;
+
+UPDATE `sale_stack` SET 
+`cgst_rate` = 6,
+`sgst_rate` = 6,
+`igst_rate` = 0
+WHERE 
+selling_price > 1000 AND
+sale_id IN (259) ;
+
+UPDATE `sale_stack` SET 
+`cgst_amount` = ROUND(`cgst_rate` * 0.01 * `taxable_amount`,2),
+`sgst_amount` = ROUND(`sgst_rate` * 0.01 * `taxable_amount`,2),
+`igst_amount` = ROUND(`igst_rate` * 0.01 * `taxable_amount`,2)
+WHERE sale_id IN (259) ;
+
+UPDATE `sale_stack` SET 
+`total` = taxable_amount + cgst_amount + sgst_amount + igst_amount
+WHERE sale_id IN (259) ;
+
+UPDATE sales s 
+INNER JOIN
+(
+   SELECT sale_id, discount_rate,
+   SUM(`selling_price`) as 'billing_amount',
+    SUM(`taxable_amount`) as 'taxable_amount',
+    SUM(`cgst_amount`) as 'cgst_amount',
+    SUM(`sgst_amount`) as 'sgst_amount',
+    SUM(`igst_amount`) as 'igst_amount',
+    SUM(`discount_amount`) as 'discount_amount',
+    SUM(`total`) as 'total'
+   FROM sale_stack 
+   GROUP BY sale_id
+) ss ON s.id = ss.sale_id
+SET 
+s.billing_amount = ss.billing_amount,
+s.taxable_amount = ss.taxable_amount,
+s.cgst_amount = ss.cgst_amount,
+s.sgst_amount = ss.sgst_amount,
+s.igst_amount = ss.igst_amount,
+s.discount_rate = ss.discount_rate,
+s.discount_amount = ss.discount_amount,
+s.total = ss.total
+WHERE s.id IN (259);
+
+
+
+UPDATE `sale_stack` SET 
+`discount_rate` = 0,
+`discount_amount` = ROUND(`selling_price` * 0.01 * `discount_rate`,2),
+`taxable_amount` = `selling_price` - `discount_amount`
+WHERE sale_id IN (5) ;
+
+UPDATE `sale_stack` SET 
+`cgst_rate` = 2.5,
+`sgst_rate` = 2.5,
+`igst_rate` = 0
+WHERE 
+taxable_amount < 1000 AND
+sale_id IN (5) ;
+
+UPDATE `sale_stack` SET 
+`cgst_rate` = 6,
+`sgst_rate` = 6,
+`igst_rate` = 0
+WHERE 
+taxable_amount > 1000 AND
+sale_id IN (5) ;
+
+UPDATE `sale_stack` SET 
+`cgst_amount` = ROUND(`cgst_rate` * 0.01 * `taxable_amount`,2),
+`sgst_amount` = ROUND(`sgst_rate` * 0.01 * `taxable_amount`,2),
+`igst_amount` = ROUND(`igst_rate` * 0.01 * `taxable_amount`,2)
+WHERE sale_id IN (5) ;
+
+UPDATE `sale_stack` SET 
+`total` = taxable_amount + cgst_amount + sgst_amount + igst_amount
+WHERE sale_id IN (5) ;
+
+UPDATE sales s 
+INNER JOIN
+(
+   SELECT sale_id, discount_rate,
+   SUM(`selling_price`) as 'billing_amount',
+    SUM(`taxable_amount`) as 'taxable_amount',
+    SUM(`cgst_amount`) as 'cgst_amount',
+    SUM(`sgst_amount`) as 'sgst_amount',
+    SUM(`igst_amount`) as 'igst_amount',
+    SUM(`discount_amount`) as 'discount_amount',
+    SUM(`total`) as 'total'
+   FROM sale_stack 
+   GROUP BY sale_id
+) ss ON s.id = ss.sale_id
+SET 
+s.billing_amount = ss.billing_amount,
+s.taxable_amount = ss.taxable_amount,
+s.cgst_amount = ss.cgst_amount,
+s.sgst_amount = ss.sgst_amount,
+s.igst_amount = ss.igst_amount,
+s.discount_rate = ss.discount_rate,
+s.discount_amount = ss.discount_amount,
+s.total = ss.total
+WHERE s.id IN (5);
+
+
+<h3><b>POLICIES @ VAMAS (SALE)<b></b></b></h3>
+<div class="block custom-block">
+<div><em class="fa fa-truck"></em>
+<h3>SHIPPING COST</h3>
+<p>Additional</p>
+</div>
+<div><em class="fa fa-dollar"></em>
+<h3>Pricing</h3>
+<p>All the prices shown are final price removing discounts</p>
+</div>
+<div><em class="fa fa-dollar"></em>
+<h3>Tax</h3>
+<p>Extra during sale period</p>
+</div>
+<div><i class="fa fa-clock-o  fa-lg"></i>
+<h3>DELIVERY TIME (SALE)</h3>
+<p>On an average 7-8 working days</p>
+</div>
+<div><i class="fa fa-retweet"></i>
+<h3>RETURN POLICY</h3>
+<p>7 days only in case of valid reason</p>
+</div>
+<div><em class="fa fa-life-ring"></em>
+<h3>SUPPORT (10:30 to 19:30)</h3>
+<p>support@vamas.in</p>
+</div>
+</div>
+
+
+
+
+CREATE TABLE `goods_return_ecommerce` (
+  `id` int(10) unsigned NOT NULL,
+  `invoice_no` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `ecommerce_sale_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `billing_amount` decimal(10,2) NOT NULL,
+  `discount_rate` decimal(10,2) NOT NULL,
+  `discount_amount` decimal(10,2) NOT NULL,
+  `taxable_amount` decimal(10,2) NOT NULL,
+  `cgst_amount` decimal(10,2) NOT NULL,
+  `sgst_amount` decimal(10,2) NOT NULL,
+  `igst_amount` decimal(10,2) NOT NULL,
+  `total` decimal(10,2) NOT NULL,
+  `tally_sync_date` timestamp NULL DEFAULT NULL,
+  `tally_sync_status` tinyint(4) DEFAULT '0',
+  `tally_sync_count` int(11) DEFAULT '0',
+  `tally_sync_by` tinyint(4) DEFAULT NULL,
+  `return_reason` varchar(500) NOT NULL,
+  `return_type` varchar(50) NOT NULL,
+  `wrong_return` tinyint(4) NOT NULL DEFAULT '0',
+  `return_additional_information` varchar(500) NOT NULL,
+  `return_field_1` varchar(450) DEFAULT NULL,
+  `return_value_1` varchar(450) DEFAULT NULL,
+  `return_field_2` varchar(450) DEFAULT NULL,
+  `return_value_2` varchar(450) DEFAULT NULL,
+  `return_date` timestamp NULL DEFAULT NULL,
+  `return_received_date` timestamp NULL DEFAULT NULL,
+  `updated_by` int(11) unsigned NOT NULL,
+  `created_by` tinyint(4) DEFAULT NULL,
+  `edited_by` tinyint(4) DEFAULT NULL,
+  `cancelled_by` tinyint(4) DEFAULT NULL,
+  `tallied_by` tinyint(4) DEFAULT NULL,
+  `edited_at` timestamp NULL DEFAULT NULL,
+  `cancelled_at` timestamp NULL DEFAULT NULL,
+  `tallied_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+CREATE TABLE `goods_return_ecommerce_stack` (
+  `id` int(10) unsigned NOT NULL,
+  `ecommerce_goods_return_id` int(10) unsigned NOT NULL,
+  `barcode` varchar(8) COLLATE utf8_unicode_ci NOT NULL,
+  `description` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
+  `selling_price` decimal(10,2) NOT NULL,
+  `discount_rate` decimal(10,2) NOT NULL,
+  `discount_amount` decimal(10,2) NOT NULL,
+  `taxable_amount` decimal(10,2) NOT NULL,
+  `cgst_rate` decimal(10,2) NOT NULL,
+  `cgst_amount` decimal(10,2) NOT NULL,
+  `sgst_rate` decimal(10,2) NOT NULL,
+  `sgst_amount` decimal(10,2) NOT NULL,
+  `igst_rate` decimal(10,2) NOT NULL,
+  `igst_amount` decimal(10,2) NOT NULL,
+  `tax_amount` decimal(10,2) NOT NULL,
+  `total` decimal(10,2) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT '1',
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+253,262,127,259,69,70,71,72,132,184,238,239,241,242,243,244,245, 253, 259, 262, 263, 264
