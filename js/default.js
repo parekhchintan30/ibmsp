@@ -344,10 +344,13 @@ function calculateTotal() {
         if(type_client.toLowerCase() == "ethnicity"){
             var retail = parseFloat($("#element-" + i + " .mrp").data("retail")).toFixed(2);
             discount = parseFloat(retail * discount_rate / 100).toFixed(2);
+            selling_rate = parseFloat(mrp) - parseFloat(discount);
         }
 
 
             taxable_value = parseFloat(bill_amt - discount).toFixed(2);
+
+
             if(gst_type == "S"){
             if(selling_rate <= 1000)
                 gst_rate = parseFloat(2.5).toFixed(2);
