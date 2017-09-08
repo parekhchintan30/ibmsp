@@ -93,10 +93,7 @@ jQuery(function($) {
     });
 
     $('body').delegate('.barcodeScanner .barcode', 'change', function() {
-        if(sale)
             calculateTotal();
-        else
-            calculateTotalOld();
     });
 
     $("body").delegate(".pagination a", "click", function() {
@@ -328,7 +325,7 @@ function calculateTotal() {
     var igst_sum = 0;
     var quantity_sum = 0;
     var bill_sum = 0;
-    var bill_amt;
+    var bill_amt ;
     var gst_type = $("#gst_type").val();
     var type_client = $("#type_client").val();
     while (barcode != "" && barcode != null) {
@@ -348,8 +345,7 @@ function calculateTotal() {
             selling_rate = parseFloat(mrp) - parseFloat(discount);
             discount_amt = discount * quantity;
         }
-
-
+        
             taxable_value = parseFloat(bill_amt - discount_amt).toFixed(2);
 
 
