@@ -1320,4 +1320,65 @@ CREATE TABLE `goods_return_ecommerce_stack` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
-253,262,127,259,69,70,71,72,132,184,238,239,241,242,243,244,245, 253, 259, 262, 263, 264
+set @bills = '411';
+
+UPDATE `sale_stack` SET 
+`discount_rate` = 10,
+`discount_amount` = ROUND((`selling_price` * quantity) * 0.01 * `discount_rate`,2)
+WHERE sale_id IN (@bills) ;
+
+UPDATE `sale_stack` SET 
+`taxable_amount` = (`selling_price` * quantity) - `discount_amount`
+WHERE sale_id IN (@bills) ;
+
+UPDATE `sale_stack` SET 
+`cgst_rate` = 0,
+`sgst_rate` = 0,
+`igst_rate` = 5
+WHERE 
+(selling_price - (`selling_price` * 0.01 *discount_rate)) < 1000 AND
+sale_id IN (@bills) ;
+
+UPDATE `sale_stack` SET 
+`cgst_rate` = 0,
+`sgst_rate` = 0,
+`igst_rate` = 12
+WHERE 
+(selling_price - (`selling_price` * 0.01 * discount_rate)) > 1000 AND
+sale_id IN (@bills) ;
+
+UPDATE `sale_stack` SET 
+`cgst_amount` = ROUND(`cgst_rate` * 0.01 * `taxable_amount`,2),
+`sgst_amount` = ROUND(`sgst_rate` * 0.01 * `taxable_amount`,2),
+`igst_amount` = ROUND(`igst_rate` * 0.01 * `taxable_amount`,2)
+WHERE sale_id IN (@bills) ;
+
+UPDATE `sale_stack` SET 
+`total` = taxable_amount + cgst_amount + sgst_amount + igst_amount
+WHERE sale_id IN (@bills) ;
+
+UPDATE sales s 
+INNER JOIN
+(
+   SELECT sale_id, discount_rate,
+   SUM(`selling_price`) as 'billing_amount',
+    SUM(`taxable_amount`) as 'taxable_amount',
+    SUM(`cgst_amount`) as 'cgst_amount',
+    SUM(`sgst_amount`) as 'sgst_amount',
+    SUM(`igst_amount`) as 'igst_amount',
+    SUM(`discount_amount`) as 'discount_amount',
+    SUM(`total`) as 'total'
+   FROM sale_stack 
+   GROUP BY sale_id
+) ss ON s.id = ss.sale_id
+SET 
+s.billing_amount = ss.billing_amount,
+s.taxable_amount = ss.taxable_amount,
+s.cgst_amount = ss.cgst_amount,
+s.sgst_amount = ss.sgst_amount,
+s.igst_amount = ss.igst_amount,
+s.discount_rate = ss.discount_rate,
+s.discount_amount = ss.discount_amount,
+s.total = ss.total
+WHERE s.id IN (@bills);
+

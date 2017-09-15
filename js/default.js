@@ -92,10 +92,11 @@ jQuery(function($) {
             calculateTotal();
     });
 
+/*
     $('body').delegate('.barcodeScanner .barcode', 'change', function() {
             calculateTotal();
     });
-
+*/
     $("body").delegate(".pagination a", "click", function() {
         var page = $(this).data('page');
         if (page == "disabled") {} else if (page == "previous") {
@@ -225,18 +226,12 @@ function calculateTotalOld() {
     var i = 1;
     var sum = 0;
     var quantity = 0;
-    var ethnicity_amount = 0;
-    var ethnicity_percentage = $("#ethnicity_percentage").val();
-
+    
     while (barcode != "" && barcode != null) {
         var mrp = $("#element-" + i + " .mrp").html();
         sum = sum + parseFloat(mrp);
         i++;
         quantity++;
-        if ($('#ethnicity_percentage').length) {
-            var local_ethnicity_amount = parseFloat(mrp * ethnicity_percentage / 100).toFixed(2);
-            ethnicity_amount += parseFloat(local_ethnicity_amount);
-        }
         barcode = $("#element-" + i + " .barcode").val();
     }
     if (isNaN(sum))
@@ -246,62 +241,6 @@ function calculateTotalOld() {
     $('#billing_amount').val(sum);
     $('#quantity').val(quantity);
     var total = parseFloat(sum).toFixed(2);
-    if ($('#ethnicity_percentage').length) {
-        var ethnicity_amount = parseFloat(sum * ethnicity_percentage / 100).toFixed(2);
-        $("#ethnicity_amount").val(ethnicity_amount);
-        $("#ethnicity_amount_t").val(ethnicity_amount);
-        total = parseFloat(sum) - parseFloat(ethnicity_amount);
-    }
-
-    var discount = 0;
-    if ($('#discount_val').length && $('#discount_val').val() != "") {
-        discount = parseFloat($('#discount_val').val());
-        $('#discount').val(discount);
-        total = parseFloat(total) - parseFloat(discount);
-    } else if ($('#discount_percentage').length && $('#discount_percentage').val() != "") {
-        discount_percentage = $('#discount_percentage').val();
-        discount = parseFloat((total * discount_percentage / 100)).toFixed(2);
-        $('#discount_percentage').val(discount_percentage);
-        $('#discount_info').text("DISCOUNT - " + discount_percentage + "%")
-        $('#discount').val(discount);
-        total = parseFloat(total) - parseFloat(discount);
-    }
-    var unstitched = $("#unstitched").val();
-    var against_h_form = $("#against_h_form").val();
-    if ($("#unstitched").is(':checked') || $("#against_h_form").is(':checked')) {
-        //do not add any taxes
-        $("#tax").val(0);
-        $("#tax_type").val(null);
-        $("#tax_percentage").val(null);
-        $("#taxRow").hide();
-
-    } else {
-        if ($('#vat').length && $('#vat').val() != "") {
-            $("#tax_type").val("vat");
-            $("#tax_percentage").val($('#vat').val());
-            var vat = parseFloat($('#vat').val()).toFixed(2);
-            var vatAmount = parseFloat((vat * total / 100)).toFixed(2);
-            $('#tax').val(vatAmount);
-            total = parseFloat(total) + parseFloat(vatAmount);
-        }
-
-        if ($('#cst').length && $('#cst').val() != "") {
-            $("#tax_type").val("cst");
-            $("#tax_percentage").val($('#cst').val());
-            var cst = parseFloat($('#cst').val()).toFixed(2);
-
-            var cstAmount = parseFloat((cst * total / 100)).toFixed(2);
-            $('#tax').val(cstAmount);
-            total = parseFloat(total) + parseFloat(cstAmount);
-        }
-    }
-
-    if ($('#credit_amount').length && $('#credit_amount').val() != "") {
-        var credit_amount = $('#credit_amount').val();
-        //$('.shopping_bag_credit_amount').text(credit_amount);
-        total = parseFloat(total) - parseFloat(credit_amount);
-        //alert(total);
-    }
     total = parseFloat(total).toFixed(2);
     $('#total').val(total);
 }
