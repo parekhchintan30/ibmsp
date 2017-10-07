@@ -142,6 +142,7 @@ jQuery(function($) {
             newRow += '<td>' + newId + '</td>';
             newRow += '<td style="width:150px"><input type="text" class="barcode" id="barcode-' + newId + '" autocomplete="off" value=""></td>';
             newRow += '<td class="description"></td>';
+            newRow += '<td style="width:150px"><input type="text" class="barcode quantity" id="quantity-' + newId + '" autocomplete="off" value=""></td>';
             newRow += '<td class="mrp"></td>';
             newRow += '<td class="discount_rate"></td>';
             newRow += '<td class="discount"></td>';
@@ -151,7 +152,6 @@ jQuery(function($) {
             newRow += '<td class="cgst"></td>';
             newRow += '<td class="igst"></td>';
             newRow += '<td class="total"></td>';
-            newRow += '<td class="quantity"></td>';
             newRow += '<td class="net"></td>';
             newRow += '<td class="original" style="display:none;"></td>';
             // alert(newRow);

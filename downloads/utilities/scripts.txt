@@ -568,7 +568,7 @@ UPDATE `new_product_master` SET
 WHERE
 `design` IN ("KP-56", "KP-57", "KP-57SL", "KP-58", "KP-58SL", "KP-59", "KP-70", "KP-70SL", "KP-64")
 
-
+ALTER TABLE `goods_return_ecommerce` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 SET @i = 2000000;
 UPDATE `goods_return` SET `invoice_no` = CONCAT("VFWGR" ,@i:=@i+1)
