@@ -986,6 +986,15 @@ INNER JOIN customers_ecommerce ON sales_ecommerce.ecommerce_customer_id = custom
 GROUP BY sales_ecommerce_stack.ecommerce_sale_id,sales_ecommerce_stack.cgst_rate,sales_ecommerce_stack.igst_rate
 
 
+SELECT customers_retail.name, sales_retail.invoice_no, sales_retail.created_at,  SUM(sales_retail_stack.taxable_amount),
+sales_retail_stack.cgst_rate, SUM(sales_retail_stack.cgst_amount), sales_retail_stack.sgst_rate, SUM(sales_retail_stack.sgst_amount),
+SUM(sales_retail_stack.total)
+FROM `sales_retail` 
+INNER JOIN 
+sales_retail_stack ON sales_retail.id = sales_retail_stack.sale_retail_id
+INNER JOIN customers_retail ON sales_retail.id_customer = customers_retail.id
+GROUP BY sales_retail_stack.sale_retail_id,sales_retail_stack.cgst_rate
+
 UPDATE `sale_stack` SET 
 `discount_rate` = 0,
 `discount_amount` = ROUND(`selling_price` * 0.01 * `discount_rate`,2),
