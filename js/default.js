@@ -279,7 +279,7 @@ function calculateTotal() {
         if(discount < 1)                                         
             discount_rate = parseFloat(0).toFixed(2);    
         if(type_client.toLowerCase() == "ethnicity"){
-            var retail = parseFloat($("#element-" + i + " .mrp").data("val")).toFixed(2);
+            var retail = parseFloat($("#element-" + i + " .retail").data("val")).toFixed(2);
             discount = parseFloat(retail * discount_rate / 100).toFixed(2);
             selling_rate = parseFloat(mrp) - parseFloat(discount);
             discount_amt = discount * quantity;
