@@ -267,6 +267,7 @@ function calculateTotal() {
     var bill_amt ;
     var gst_type = $("#gst_type").val();
     var type_client = $("#type_client").val();
+    var unstitched = $("#unstitched").val();
     while (barcode != "" && barcode != null) {
         mrp = parseFloat($("#element-" + i + " .mrp").data("val")).toFixed(2);
         quantity = parseFloat($("#element-" + i + " .quantity").val()).toFixed(2);
@@ -286,8 +287,15 @@ function calculateTotal() {
         }
         
             taxable_value = parseFloat(bill_amt - discount_amt).toFixed(2);
-
-
+        if(unstitched == 1)
+        {    
+            //alert(unstitched); 
+            if(gst_type == "S")       
+                gst_rate = parseFloat(2.5).toFixed(2);
+            else 
+                gst_rate = parseFloat(5).toFixed(2);
+        }
+        else{
             if(gst_type == "S"){
             if(selling_rate <= 1000)
                 gst_rate = parseFloat(2.5).toFixed(2);
@@ -299,7 +307,10 @@ function calculateTotal() {
             else
                 gst_rate = parseFloat(12).toFixed(2);
             }
+        }
             sgst = cgst = igst = 0;
+
+
 
             if(gst_type == "S"){
             sgst = parseFloat(taxable_value * gst_rate / 100).toFixed(2);
@@ -309,6 +320,8 @@ function calculateTotal() {
             igst = parseFloat(taxable_value * gst_rate / 100).toFixed(2);
             total = (parseFloat(taxable_value) + parseFloat(igst)).toFixed(2);
             }
+
+
 
             //quantity = parseFloat(1).toFixed(2);
             net = total;
