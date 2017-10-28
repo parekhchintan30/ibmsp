@@ -1391,3 +1391,237 @@ s.discount_amount = ss.discount_amount,
 s.total = ss.total
 WHERE s.id IN (@bills);
 
+
+UPDATE `sales_ecommerce` 
+INNER JOIN customers_ecommerce ON sales_ecommerce.ecommerce_customer_id = customers_ecommerce.id
+INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id
+SET 
+sales_ecommerce.cgst_amount = round(sales_ecommerce.igst_amount/2,2),
+sales_ecommerce.sgst_amount = sales_ecommerce.igst_amount - round(sales_ecommerce.igst_amount/2,2)
+WHERE customers_ecommerce.state = "MAHARASHTRA" AND sales_ecommerce.igst_amount > 0;
+
+UPDATE `sales_ecommerce` 
+INNER JOIN customers_ecommerce ON sales_ecommerce.ecommerce_customer_id = customers_ecommerce.id
+INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id
+SET 
+sales_ecommerce.igst_amount = 0
+WHERE customers_ecommerce.state = "MAHARASHTRA" AND sales_ecommerce.igst_amount > 0;
+
+SELECT * FROM `sales_ecommerce` 
+INNER JOIN customers_ecommerce ON sales_ecommerce.ecommerce_customer_id = customers_ecommerce.id
+INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id
+WHERE customers_ecommerce.state = "MAHARASHTRA" AND sales_ecommerce.igst_amount > 0
+
+
+
+UPDATE `sales_ecommerce` 
+INNER JOIN customers_ecommerce ON sales_ecommerce.ecommerce_customer_id = customers_ecommerce.id
+INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id
+SET 
+sales_ecommerce_stack.cgst_rate = round(sales_ecommerce_stack.igst_rate/2,2),
+sales_ecommerce_stack.sgst_rate = round(sales_ecommerce_stack.igst_rate/2,2),
+sales_ecommerce_stack.cgst_amount = round(sales_ecommerce_stack.igst_amount/2,2),
+sales_ecommerce_stack.sgst_amount = sales_ecommerce_stack.igst_amount - round(sales_ecommerce_stack.igst_amount/2,2)
+WHERE customers_ecommerce.state = "MAHARASHTRA" AND sales_ecommerce_stack.igst_amount > 0;
+
+
+UPDATE `sales_ecommerce` 
+INNER JOIN customers_ecommerce ON sales_ecommerce.ecommerce_customer_id = customers_ecommerce.id
+INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id
+SET 
+sales_ecommerce_stack.igst_rate = 0,
+sales_ecommerce_stack.igst_amount = 0
+WHERE customers_ecommerce.state = "MAHARASHTRA" AND sales_ecommerce_stack.igst_amount > 0;
+
+SELECT * FROM `sales_ecommerce` 
+INNER JOIN customers_ecommerce ON sales_ecommerce.ecommerce_customer_id = customers_ecommerce.id
+INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id
+WHERE customers_ecommerce.state = "MAHARASHTRA" AND sales_ecommerce_stack.igst_amount > 0
+
+UPDATE `sales_ecommerce` 
+INNER JOIN customers_ecommerce ON sales_ecommerce.ecommerce_customer_id = customers_ecommerce.id
+INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id
+SET 
+sales_ecommerce.igst_amount = sales_ecommerce.cgst_amount + sales_ecommerce.sgst_amount
+WHERE customers_ecommerce.state != "MAHARASHTRA" AND sales_ecommerce.cgst_amount > 0;
+
+UPDATE `sales_ecommerce` 
+INNER JOIN customers_ecommerce ON sales_ecommerce.ecommerce_customer_id = customers_ecommerce.id
+INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id
+SET 
+sales_ecommerce.cgst_amount = 0,
+sales_ecommerce.sgst_amount = 0
+WHERE customers_ecommerce.state != "MAHARASHTRA" AND sales_ecommerce.cgst_amount > 0;
+
+SELECT * FROM `sales_ecommerce` 
+INNER JOIN customers_ecommerce ON sales_ecommerce.ecommerce_customer_id = customers_ecommerce.id
+INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id
+WHERE customers_ecommerce.state != "MAHARASHTRA" AND sales_ecommerce.cgst_amount > 0;
+
+
+
+UPDATE `sales_ecommerce` 
+INNER JOIN customers_ecommerce ON sales_ecommerce.ecommerce_customer_id = customers_ecommerce.id
+INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id
+SET 
+sales_ecommerce_stack.cgst_rate = round(sales_ecommerce_stack.igst_rate/2,2),
+sales_ecommerce_stack.sgst_rate = round(sales_ecommerce_stack.igst_rate/2,2),
+sales_ecommerce_stack.cgst_amount = round(sales_ecommerce_stack.igst_amount/2,2),
+sales_ecommerce_stack.sgst_amount = sales_ecommerce_stack.igst_amount - round(sales_ecommerce_stack.igst_amount/2,2)
+WHERE customers_ecommerce.state = "MAHARASHTRA" AND sales_ecommerce_stack.igst_amount > 0;
+
+
+UPDATE `sales_ecommerce` 
+INNER JOIN customers_ecommerce ON sales_ecommerce.ecommerce_customer_id = customers_ecommerce.id
+INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id
+SET 
+sales_ecommerce_stack.igst_rate = 0,
+sales_ecommerce_stack.igst_amount = 0
+WHERE customers_ecommerce.state = "MAHARASHTRA" AND sales_ecommerce_stack.igst_amount > 0;
+
+SELECT * FROM `sales_ecommerce` 
+INNER JOIN customers_ecommerce ON sales_ecommerce.ecommerce_customer_id = customers_ecommerce.id
+INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id
+WHERE customers_ecommerce.state = "MAHARASHTRA" AND sales_ecommerce_stack.igst_amount > 0
+
+
+UPDATE `sales_ecommerce_stack` SET 
+`igst_amount` = round(0.01*igst_rate*taxable_amount,2),
+taxable_amount = total - igst_amount
+WHERE `igst_rate` = 12 
+AND igst_amount - (0.01*igst_rate*taxable_amount) < -0.1
+
+SELECT * FROM sales_ecommerce_stack
+WHERE `igst_rate` = 12 
+AND igst_amount - (0.01*igst_rate*taxable_amount) < -0.1
+
+
+SELECT * FROM sales_ecommerce_stack
+WHERE `cgst_rate` = 6 
+AND cgst_amount - (0.01*cgst_rate*taxable_amount) < -0.1
+
+UPDATE `sales_ecommerce_stack` SET 
+`sgst_amount` = round(0.01*sgst_rate*taxable_amount,2),
+taxable_amount = total - sgst_amount
+WHERE `sgst_rate` = 6 
+AND sgst_amount - (0.01*sgst_rate*taxable_amount) < -0.1
+
+SELECT * FROM `sales_ecommerce_stack`
+WHERE taxable_amount < 1000
+AND cgst_rate + igst_rate + sgst_rate = 12
+AND total < 1050
+
+
+SELECT sales_ecommerce.invoice_no, sales_ecommerce.created_at, sales_ecommerce_stack.taxable_amount, round(sales_ecommerce_stack.total / (1+sales_ecommerce_stack.igst_rate*0.01),2) AS V, sales_ecommerce_stack.taxable_amount - round(sales_ecommerce_stack.total / (1+sales_ecommerce_stack.igst_rate*0.01),2) AS difference,
+sales_ecommerce_stack.total,sales_ecommerce_stack.igst_rate,sales_ecommerce_stack.cgst_rate
+FROM `sales_ecommerce` INNER JOIN customers_ecommerce ON sales_ecommerce.ecommerce_customer_id = customers_ecommerce.id INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id WHERE
+sales_ecommerce_stack.igst_rate > 0 AND
+sales_ecommerce_stack.taxable_amount - round((sales_ecommerce_stack.total / (1+sales_ecommerce_stack.igst_rate*0.01 )),2) != 0 ORDER BY `sales_ecommerce`.`created_at` 
+
+
+
+SELECT sales_ecommerce.invoice_no, sales_ecommerce.created_at, sales_ecommerce_stack.taxable_amount, round(sales_ecommerce_stack.total / (1+sales_ecommerce_stack.igst_rate*0.01),2) AS V, sales_ecommerce_stack.taxable_amount - round(sales_ecommerce_stack.total / (1+sales_ecommerce_stack.igst_rate*0.01),2) AS difference, sales_ecommerce_stack.total,sales_ecommerce_stack.igst_rate,sales_ecommerce_stack.cgst_rate FROM `sales_ecommerce` INNER JOIN customers_ecommerce ON sales_ecommerce.ecommerce_customer_id = customers_ecommerce.id INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id WHERE sales_ecommerce_stack.cgst_rate > 0 AND sales_ecommerce_stack.taxable_amount - round((sales_ecommerce_stack.total / (1+sales_ecommerce_stack.cgst_rate*2*0.01 )),2) != 0 ORDER BY `sales_ecommerce`.`created_at` 
+
+UPDATE sales_ecommerce_stack
+SET 
+sales_ecommerce_stack.taxable_amount = round((sales_ecommerce_stack.total / (1+sales_ecommerce_stack.cgst_rate*2*0.01 )),2),
+
+sales_ecommerce_stack.sgst_amount = round(total - (round((sales_ecommerce_stack.total / (1+sales_ecommerce_stack.cgst_rate*2*0.01 )),2)),2),
+
+sales_ecommerce_stack.cgst_amount=total - (round((sales_ecommerce_stack.total / (1+sales_ecommerce_stack.cgst_rate*2*0.01 )),2)) - (round(total - (round((sales_ecommerce_stack.total / (1+sales_ecommerce_stack.cgst_rate*2*0.01 )),2)),2))
+
+
+WHERE sales_ecommerce_stack.cgst_rate > 0 AND sales_ecommerce_stack.taxable_amount - round((sales_ecommerce_stack.total / (1+sales_ecommerce_stack.cgst_rate*2*0.01 )),2) != 0
+
+
+SELECT sales_ecommerce.invoice_no, sales_ecommerce.created_at, sales_ecommerce_stack.taxable_amount, round(sales_ecommerce_stack.total / (1+sales_ecommerce_stack.igst_rate*0.01),2) AS V, sales_ecommerce_stack.taxable_amount - round(sales_ecommerce_stack.total / (1+sales_ecommerce_stack.igst_rate*0.01),2) AS difference, sales_ecommerce_stack.total,sales_ecommerce_stack.igst_rate,sales_ecommerce_stack.igst_rate FROM `sales_ecommerce` 
+
+INNER JOIN customers_ecommerce ON sales_ecommerce.ecommerce_customer_id = customers_ecommerce.id 
+
+INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id 
+
+WHERE sales_ecommerce_stack.igst_rate > 0 AND sales_ecommerce_stack.taxable_amount - round((sales_ecommerce_stack.total / (1+sales_ecommerce_stack.igst_rate*0.01 )),2) != 0 ORDER BY `sales_ecommerce`.`created_at` 
+
+UPDATE sales_ecommerce_stack
+SET 
+sales_ecommerce_stack.taxable_amount = round((sales_ecommerce_stack.total / (1+sales_ecommerce_stack.igst_rate*0.01 )),2),
+
+sales_ecommerce_stack.igst_amount = round(total - (round((sales_ecommerce_stack.total / (1+sales_ecommerce_stack.igst_rate*0.01 )),2)),2)
+
+WHERE sales_ecommerce_stack.igst_rate > 0 AND sales_ecommerce_stack.taxable_amount - round((sales_ecommerce_stack.total / (1+sales_ecommerce_stack.igst_rate*0.01 )),2) != 0
+
+
+UPDATE sales_ecommerce s 
+INNER JOIN
+(
+   SELECT ecommerce_sale_id,
+    SUM(`taxable_amount`) as 'taxable_amount',
+    SUM(`cgst_amount`) as 'cgst_amount',
+    SUM(`sgst_amount`) as 'sgst_amount',
+    SUM(`igst_amount`) as 'igst_amount',
+    SUM(`total`) as 'total'
+   FROM sales_ecommerce_stack 
+   GROUP BY ecommerce_sale_id
+) ss ON s.id = ss.ecommerce_sale_id
+SET 
+s.taxable_amount = ss.taxable_amount,
+s.cgst_amount = ss.cgst_amount,
+s.sgst_amount = ss.sgst_amount,
+s.igst_amount = ss.igst_amount,
+s.extra = 1
+WHERE s.icgst_amount != ss.igst_amount;
+
+
+SELECT s.invoice_no, s.created_at,s.taxable_amount,ss.taxable_amount FROM sales_ecommerce s 
+INNER JOIN
+(
+   SELECT ecommerce_sale_id,
+    SUM(`taxable_amount`) as 'taxable_amount',
+    SUM(`cgst_amount`) as 'cgst_amount',
+    SUM(`sgst_amount`) as 'sgst_amount',
+    SUM(`igst_amount`) as 'igst_amount',
+    SUM(`total`) as 'total'
+   FROM sales_ecommerce_stack 
+   GROUP BY ecommerce_sale_id
+) ss ON s.id = ss.ecommerce_sale_id
+WHERE s.igst_amount != ss.igst_amount;
+
+
+UPDATE sales_ecommerce s 
+INNER JOIN
+(
+   SELECT ecommerce_sale_id,
+    SUM(`taxable_amount`) as 'taxable_amount',
+    SUM(`cgst_amount`) as 'cgst_amount',
+    SUM(`sgst_amount`) as 'sgst_amount',
+    SUM(`igst_amount`) as 'igst_amount',
+    SUM(`total`) as 'total'
+   FROM sales_ecommerce_stack 
+   GROUP BY ecommerce_sale_id
+) ss ON s.id = ss.ecommerce_sale_id
+SET 
+s.taxable_amount = ss.taxable_amount,
+s.cgst_amount = ss.cgst_amount,
+s.sgst_amount = ss.sgst_amount,
+s.igst_amount = ss.igst_amount,
+s.extra = 1
+WHERE s.cgst_amount != ss.cgst_amount;
+
+
+SELECT sales_retail.invoice_no,sales_retail.created_at
+FROM `sales_retail_stack` 
+INNER JOIN sales_retail ON sales_retail_stack.sale_retail_id = sales_retail.id
+WHERE sales_retail_stack.cgst_amount - sales_retail_stack.sgst_amount > 1
+
+UPDATE `sales_retail_stack` SET 
+`cgst_amount` = 57.59,
+`sgst_amount` = 57.59
+ WHERE cgst_amount - sgst_amount > 1 
+
+ UPDATE `sales_retail` SET 
+`cgst_amount` = 57.59,
+`sgst_amount` = 57.59
+WHERE cgst_amount - sgst_amount > 1
+AND quantity = 1
+
+
