@@ -1329,6 +1329,60 @@ CREATE TABLE `goods_return_ecommerce_stack` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
+set @bills = '1';
+UPDATE local_sales s 
+INNER JOIN
+(
+   SELECT sale_id, discount_rate,
+   SUM(`selling_price`) as 'billing_amount',
+    SUM(`taxable_amount`) as 'taxable_amount',
+    SUM(`cgst_amount`) as 'cgst_amount',
+    SUM(`sgst_amount`) as 'sgst_amount',
+    SUM(`igst_amount`) as 'igst_amount',
+    SUM(`discount_amount`) as 'discount_amount',
+    SUM(`total`) as 'total'
+   FROM local_sale_stack 
+   GROUP BY sale_id
+) ss ON s.id = ss.sale_id
+SET 
+s.billing_amount = ss.billing_amount,
+s.taxable_amount = ss.taxable_amount,
+s.cgst_amount = ss.cgst_amount,
+s.sgst_amount = ss.sgst_amount,
+s.igst_amount = ss.igst_amount,
+s.discount_rate = ss.discount_rate,
+s.discount_amount = ss.discount_amount,
+s.total = ss.total
+WHERE s.id IN (@bills);
+
+set @bills = '5';
+
+UPDATE `local_sale_stack` SET 
+`cgst_rate` = 0,
+`sgst_rate` = 0,
+`igst_rate` = 5
+WHERE 
+taxable_amount < 1000 AND
+sale_id IN (@bills) ;
+
+UPDATE `local_sale_stack` SET 
+`cgst_rate` = 0,
+`sgst_rate` = 0,
+`igst_rate` = 12
+WHERE 
+taxable_amount > 1000 AND
+sale_id IN (@bills) ;
+
+UPDATE `local_sale_stack` SET 
+`cgst_amount` = ROUND(`cgst_rate` * 0.01 * `taxable_amount`,2),
+`sgst_amount` = ROUND(`sgst_rate` * 0.01 * `taxable_amount`,2),
+`igst_amount` = ROUND(`igst_rate` * 0.01 * `taxable_amount`,2)
+WHERE sale_id IN (@bills) ;
+
+UPDATE `local_sale_stack` SET 
+`total` = taxable_amount + cgst_amount + sgst_amount + igst_amount
+WHERE sale_id IN (@bills) ;
+
 set @bills = '411';
 
 UPDATE `sale_stack` SET 
@@ -1624,4 +1678,97 @@ UPDATE `sales_retail_stack` SET
 WHERE cgst_amount - sgst_amount > 1
 AND quantity = 1
 
+SELECT COUNT(approval_stack.id) FROM `approval_stack` INNER JOIN approvals ON approvals.id = approval_stack.approval_id WHERE approvals.status = 1 AND approval_stack.design LIKE "VF%" AND approvals.created_at > "2017-11-07";
 
+SELECT COUNT(approval_return_stack.id) FROM `approval_return_stack` INNER JOIN approval_return ON approval_return_stack.approval_return_id = approval_return.id WHERE approval_return.status = 1 AND approval_return_stack.design LIKE "VF%" AND approval_return.created_at > "2017-11-07";
+
+SELECT SUM(sale_stack.quantity) FROM `sale_stack` INNER JOIN sales ON sales.id = sale_stack.sale_id WHERE sales.status = 1 AND sale_stack.description LIKE "VF%" AND sales.created_at > "2017-11-07";
+
+
+SELECT SUM(sale_stack.quantity) FROM `sale_stack` INNER JOIN sales ON sales.id = sale_stack.sale_id WHERE sales.status = 1 AND sale_stack.description LIKE "VF%" AND sales.created_at > "2017-11-06" AND sales.created_at < "2017-11-07";
+
+
+
+SELECT * FROM `alteration_stack` 
+WHERE created_at > "2017-11-06" AND original_sku LIKE "VF%"
+
+
+SELECT SUM(quantity) FROM `stock` INNER JOIN new_product_master ON stock.barcode = new_product_master.barcode WHERE stock.warehouse = 1 AND new_product_master.design LIKE "VF%" 
+
+
+SELECT new_product_master.design,wrong_new_product_master.design,new_product_master.barcode,wrong_new_product_master.created_at,wrong_new_product_master.updated_by 
+
+FROM `new_product_master` 
+
+INNER JOIN wrong_new_product_master ON new_product_master.barcode = wrong_new_product_master.barcode
+WHERE new_product_master.design != wrong_new_product_master.design
+
+UPDATE `goods_return_ecommerce` g
+INNER JOIN sales_ecommerce s ON g.ecommerce_sale_id = s.id 
+SET g.cgst_amount = s.cgst_amount,
+g.sgst_amount = s.sgst_amount
+WHERE g.cgst_amount != s.cgst_amount
+
+UPDATE `goods_return_ecommerce` g
+INNER JOIN sales_ecommerce s ON g.ecommerce_sale_id = s.id 
+SET g.igst_amount = s.igst_amount
+WHERE g.igst_amount != s.igst_amount
+
+
+
+
+SELECT g.igst_amount,s.igst_amount FROM `goods_return_ecommerce` g
+INNER JOIN sales_ecommerce s ON g.ecommerce_sale_id = s.id 
+WHERE g.igst_amount != s.igst_amount
+
+
+SELECT * FROM `goods_return_ecommerce_stack`
+INNER JOIN goods_return_ecommerce ON goods_return_ecommerce.id = goods_return_ecommerce_stack.ecommerce_goods_return_id
+WHERE goods_return_ecommerce.igst_amount != goods_return_ecommerce_stack.igst_amount
+
+SELECT sales_ecommerce_stack.igst_rate,sales_ecommerce_stack.igst_amount, goods_return_ecommerce_stack.igst_rate,goods_return_ecommerce_stack.igst_amount FROM `goods_return_ecommerce_stack`
+INNER JOIN goods_return_ecommerce ON goods_return_ecommerce.id = goods_return_ecommerce_stack.ecommerce_goods_return_id
+INNER JOIN sales_ecommerce ON sales_ecommerce.id = goods_return_ecommerce.ecommerce_sale_id
+INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id
+WHERE goods_return_ecommerce.igst_amount != goods_return_ecommerce_stack.igst_amount
+
+
+SELECT sales_ecommerce_stack.igst_rate,sales_ecommerce_stack.igst_amount, goods_return_ecommerce_stack.igst_rate,goods_return_ecommerce_stack.igst_amount, sales_ecommerce_stack.taxable_amount FROM `goods_return_ecommerce_stack`
+INNER JOIN goods_return_ecommerce ON goods_return_ecommerce.id = goods_return_ecommerce_stack.ecommerce_goods_return_id
+INNER JOIN sales_ecommerce ON sales_ecommerce.id = goods_return_ecommerce.ecommerce_sale_id
+INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id
+WHERE goods_return_ecommerce.igst_amount != goods_return_ecommerce_stack.igst_amount
+
+UPDATE goods_return_ecommerce_stack
+INNER JOIN goods_return_ecommerce ON goods_return_ecommerce.id = goods_return_ecommerce_stack.ecommerce_goods_return_id
+INNER JOIN sales_ecommerce ON sales_ecommerce.id = goods_return_ecommerce.ecommerce_sale_id
+INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id
+SET goods_return_ecommerce_stack.igst_rate = sales_ecommerce_stack.igst_rate,
+goods_return_ecommerce_stack.igst_amount = sales_ecommerce_stack.igst_amount
+WHERE goods_return_ecommerce.igst_amount != goods_return_ecommerce_stack.igst_amount
+
+UPDATE goods_return_ecommerce_stack
+INNER JOIN goods_return_ecommerce ON goods_return_ecommerce.id = goods_return_ecommerce_stack.ecommerce_goods_return_id
+INNER JOIN sales_ecommerce ON sales_ecommerce.id = goods_return_ecommerce.ecommerce_sale_id
+INNER JOIN sales_ecommerce_stack ON sales_ecommerce_stack.ecommerce_sale_id = sales_ecommerce.id
+SET goods_return_ecommerce_stack.cgst_rate = sales_ecommerce_stack.cgst_rate,
+goods_return_ecommerce_stack.cgst_amount = sales_ecommerce_stack.cgst_amount,
+goods_return_ecommerce_stack.sgst_rate = sales_ecommerce_stack.sgst_rate,
+goods_return_ecommerce_stack.sgst_amount = sales_ecommerce_stack.sgst_amount
+WHERE goods_return_ecommerce.cgst_amount != goods_return_ecommerce_stack.cgst_amount
+
+DELETE 
+s FROM `stock` s
+INNER JOIN new_product_master n ON s.barcode = n.barcode 
+WHERE n.design LIKE "VF%" AND s.warehouse = 1
+
+SELECT SUM(s.quantity) 
+FROM `stock` s
+INNER JOIN new_product_master n ON s.barcode = n.barcode 
+WHERE n.design LIKE "VF-" AND s.warehouse = 1
+
+SELECT SUM(stock.quantity) FROM `stock` INNER JOIN new_product_master ON stock.barcode = new_product_master.barcode WHERE new_product_master.design LIKE "VF-%" AND stock.warehouse = 1 
+
+$j = 5;
+$from2 = date("Y-m-d", strtotime("-".$j." day", strtotime("now")));
+echo $from2;
