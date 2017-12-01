@@ -295,9 +295,9 @@ function calculateTotal() {
                 gst_rate = parseFloat(5).toFixed(2);
         }else if(against_h_form == 1){
             if(gst_type == "S")       
-                gst_rate = parseFloat(0.5).toFixed(2);
+                gst_rate = parseFloat(0.05).toFixed(2);
             else 
-                gst_rate = parseFloat(1).toFixed(2);
+                gst_rate = parseFloat(0.1).toFixed(2);
         }
         else{
             if(gst_type == "S"){
