@@ -451,6 +451,30 @@ text-align: center;
           width: 150px;
         }
 
+        .mobile{
+          display: none !important;
+        }
+
+        @media screen and (max-width: 400px) {
+        .logo{
+          position:absolute;
+          top:15px;
+          left:25px;
+          color: white;
+          font-weight: bold;
+          font-size: 15px;
+          width: 200px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 200px;
+        }
+        .mobile{
+          display: block !important;
+        }
+
+      }
+
       /* Accordion Button */
       /*ul li.has-subnav .accordion-btn {
         color:#fff; 
