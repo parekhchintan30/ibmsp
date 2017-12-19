@@ -140,7 +140,7 @@ jQuery(function($) {
             var newId = $('.barcodeScanner table tr:last').data('id') + 1;
             var newRow = '<tr id="element-' + newId + '" data-id="' + newId + '">';
             newRow += '<td>' + newId + '</td>';
-            newRow += '<td style="width:150px"><input type="text" class="barcode" id="barcode-' + newId + '" autocomplete="off" value=""></td>';
+            newRow += '<td style="width:150px"><input type="text" class="barcode barcode_field" id="barcode-' + newId + '" autocomplete="off" value=""></td>';
             newRow += '<td class="description"></td>';
             newRow += '<td style="width:150px"><input type="text" class="barcode quantity" id="quantity-' + newId + '" autocomplete="off" value=""></td>';
             newRow += '<td class="mrp"></td>';
