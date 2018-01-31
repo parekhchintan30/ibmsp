@@ -1,3 +1,36 @@
+SELECT * FROM `sales_retail_stack` WHERE sales_retail_stack.sale_retail_id IN (4001, 4043, 4078, 4194, 4226, 4253, 4315, 4441, 4545, 4643, 4694, 4825, 4853, 4905, 5069, 5175, 3898, 4036, 4044, 4055, 4242, 4306, 4307, 4347, 4362, 4492, 4571, 4594, 4688, 5146, 5149, 5161, 5165, 5166, 5167, 5170, 5184, 5189, 4115, 4180, 4380, 4402, 4403, 4868, 4948, 5007, 5147, 5178, 5181, 5185)
+AND taxable_amount < 1000 AND cgst_rate = 6
+
+
+UPDATE sales_retail s 
+INNER JOIN
+(
+   SELECT sale_retail_id, discount_rate,
+   SUM(`selling_price`) as 'billing_amount',
+    SUM(`taxable_amount`) as 'taxable_amount',
+    SUM(`cgst_amount`) as 'cgst_amount',
+    SUM(`sgst_amount`) as 'sgst_amount',
+    SUM(`igst_amount`) as 'igst_amount',
+    SUM(`discount_amount`) as 'discount_amount',
+    SUM(`total`) as 'total'
+   FROM sales_retail_stack 
+   GROUP BY sale_retail_id
+) ss ON s.id = ss.sale_retail_id
+SET 
+s.billing_amount = ss.billing_amount,
+s.taxable_amount = ss.taxable_amount,
+s.cgst_amount = ss.cgst_amount,
+s.sgst_amount = ss.sgst_amount,
+s.igst_amount = ss.igst_amount,
+s.discount_rate = ss.discount_rate,
+s.discount_amount = ss.discount_amount,
+s.total = ss.total
+WHERE s.id IN (4001, 4043, 4078, 4194, 4226, 4253, 4315, 4441, 4545, 4643, 4694, 4825, 4853, 4905, 5069, 5175, 3898, 4036, 4044, 4055, 4242, 4306, 4307, 4347, 4362, 4492, 4571, 4594, 4688, 5146, 5149, 5161, 5165, 5166, 5167, 5170, 5184, 5189, 4115, 4180, 4380, 4402, 4403, 4868, 4948, 5007, 5147, 5178, 5181, 5185);
+
+
+
+
+
 ALTER TABLE `sales` ADD `cancellation_reason` VARCHAR(200) NULL AFTER `status`;
 ALTER TABLE `sales_retail` ADD `uniqid` MEDIUMTEXT NULL AFTER `status`;
 ALTER TABLE `sales_retail` ADD `cancellation_reason` VARCHAR(200) NULL AFTER `status`;
