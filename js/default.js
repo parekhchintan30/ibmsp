@@ -1533,7 +1533,7 @@ function pBNoMRP(key, value, date_string) {
         qz.append('A545,182,0,3,1,1,N,"' + size + '"\n');
         qz.append('A325,205,0,3,1,1,N,"' + identifier + '"\n');
         //qz.append('A325,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
-        qz.append('A325,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
+        //qz.append('A325,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
         qz.append('A325,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
         qz.append('\nP1,1\n');
         total_barcodes_printed++;
@@ -1568,8 +1568,8 @@ function pBNoMRP(key, value, date_string) {
             //qz.append('A0,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
             //qz.append('A325,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
 
-            qz.append('A0,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
-            qz.append('A325,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
+            //qz.append('A0,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
+            //qz.append('A325,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
 
             qz.append('A0,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
             qz.append('A325,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
@@ -1589,7 +1589,7 @@ function pBNoMRP(key, value, date_string) {
             qz.append('A0,205,0,3,1,1,N,"' + identifier + '"\n');
 
             //qz.append('A0,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
-            qz.append('A0,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
+            //qz.append('A0,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
             qz.append('A0,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
 
 
