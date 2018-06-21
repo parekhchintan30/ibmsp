@@ -9,9 +9,11 @@ var delay = (function() {
 var odd = 0;
 var total_print_documents = 0;
 var total_barcodes_printed = 0;
+var qz_array = [];
+    
 var finished = true;
 var allowedColors = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed ", "Indigo ", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "RebeccaPurple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen"];
-var allowedSizes = ["30", "32", "34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54", "56", "58", "L", "XL", "XXL", "M", "S", "XS", "XXS", "XXXL", "4XL", "28", "FS", "14Y", "6Y", "8Y", "2Y", "4Y", "10Y", "12Y" , "NA"];
+var allowedSizes = ["30", "32", "34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54", "56", "58", "60", "L", "XL", "XXL", "M", "S", "XS", "XXS", "XXXL", "4XL", "28", "FS", "14Y", "6Y", "8Y", "2Y", "4Y", "10Y", "12Y" , "NA"];
 
 var allowedStates =["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jammu and Kashmir",
 "Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Orissa","Punjab","Rajasthan","Sikkim",
@@ -1144,10 +1146,10 @@ function copyOrdersContent(event) {
 function printBarcodes() {
 
     if (qz) {
-        qz.findPrinter('TSC TTP-247');
+        var config = qz.configs.create("TSC TTP-247")
     } else {
         qz = document.getElementById('qz');
-        qz.findPrinter('TSC TTP-247');
+        config = qz.configs.create("TSC TTP-247")
     }
 
     var date = new Date();
@@ -1155,10 +1157,10 @@ function printBarcodes() {
     var totalBarcodes = 0;
     var subTotal = 0;
     var print = print_array;
-    qz.append("N\n");
-    qz.append("q550\n");
-    qz.append("Q303,26\n");
-    qz.append('TDdd me y4\n');
+    //qz_array.push("N\n");
+    //qz_array.push("q550\n");
+    //qz_array.push("Q303,26\n");
+    //qz_array.push('TDdd me y4\n');
     var c = 0;
     $.each(print, function(key, value) {
         pB(key, value, date_string);
@@ -1166,10 +1168,10 @@ function printBarcodes() {
     });
     if (odd) {
         //alert("Inside odd");  
-        qz.append('\nP1,1\n');
+        qz_array.push('\nP1,1\n');
         c++;
         odd = 0;
-        // qz.append('END');
+        // qz_array.push('END');
         total_print_documents++;
         // alert("appending odd");
     } else {
@@ -1191,7 +1193,9 @@ function printBarcodes() {
 
     var r = confirm("Are you sure you want to print " + total_barcodes_printed + " barcodes");
     if (r == true) {
-        qz.print();
+        qz.print(config,qz_array).catch(function(e){
+            console.error(e);
+        });
     }
 
     total_print_documents = 0;
@@ -1214,10 +1218,10 @@ function printBarcodesNoMRP() {
     var totalBarcodes = 0;
     var subTotal = 0;
     var print = print_array;
-    qz.append("N\n");
-    qz.append("q550\n");
-    qz.append("Q303,26\n");
-    qz.append('TDdd me y4\n');
+    qz_array.push("N\n");
+    qz_array.push("q550\n");
+    qz_array.push("Q303,26\n");
+    qz_array.push('TDdd me y4\n');
     var c = 0;
     $.each(print, function(key, value) {
         pBNoMRP(key, value, date_string);
@@ -1225,10 +1229,10 @@ function printBarcodesNoMRP() {
     });
     if (odd) {
         //alert("Inside odd");  
-        qz.append('\nP1,1\n');
+        qz_array.push('\nP1,1\n');
         c++;
         odd = 0;
-        // qz.append('END');
+        // qz_array.push('END');
         total_print_documents++;
         // alert("appending odd");
     } else {
@@ -1273,10 +1277,10 @@ function printBarcodesKraftiny() {
     var totalBarcodes = 0;
     var subTotal = 0;
     var print = print_array;
-    qz.append("N\n");
-    qz.append("q550\n");
-    qz.append("Q303,26\n");
-    qz.append('TDdd me y4\n');
+    qz_array.push("N\n");
+    qz_array.push("q550\n");
+    qz_array.push("Q303,26\n");
+    qz_array.push('TDdd me y4\n');
     var c = 0;
     $.each(print, function(key, value) {
         pBKraftiny(key, value, date_string);
@@ -1284,10 +1288,10 @@ function printBarcodesKraftiny() {
     });
     if (odd) {
         //alert("Inside odd");  
-        qz.append('\nP1,1\n');
+        qz_array.push('\nP1,1\n');
         c++;
         odd = 0;
-        // qz.append('END');
+        // qz_array.push('END');
         total_print_documents++;
         // alert("appending odd");
     } else {
@@ -1337,19 +1341,19 @@ function pBKraftiny(key, value, date_string) {
         size = "42";
         
     if (odd) {
-        qz.append('B325,20,0,1A,2,2,70,B,"' + key + '"\n');
-        qz.append('A325,125,0,3,1,1,N,"' + category + '"\n');
-        qz.append('A325,150,0,3,1,1,N,"' + design + '"\n');
-        qz.append('A325,175,0,3,1,1,N,"' + color + '"\n');
-        qz.append('A545,175,0,3,1,1,N,"' + size + '"\n');
-        //qz.append('A325,205,0,3,1,1,N,"' + identifier + '"\n');
-        qz.append('A325,200,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
-        qz.append('A325,225,0,1,1,1,N,"(Inclu. of all taxes)"\n');
-        qz.append('A325,242,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
-        qz.append('A325,259,0,1,1,1,N,"Kraftiny,Pestom Sagar Rd.3"\n');
-         qz.append('A325,276,0,1,1,1,N,"Opp. Ambaji Niketan,Mum-89"\n');
-        qz.append('A325,295,0,1,1,1,N,"Cont. +91-9594283890"\n');
-        qz.append('\nP1,1\n');
+        qz_array.push('B325,20,0,1A,2,2,70,B,"' + key + '"\n');
+        qz_array.push('A325,125,0,3,1,1,N,"' + category + '"\n');
+        qz_array.push('A325,150,0,3,1,1,N,"' + design + '"\n');
+        qz_array.push('A325,175,0,3,1,1,N,"' + color + '"\n');
+        qz_array.push('A545,175,0,3,1,1,N,"' + size + '"\n');
+        //qz_array.push('A325,205,0,3,1,1,N,"' + identifier + '"\n');
+        qz_array.push('A325,200,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
+        qz_array.push('A325,225,0,1,1,1,N,"(Inclu. of all taxes)"\n');
+        qz_array.push('A325,242,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
+        qz_array.push('A325,259,0,1,1,1,N,"Kraftiny,Pestom Sagar Rd.3"\n');
+         qz_array.push('A325,276,0,1,1,1,N,"Opp. Ambaji Niketan,Mum-89"\n');
+        qz_array.push('A325,295,0,1,1,1,N,"Cont. +91-9594283890"\n');
+        qz_array.push('\nP1,1\n');
         total_barcodes_printed++;
         total_print_documents++;
         odd = 0;
@@ -1360,70 +1364,70 @@ function pBKraftiny(key, value, date_string) {
         if (quantity % 2 == 0 || Math.floor(quantity / 2) > 0) {
             var set = Math.floor(quantity / 2);
             var remaining = quantity % 2;
-            qz.append('\nN\n');
-            qz.append('B0,20,0,1A,2,2,70,B,"' + key + '"\n');
-            qz.append('B325,20,0,1A,2,2,70,B,"' + key + '"\n');
+            qz_array.push('\nN\n');
+            qz_array.push('B0,20,0,1A,2,2,70,B,"' + key + '"\n');
+            qz_array.push('B325,20,0,1A,2,2,70,B,"' + key + '"\n');
 
-            qz.append('A0,125,0,3,1,1,N,"' + category + '"\n');
-            qz.append('A325,125,0,3,1,1,N,"' + category + '"\n');
+            qz_array.push('A0,125,0,3,1,1,N,"' + category + '"\n');
+            qz_array.push('A325,125,0,3,1,1,N,"' + category + '"\n');
 
-            qz.append('A0,150,0,3,1,1,N,"' + design + '"\n');
-            qz.append('A325,150,0,3,1,1,N,"' + design + '"\n');
+            qz_array.push('A0,150,0,3,1,1,N,"' + design + '"\n');
+            qz_array.push('A325,150,0,3,1,1,N,"' + design + '"\n');
 
-            qz.append('A0,175,0,3,1,1,N,"' + color + '"\n');
-            qz.append('A325,175,0,3,1,1,N,"' + color + '"\n');
+            qz_array.push('A0,175,0,3,1,1,N,"' + color + '"\n');
+            qz_array.push('A325,175,0,3,1,1,N,"' + color + '"\n');
 
-            qz.append('A190,175,0,3,1,1,N,"' + size + '"\n');
-            qz.append('A545,175,0,3,1,1,N,"' + size + '"\n');
+            qz_array.push('A190,175,0,3,1,1,N,"' + size + '"\n');
+            qz_array.push('A545,175,0,3,1,1,N,"' + size + '"\n');
 
-            //qz.append('A0,205,0,3,1,1,N,"' + identifier + '"\n');
-            //qz.append('A325,205,0,3,1,1,N,"' + identifier + '"\n');
+            //qz_array.push('A0,205,0,3,1,1,N,"' + identifier + '"\n');
+            //qz_array.push('A325,205,0,3,1,1,N,"' + identifier + '"\n');
 
-            qz.append('A0,200,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
-            qz.append('A325,200,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
+            qz_array.push('A0,200,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
+            qz_array.push('A325,200,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
 
-            qz.append('A0,225,0,1,1,1,N,"(Inclu. of all taxes)"\n');
-            qz.append('A325,225,0,1,1,1,N,"(Inclu. of all taxes)"\n');
+            qz_array.push('A0,225,0,1,1,1,N,"(Inclu. of all taxes)"\n');
+            qz_array.push('A325,225,0,1,1,1,N,"(Inclu. of all taxes)"\n');
 
-            qz.append('A0,242,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
-            qz.append('A325,242,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
+            qz_array.push('A0,242,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
+            qz_array.push('A325,242,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
             
-            qz.append('A0,259,0,1,1,1,N,"Kraftiny,Pestom Sagar Rd.3,"\n');
-            qz.append('A325,259,0,1,1,1,N,"Kraftiny,Pestom Sagar Rd.3,"\n');
+            qz_array.push('A0,259,0,1,1,1,N,"Kraftiny,Pestom Sagar Rd.3,"\n');
+            qz_array.push('A325,259,0,1,1,1,N,"Kraftiny,Pestom Sagar Rd.3,"\n');
             
-            qz.append('A0,276,0,1,1,1,N,"Opp. Ambaji Niketan,Mum-89"\n');
-            qz.append('A325,276,0,1,1,1,N,"Opp. Ambaji Niketan,Mum-89"\n');
+            qz_array.push('A0,276,0,1,1,1,N,"Opp. Ambaji Niketan,Mum-89"\n');
+            qz_array.push('A325,276,0,1,1,1,N,"Opp. Ambaji Niketan,Mum-89"\n');
 
-            qz.append('A0,295,0,1,1,1,N,"Cont. +91-9594283890"\n');
-            qz.append('A325,295,0,1,1,1,N,"Cont. +91-9594283890"\n');
+            qz_array.push('A0,295,0,1,1,1,N,"Cont. +91-9594283890"\n');
+            qz_array.push('A325,295,0,1,1,1,N,"Cont. +91-9594283890"\n');
 
-            
-            
             
             
             
-            qz.append('\nP' + set + ',1\n');
+            
+            
+            qz_array.push('\nP' + set + ',1\n');
             total_barcodes_printed += set * 2;
             total_print_documents++;
         }
 
 
         if (remaining || Math.floor(quantity / 2) == 0) {
-            qz.append('\nN\n');
-            qz.append('B0,20,0,1A,2,2,70,B,"' + key + '"\n');
-            qz.append('A0,125,0,3,1,1,N,"' + category + '"\n');
-            qz.append('A0,150,0,3,1,1,N,"' + design + '"\n');
-            qz.append('A0,175,0,3,1,1,N,"' + color + '"\n');
-            qz.append('A190,175,0,3,1,1,N,"' + size + '"\n');
-            //qz.append('A0,205,0,3,1,1,N,"' + identifier + '"\n');
+            qz_array.push('\nN\n');
+            qz_array.push('B0,20,0,1A,2,2,70,B,"' + key + '"\n');
+            qz_array.push('A0,125,0,3,1,1,N,"' + category + '"\n');
+            qz_array.push('A0,150,0,3,1,1,N,"' + design + '"\n');
+            qz_array.push('A0,175,0,3,1,1,N,"' + color + '"\n');
+            qz_array.push('A190,175,0,3,1,1,N,"' + size + '"\n');
+            //qz_array.push('A0,205,0,3,1,1,N,"' + identifier + '"\n');
 
-            qz.append('A0,200,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
-            qz.append('A0,225,0,1,1,1,N,"(Inclu. of all taxes)"\n');
-            qz.append('A0,242,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
+            qz_array.push('A0,200,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
+            qz_array.push('A0,225,0,1,1,1,N,"(Inclu. of all taxes)"\n');
+            qz_array.push('A0,242,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
             
-            qz.append('A0,259,0,1,1,1,N,"Kraftiny,Pestom Sagar Rd.3"\n');
-            qz.append('A0,276,0,1,1,1,N,"Opp. Ambaji Niketan,Mum-89"\n');
-            qz.append('A0,295,0,1,1,1,N,"Cont. +91-9594283890"\n');
+            qz_array.push('A0,259,0,1,1,1,N,"Kraftiny,Pestom Sagar Rd.3"\n');
+            qz_array.push('A0,276,0,1,1,1,N,"Opp. Ambaji Niketan,Mum-89"\n');
+            qz_array.push('A0,295,0,1,1,1,N,"Cont. +91-9594283890"\n');
             
             total_barcodes_printed++;
             odd = 1;
@@ -1442,16 +1446,16 @@ function pB(key, value, date_string) {
     var identifier = value['identifier'];
     var category = value['category'];
     if (odd) {
-        qz.append('B325,20,0,1A,2,2,70,B,"' + key + '"\n');
-        qz.append('A325,125,0,3,1,1,N,"' + category + '"\n');
-        qz.append('A325,150,0,4,1,1,N,"' + design + '"\n');
-        qz.append('A325,182,0,3,1,1,N,"' + color + '"\n');
-        qz.append('A545,182,0,3,1,1,N,"' + size + '"\n');
-        qz.append('A325,205,0,3,1,1,N,"' + identifier + '"\n');
-        qz.append('A325,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
-        qz.append('A325,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
-        qz.append('A325,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
-        qz.append('\nP1,1\n');
+        qz_array.push('B325,20,0,1A,2,2,70,B,"' + key + '"\n');
+        qz_array.push('A325,125,0,3,1,1,N,"' + category + '"\n');
+        qz_array.push('A325,150,0,4,1,1,N,"' + design + '"\n');
+        qz_array.push('A325,182,0,3,1,1,N,"' + color + '"\n');
+        qz_array.push('A545,182,0,3,1,1,N,"' + size + '"\n');
+        qz_array.push('A325,205,0,3,1,1,N,"' + identifier + '"\n');
+        qz_array.push('A325,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
+        qz_array.push('A325,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
+        qz_array.push('A325,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
+        qz_array.push('\nP1,1\n');
         total_barcodes_printed++;
         total_print_documents++;
         odd = 0;
@@ -1462,51 +1466,51 @@ function pB(key, value, date_string) {
         if (quantity % 2 == 0 || Math.floor(quantity / 2) > 0) {
             var set = Math.floor(quantity / 2);
             var remaining = quantity % 2;
-            qz.append('\nN\n');
-            qz.append('B0,20,0,1A,2,2,70,B,"' + key + '"\n');
-            qz.append('B325,20,0,1A,2,2,70,B,"' + key + '"\n');
+            qz_array.push('\nN\n');
+            qz_array.push('B0,20,0,1A,2,2,70,B,"' + key + '"\n');
+            qz_array.push('B325,20,0,1A,2,2,70,B,"' + key + '"\n');
 
-            qz.append('A0,125,0,3,1,1,N,"' + category + '"\n');
-            qz.append('A325,125,0,3,1,1,N,"' + category + '"\n');
+            qz_array.push('A0,125,0,3,1,1,N,"' + category + '"\n');
+            qz_array.push('A325,125,0,3,1,1,N,"' + category + '"\n');
 
-            qz.append('A0,150,0,4,1,1,N,"' + design + '"\n');
-            qz.append('A325,150,0,4,1,1,N,"' + design + '"\n');
+            qz_array.push('A0,150,0,4,1,1,N,"' + design + '"\n');
+            qz_array.push('A325,150,0,4,1,1,N,"' + design + '"\n');
 
-            qz.append('A0,182,0,3,1,1,N,"' + color + '"\n');
-            qz.append('A325,182,0,3,1,1,N,"' + color + '"\n');
+            qz_array.push('A0,182,0,3,1,1,N,"' + color + '"\n');
+            qz_array.push('A325,182,0,3,1,1,N,"' + color + '"\n');
 
-            qz.append('A190,182,0,3,1,1,N,"' + size + '"\n');
-            qz.append('A545,182,0,3,1,1,N,"' + size + '"\n');
+            qz_array.push('A190,182,0,3,1,1,N,"' + size + '"\n');
+            qz_array.push('A545,182,0,3,1,1,N,"' + size + '"\n');
 
-            qz.append('A0,205,0,3,1,1,N,"' + identifier + '"\n');
-            qz.append('A325,205,0,3,1,1,N,"' + identifier + '"\n');
+            qz_array.push('A0,205,0,3,1,1,N,"' + identifier + '"\n');
+            qz_array.push('A325,205,0,3,1,1,N,"' + identifier + '"\n');
 
-            qz.append('A0,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
-            qz.append('A325,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
+            qz_array.push('A0,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
+            qz_array.push('A325,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
 
-            qz.append('A0,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
-            qz.append('A325,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
+            qz_array.push('A0,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
+            qz_array.push('A325,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
 
-            qz.append('A0,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
-            qz.append('A325,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
-            qz.append('\nP' + set + ',1\n');
+            qz_array.push('A0,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
+            qz_array.push('A325,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
+            qz_array.push('\nP' + set + ',1\n');
             total_barcodes_printed += set * 2;
             total_print_documents++;
         }
 
 
         if (remaining || Math.floor(quantity / 2) == 0) {
-            qz.append('\nN\n');
-            qz.append('B0,20,0,1A,2,2,70,B,"' + key + '"\n');
-            qz.append('A0,125,0,3,1,1,N,"' + category + '"\n');
-            qz.append('A0,150,0,4,1,1,N,"' + design + '"\n');
-            qz.append('A0,182,0,3,1,1,N,"' + color + '"\n');
-            qz.append('A190,182,0,3,1,1,N,"' + size + '"\n');
-            qz.append('A0,205,0,3,1,1,N,"' + identifier + '"\n');
+            qz_array.push('\nN\n');
+            qz_array.push('B0,20,0,1A,2,2,70,B,"' + key + '"\n');
+            qz_array.push('A0,125,0,3,1,1,N,"' + category + '"\n');
+            qz_array.push('A0,150,0,4,1,1,N,"' + design + '"\n');
+            qz_array.push('A0,182,0,3,1,1,N,"' + color + '"\n');
+            qz_array.push('A190,182,0,3,1,1,N,"' + size + '"\n');
+            qz_array.push('A0,205,0,3,1,1,N,"' + identifier + '"\n');
 
-            qz.append('A0,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
-            qz.append('A0,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
-            qz.append('A0,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
+            qz_array.push('A0,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
+            qz_array.push('A0,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
+            qz_array.push('A0,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
 
 
             total_barcodes_printed++;
@@ -1526,16 +1530,16 @@ function pBNoMRP(key, value, date_string) {
     var identifier = value['identifier'];
     var category = value['category'];
     if (odd) {
-        qz.append('B325,20,0,1A,2,2,70,B,"' + key + '"\n');
-        qz.append('A325,125,0,3,1,1,N,"' + category + '"\n');
-        qz.append('A325,150,0,4,1,1,N,"' + design + '"\n');
-        qz.append('A325,182,0,3,1,1,N,"' + color + '"\n');
-        qz.append('A545,182,0,3,1,1,N,"' + size + '"\n');
-        qz.append('A325,205,0,3,1,1,N,"' + identifier + '"\n');
-        //qz.append('A325,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
-        //qz.append('A325,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
-        qz.append('A325,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
-        qz.append('\nP1,1\n');
+        qz_array.push('B325,20,0,1A,2,2,70,B,"' + key + '"\n');
+        qz_array.push('A325,125,0,3,1,1,N,"' + category + '"\n');
+        qz_array.push('A325,150,0,4,1,1,N,"' + design + '"\n');
+        qz_array.push('A325,182,0,3,1,1,N,"' + color + '"\n');
+        qz_array.push('A545,182,0,3,1,1,N,"' + size + '"\n');
+        qz_array.push('A325,205,0,3,1,1,N,"' + identifier + '"\n');
+        //qz_array.push('A325,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
+        //qz_array.push('A325,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
+        qz_array.push('A325,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
+        qz_array.push('\nP1,1\n');
         total_barcodes_printed++;
         total_print_documents++;
         odd = 0;
@@ -1546,51 +1550,51 @@ function pBNoMRP(key, value, date_string) {
         if (quantity % 2 == 0 || Math.floor(quantity / 2) > 0) {
             var set = Math.floor(quantity / 2);
             var remaining = quantity % 2;
-            qz.append('\nN\n');
-            qz.append('B0,20,0,1A,2,2,70,B,"' + key + '"\n');
-            qz.append('B325,20,0,1A,2,2,70,B,"' + key + '"\n');
+            qz_array.push('\nN\n');
+            qz_array.push('B0,20,0,1A,2,2,70,B,"' + key + '"\n');
+            qz_array.push('B325,20,0,1A,2,2,70,B,"' + key + '"\n');
 
-            qz.append('A0,125,0,3,1,1,N,"' + category + '"\n');
-            qz.append('A325,125,0,3,1,1,N,"' + category + '"\n');
+            qz_array.push('A0,125,0,3,1,1,N,"' + category + '"\n');
+            qz_array.push('A325,125,0,3,1,1,N,"' + category + '"\n');
 
-            qz.append('A0,150,0,4,1,1,N,"' + design + '"\n');
-            qz.append('A325,150,0,4,1,1,N,"' + design + '"\n');
+            qz_array.push('A0,150,0,4,1,1,N,"' + design + '"\n');
+            qz_array.push('A325,150,0,4,1,1,N,"' + design + '"\n');
 
-            qz.append('A0,182,0,3,1,1,N,"' + color + '"\n');
-            qz.append('A325,182,0,3,1,1,N,"' + color + '"\n');
+            qz_array.push('A0,182,0,3,1,1,N,"' + color + '"\n');
+            qz_array.push('A325,182,0,3,1,1,N,"' + color + '"\n');
 
-            qz.append('A190,182,0,3,1,1,N,"' + size + '"\n');
-            qz.append('A545,182,0,3,1,1,N,"' + size + '"\n');
+            qz_array.push('A190,182,0,3,1,1,N,"' + size + '"\n');
+            qz_array.push('A545,182,0,3,1,1,N,"' + size + '"\n');
 
-            qz.append('A0,205,0,3,1,1,N,"' + identifier + '"\n');
-            qz.append('A325,205,0,3,1,1,N,"' + identifier + '"\n');
+            qz_array.push('A0,205,0,3,1,1,N,"' + identifier + '"\n');
+            qz_array.push('A325,205,0,3,1,1,N,"' + identifier + '"\n');
 
-            //qz.append('A0,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
-            //qz.append('A325,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
+            //qz_array.push('A0,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
+            //qz_array.push('A325,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
 
-            //qz.append('A0,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
-            //qz.append('A325,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
+            //qz_array.push('A0,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
+            //qz_array.push('A325,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
 
-            qz.append('A0,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
-            qz.append('A325,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
-            qz.append('\nP' + set + ',1\n');
+            qz_array.push('A0,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
+            qz_array.push('A325,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
+            qz_array.push('\nP' + set + ',1\n');
             total_barcodes_printed += set * 2;
             total_print_documents++;
         }
 
 
         if (remaining || Math.floor(quantity / 2) == 0) {
-            qz.append('\nN\n');
-            qz.append('B0,20,0,1A,2,2,70,B,"' + key + '"\n');
-            qz.append('A0,125,0,3,1,1,N,"' + category + '"\n');
-            qz.append('A0,150,0,4,1,1,N,"' + design + '"\n');
-            qz.append('A0,182,0,3,1,1,N,"' + color + '"\n');
-            qz.append('A190,182,0,3,1,1,N,"' + size + '"\n');
-            qz.append('A0,205,0,3,1,1,N,"' + identifier + '"\n');
+            qz_array.push('\nN\n');
+            qz_array.push('B0,20,0,1A,2,2,70,B,"' + key + '"\n');
+            qz_array.push('A0,125,0,3,1,1,N,"' + category + '"\n');
+            qz_array.push('A0,150,0,4,1,1,N,"' + design + '"\n');
+            qz_array.push('A0,182,0,3,1,1,N,"' + color + '"\n');
+            qz_array.push('A190,182,0,3,1,1,N,"' + size + '"\n');
+            qz_array.push('A0,205,0,3,1,1,N,"' + identifier + '"\n');
 
-            //qz.append('A0,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
-            //qz.append('A0,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
-            qz.append('A0,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
+            //qz_array.push('A0,230,0,3,1,1,N,"M.R.P. Rs. ' + mrp + '"\n');
+            //qz_array.push('A0,252,0,2,1,1,N,"(Inclu. of all taxes)"\n');
+            qz_array.push('A0,275,0,1,1,1,N,"Pcs 1 Pkd. Dt: ' + date_string + '"\n');
 
 
             total_barcodes_printed++;
@@ -1640,39 +1644,39 @@ function pB_tags(key, value, date_string) {
     var worker_id = value['worker_id'];
     //var unique_code = "Vamas "+ category + "-" + design + "-" + color + "-" + size + "-" +worker_id;
     for (i = 0; i < quantity; i++) {
-        qz.append('^XA^MCY^XZ');
-        qz.append('^XA');
-        qz.append('^FX Top section with company logo, name and address.');
-        qz.append('^CF0,60');
-        qz.append('^BY2,2,80');
-        qz.append('^FO45,60^BC^FD' + key + '^FS');
-        qz.append('^FO10,165^GB300,3,3^FS');
-        qz.append('^FX Second section with recipient address and permit information.');
-        qz.append('^CFA,20');
-        qz.append('^FO20,190^FDStyle - ' + design + '^FS');
-        qz.append('^FO20,220^FDColor - ' + color + '^FS');
-        qz.append('^FO20,250^FDSize -  ' + size + '^FS');
-        qz.append('^FO20,280^FDType - ' + identifier + '^FS');
-        qz.append('^FO20,310^FDQuantity - 1 PC^FS');
-        qz.append('^FO20,340^FDMFD - ' + date_string + '^FS');
-        qz.append('^FO10,370^GB300,3,3^FS');
-        qz.append('^FX Second section with recipient address and permit information.');
-        qz.append('^CFA,40');
-        qz.append('^FO20,390^FDMRP Rs.' + mrp + '/-^FS');
-        qz.append('^CFA,13');
-        qz.append('^FO80,430^FD(Inclusive of all taxes)^FS');
-        qz.append('^FO10,440^GB300,3,3^FS');
-        qz.append('^FX Fourth section (the two boxes on the bottom).');
-        qz.append('^FO20,460^GB280,180,3^FS');
-        qz.append('^CFA,15');
-        qz.append('^FO30,470^FDVamas^FS');
-        qz.append('^FO30,495^FD3,Jamuna Bhaiya Chawl,^FS');
-        qz.append('^FO30,520^FDPestom Sagar Road No.3^FS');
-        qz.append('^FO30,545^FDMumbai - 400089^FS');
-        qz.append('^FO30,570^FDContact No:25253808^FS');
-        qz.append('^FO30,595^FDEmail:support@vamas.in^FS');
-        qz.append('^FO80,620^FDwww.vamas.in^FS');
-        qz.append('^XZ');
+        qz_array.push('^XA^MCY^XZ');
+        qz_array.push('^XA');
+        qz_array.push('^FX Top section with company logo, name and address.');
+        qz_array.push('^CF0,60');
+        qz_array.push('^BY2,2,80');
+        qz_array.push('^FO45,60^BC^FD' + key + '^FS');
+        qz_array.push('^FO10,165^GB300,3,3^FS');
+        qz_array.push('^FX Second section with recipient address and permit information.');
+        qz_array.push('^CFA,20');
+        qz_array.push('^FO20,190^FDStyle - ' + design + '^FS');
+        qz_array.push('^FO20,220^FDColor - ' + color + '^FS');
+        qz_array.push('^FO20,250^FDSize -  ' + size + '^FS');
+        qz_array.push('^FO20,280^FDType - ' + identifier + '^FS');
+        qz_array.push('^FO20,310^FDQuantity - 1 PC^FS');
+        qz_array.push('^FO20,340^FDMFD - ' + date_string + '^FS');
+        qz_array.push('^FO10,370^GB300,3,3^FS');
+        qz_array.push('^FX Second section with recipient address and permit information.');
+        qz_array.push('^CFA,40');
+        qz_array.push('^FO20,390^FDMRP Rs.' + mrp + '/-^FS');
+        qz_array.push('^CFA,13');
+        qz_array.push('^FO80,430^FD(Inclusive of all taxes)^FS');
+        qz_array.push('^FO10,440^GB300,3,3^FS');
+        qz_array.push('^FX Fourth section (the two boxes on the bottom).');
+        qz_array.push('^FO20,460^GB280,180,3^FS');
+        qz_array.push('^CFA,15');
+        qz_array.push('^FO30,470^FDVamas^FS');
+        qz_array.push('^FO30,495^FD3,Jamuna Bhaiya Chawl,^FS');
+        qz_array.push('^FO30,520^FDPestom Sagar Road No.3^FS');
+        qz_array.push('^FO30,545^FDMumbai - 400089^FS');
+        qz_array.push('^FO30,570^FDContact No:25253808^FS');
+        qz_array.push('^FO30,595^FDEmail:support@vamas.in^FS');
+        qz_array.push('^FO80,620^FDwww.vamas.in^FS');
+        qz_array.push('^XZ');
         total_barcodes_printed++;
     }
 }
