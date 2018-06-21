@@ -1867,3 +1867,140 @@ SELECT SUM(stock.quantity) FROM `stock` INNER JOIN new_product_master ON stock.b
 $j = 5;
 $from2 = date("Y-m-d", strtotime("-".$j." day", strtotime("now")));
 echo $from2;
+
+
+SELECT SUM(total) FROM `goods_return` 
+WHERE created_at > "2017-07-01" AND created_at < "2017-08-01";
+SELECT SUM(total) FROM `goods_return_ecommerce` 
+WHERE created_at > "2017-07-01" AND created_at < "2017-08-01";
+
+SELECT SUM(total) FROM `goods_return` 
+WHERE created_at > "2017-08-01" AND created_at < "2017-09-01";
+SELECT SUM(total) FROM `goods_return_ecommerce` 
+WHERE created_at > "2017-08-01" AND created_at < "2017-09-01";
+
+SELECT SUM(total) FROM `goods_return` 
+WHERE created_at > "2017-09-01" AND created_at < "2017-10-01";
+SELECT SUM(total) FROM `goods_return_ecommerce` 
+WHERE created_at > "2017-09-01" AND created_at < "2017-10-01";
+
+SELECT SUM(total) FROM `goods_return` 
+WHERE created_at > "2017-10-01" AND created_at < "2017-11-01";
+SELECT SUM(total) FROM `goods_return_ecommerce` 
+WHERE created_at > "2017-10-01" AND created_at < "2017-11-01";
+
+
+SELECT SUM(total) FROM `goods_return` 
+WHERE created_at > "2017-11-01" AND created_at < "2017-12-01";
+SELECT SUM(total) FROM `goods_return_ecommerce` 
+WHERE created_at > "2017-11-01" AND created_at < "2017-12-01";
+
+
+SELECT SUM(total) FROM `goods_return` 
+WHERE created_at > "2017-12-01" AND created_at < "2018-01-01";
+SELECT SUM(total) FROM `goods_return_ecommerce` 
+WHERE created_at > "2017-12-01" AND created_at < "2018-01-01";
+
+
+SELECT SUM(total) FROM `goods_return` 
+WHERE created_at > "2018-01-01" AND created_at < "2018-02-01";
+SELECT SUM(total) FROM `goods_return_ecommerce` 
+WHERE created_at > "2018-01-01" AND created_at < "2018-02-01";
+
+
+SELECT SUM(total) FROM `goods_return` 
+WHERE created_at > "2018-02-01" AND created_at < "2018-03-01";
+SELECT SUM(total) FROM `goods_return_ecommerce` 
+WHERE created_at > "2018-02-01" AND created_at < "2018-03-01";
+
+
+
+
+
+
+
+
+
+SELECT sale_stack.barcode,sales.invoice_no,sale_stack.quantity,sale_stack.return_status,sale_stack.return_quantity FROM `sale_stack` 
+INNER JOIN sales ON sales.id = sale_stack.sale_id
+WHERE sales.id_client = 638
+
+
+
+SELECT 
+sales.created_at,
+clients.name,
+sales.invoice_no,
+sales.quantity,
+sales.billing_amount,
+sales.ethnicity_amount,
+sales.total
+FROM `sales`
+INNER JOIN clients ON sales.id_client = clients.id
+WHERE clients.type LIKE "%Ethnicity%"
+
+
+SELECT 
+sales.created_at,
+clients.name,
+sales.invoice_no,
+sales.quantity,
+sales.billing_amount,
+sales.discount_amount,
+sales.cgst_amount,
+sales.sgst_amount,
+sales.igst_amount,
+sales.total
+FROM `sales`
+INNER JOIN clients ON sales.id_client = clients.id
+WHERE clients.type LIKE "%Ethnicity%"
+
+
+SELECT 
+goods_return.created_at,
+clients.name,
+goods_return.invoice_no,
+goods_return.quantity,
+goods_return.billing_amount,
+goods_return.discount_amount,
+goods_return.cgst_amount,
+goods_return.sgst_amount,
+goods_return.igst_amount,
+goods_return.total
+FROM `goods_return`
+INNER JOIN clients ON goods_return.id_client = clients.id
+WHERE clients.type LIKE "%Ethnicity%"
+
+SELECT 
+goods_return.created_at,
+clients.name,
+goods_return.invoice_no,
+goods_return.quantity,
+goods_return.billing_amount,
+goods_return.ethnicity_amount,
+goods_return.tax,
+goods_return.total
+FROM `goods_return`
+INNER JOIN clients ON goods_return.id_client = clients.id
+WHERE clients.type LIKE "%Ethnicity%"
+AND goods_return.status = 1
+
+UPDATE `goods_return_ecommerce` 
+INNER JOIN goods_return_ecommerce_stack ON goods_return_ecommerce.id = goods_return_ecommerce_stack.ecommerce_goods_return_id
+SET 
+goods_return_ecommerce_stack.taxable_amount = goods_return_ecommerce_stack.total - goods_return_ecommerce_stack.igst_amount,
+goods_return_ecommerce.taxable_amount = goods_return_ecommerce.total - goods_return_ecommerce.igst_amount
+WHERE 
+goods_return_ecommerce_stack.taxable_amount * goods_return_ecommerce_stack.igst_rate != goods_return_ecommerce_stack.igst_amount
+AND goods_return_ecommerce_stack.igst_amount > 0
+
+SELECT * FROM `goods_return_ecommerce_stack` WHERE igst_amount != igst_rate * taxable_amount;
+
+SELECT * FROM `sales_ecommerce` 
+WHERE billing_amount - `discount_amount` != taxable_amount
+AND discount_amount = 0;
+
+UPDATE `goods_return_ecommerce` SET 
+`billing_amount` = `taxable_amount`
+WHERE billing_amount - `discount_amount` != taxable_amount
+AND discount_amount = 0;
