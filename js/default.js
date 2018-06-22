@@ -1156,10 +1156,10 @@ function printBarcodes() {
     var totalBarcodes = 0;
     var subTotal = 0;
     var print = print_array;
-    //qz_array.push("N\n");
-    //qz_array.push("q550\n");
-    //qz_array.push("Q303,26\n");
-    //qz_array.push('TDdd me y4\n');
+    qz_array.push("N\n");
+    qz_array.push("q550\n");
+    qz_array.push("Q303,26\n");
+    qz_array.push('TDdd me y4\n');
     var c = 0;
     $.each(print, function(key, value) {
         pB(key, value, date_string);
@@ -1206,10 +1206,10 @@ function printBarcodes() {
 function printBarcodesNoMRP() {
 
     if (qz) {
-        qz.findPrinter('TSC TTP-247');
+         var config = qz.configs.create("TSC TTP-247")
     } else {
         qz = document.getElementById('qz');
-        qz.findPrinter('TSC TTP-247');
+        config = qz.configs.create("TSC TTP-247")
     }
 
     var date = new Date();
@@ -1240,20 +1240,22 @@ function printBarcodesNoMRP() {
     // Mark the end of a label, in this case  P1 plus a newline character
     // qz-printknows to look for this and treat this as the end of a "page"
     // for better control of larger spooled jobs (i.e. 50+ labels)
-    qz.setEndOfDocument(",1\n");
+    //qz.setEndOfDocument(",1\n");
 
     // The amount of labels to spool to the printer at a time. When
     // qz-print counts this many `EndOfDocument`'s, a new print job will 
     // automatically be spooled to the printer and counting will start
     // over.
-    qz.setDocumentsPerSpool("10");
+    //qz.setDocumentsPerSpool("10");
     //alert("Printing: "+c);  
     //alert("Total Documents: "+total_print_documents);
     //alert("Total Barcodes: "+total_barcodes_printed);
 
     var r = confirm("Are you sure you want to print " + total_barcodes_printed + " barcodes");
     if (r == true) {
-        qz.print();
+         qz.print(config,qz_array).catch(function(e){
+            console.error(e);
+        });
     }
 
     total_print_documents = 0;
@@ -1265,10 +1267,10 @@ function printBarcodesNoMRP() {
 function printBarcodesKraftiny() {
 
     if (qz) {
-        qz.findPrinter('TSC TTP-247');
+        var config = qz.configs.create("TSC TTP-247")
     } else {
         qz = document.getElementById('qz');
-        qz.findPrinter('TSC TTP-247');
+        config = qz.configs.create("TSC TTP-247")
     }
 
     var date = new Date();
@@ -1299,20 +1301,22 @@ function printBarcodesKraftiny() {
     // Mark the end of a label, in this case  P1 plus a newline character
     // qz-printknows to look for this and treat this as the end of a "page"
     // for better control of larger spooled jobs (i.e. 50+ labels)
-    qz.setEndOfDocument(",1\n");
+    //qz.setEndOfDocument(",1\n");
 
     // The amount of labels to spool to the printer at a time. When
     // qz-print counts this many `EndOfDocument`'s, a new print job will 
     // automatically be spooled to the printer and counting will start
     // over.
-    qz.setDocumentsPerSpool("10");
+    //qz.setDocumentsPerSpool("10");
     //alert("Printing: "+c);  
     //alert("Total Documents: "+total_print_documents);
     //alert("Total Barcodes: "+total_barcodes_printed);
 
     var r = confirm("Are you sure you want to print " + total_barcodes_printed + " barcodes");
     if (r == true) {
-        qz.print();
+         qz.print(config,qz_array).catch(function(e){
+            console.error(e);
+        });
     }
 
     total_print_documents = 0;
