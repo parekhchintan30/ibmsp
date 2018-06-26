@@ -49,6 +49,10 @@ body {
     padding-left:0;
     padding-right:0;
   }
+
+  .mobile{
+          display: none !important;
+        }
   
 }
 
@@ -451,9 +455,7 @@ text-align: center;
           width: 150px;
         }
 
-        .mobile{
-          display: none !important;
-        }
+        
 
         @media screen and (max-width: 400px) {
         .logo{
