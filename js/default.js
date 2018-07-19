@@ -687,6 +687,8 @@ function calculateTotal() {
     var type_client = $("#type_client").val();
     var unstitched = $("#unstitched").val();
     var against_h_form = $("#against_h_form").val();
+    var transport_charges = $("#transport_charge").val();
+
     while (barcode != "" && barcode != null) {
         mrp = parseFloat($("#element-" + i + " .mrp").data("val")).toFixed(2);
         quantity = parseFloat($("#element-" + i + " .quantity").val()).toFixed(2);
@@ -744,7 +746,7 @@ function calculateTotal() {
             //quantity = parseFloat(1).toFixed(2);
             net = total;
             //alertt(net);
-       
+            
             $("#element-" + i + " .mrp").text(mrp);
             $("#element-" + i + " .discount_rate").text(discount_rate); 
             $("#element-" + i + " .discount").text(discount_amt);  
@@ -757,7 +759,6 @@ function calculateTotal() {
             $("#element-" + i + " .quantity").val(quantity);
             $("#element-" + i + " .net").text(net); 
 
-
         sum =  parseFloat(sum) + parseFloat($("#element-" + i + " .mrp").html());
         discount_sum = parseFloat(discount_sum) + parseFloat($("#element-" + i + " .discount").html());
         sgst_sum = parseFloat(sgst_sum) + parseFloat($("#element-" + i + " .sgst").html());
@@ -769,6 +770,9 @@ function calculateTotal() {
         i++;
         barcode = $("#element-" + i + " .barcode").val();
     }
+    if(transport_charges)
+    net_sum = net_sum + parseFloat(transport_charges);  
+
     $('#billing_amount').val(bill_sum.toFixed(2));
     $('#quantity').val(quantity_sum.toFixed(2));
     $('#sgst').val(sgst_sum.toFixed(2));
