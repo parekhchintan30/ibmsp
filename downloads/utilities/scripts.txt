@@ -2,6 +2,46 @@ SELECT * FROM `sales_retail_stack` WHERE sales_retail_stack.sale_retail_id IN (4
 AND taxable_amount < 1000 AND cgst_rate = 6
 
 
+ALTER TABLE `goods_return_retail` ADD `taxable_amount` DECIMAL(10) NOT NULL AFTER `tax_type`, ADD `cgst_amount` DECIMAL(10,2) NOT NULL AFTER `taxable_amount`, ADD `sgst_amount` DECIMAL(10,2) NOT NULL AFTER `cgst_amount`, ADD `igst_amount` DECIMAL(10,2) NOT NULL AFTER `sgst_amount`;
+
+
+ALTER TABLE `goods_return_retail` DROP `tax`, DROP `tax_type`, DROP `tax_percentage`;
+
+
+ALTER TABLE `goods_return_retail` CHANGE `discount_percentage` `discount_rate` INT(11) NULL DEFAULT NULL;
+
+
+ALTER TABLE `goods_return_retail` ADD `discount_amount` DECIMAL(10,2) NOT NULL AFTER `discount_rate`;
+
+
+
+UPDATE goods_return_retail s 
+INNER JOIN
+(
+   SELECT goods_return_id, discount_rate,
+   SUM(`selling_price`) as 'billing_amount',
+    SUM(`taxable_amount`) as 'taxable_amount',
+    SUM(`cgst_amount`) as 'cgst_amount',
+    SUM(`sgst_amount`) as 'sgst_amount',
+    SUM(`igst_amount`) as 'igst_amount',
+    SUM(`discount_amount`) as 'discount_amount',
+    SUM(`total`) as 'total'
+   FROM goods_return_retail_stack 
+   GROUP BY goods_return_id
+) ss ON s.id = ss.goods_return_id
+SET 
+s.billing_amount = ss.billing_amount,
+s.taxable_amount = ss.taxable_amount,
+s.cgst_amount = ss.cgst_amount,
+s.sgst_amount = ss.sgst_amount,
+s.igst_amount = ss.igst_amount,
+s.discount_rate = ss.discount_rate,
+s.discount_amount = ss.discount_amount,
+s.total = ss.total
+WHERE 1
+
+
+
 UPDATE sales_retail s 
 INNER JOIN
 (
