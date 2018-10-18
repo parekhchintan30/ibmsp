@@ -11,7 +11,7 @@ var total_print_documents = 0;
 var total_barcodes_printed = 0;
 var qz_array = [];
 var finished = true;
-var allowedColors = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed ", "Indigo ", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "RebeccaPurple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen"];
+var allowedColors = ["GOLD","LIGHT-GOLD","DARK-GOLD","ROSE-GOLD","COPPER","RED","LIGHT-RED","MAROON","DARK-MAROON","GREEN","BOTTLE-GREEN","PISTA-GREEN","MEHENDI-GREEN","LIGHT-GREEN","PARROT-GREEN","BLUE","LIGHT-BLUE","ROYAL-BLUE","NAVY-BLUE","LIRIL","TOMATO-PINK","PINK","PINKISH-MAROON","ORANGE","PEACH","MULTI","GREY","PURPLE","BRINJAL","WINE","BLACK","YELLOW","MUSTARD","PINK-MULTI","RED-MULTI","BLUE-MULTI","GREEN-MULTI","YELLOW-MULTI","WHITE","OFF-WHITE","CREAM","SILVER","ANTIC-GOLD","SKIN","BROWN","MAGENTA"];
 var allowedSizes = ["30", "32", "34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54", "56", "58", "60", "L", "XL", "XXL", "M", "S", "XS", "XXS", "XXXL", "4XL", "28", "FS", "14Y", "6Y", "8Y", "2Y", "4Y", "10Y", "12Y" , "NA","S/M","L/XL"];
 
 var allowedStates =["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jammu and Kashmir",
@@ -1097,6 +1097,11 @@ function copyInwardsContent() {
             if (allowedSizes.indexOf(size.text()) < 0) {
                 $("#error-feedback").show().delay(5000).fadeOut();
                 $("#error-feedback").html("Please fill in a valid size on line " + i + " to process");
+                return false;
+            }
+            if (allowedColors.indexOf(color.text()) < 0) {
+                $("#error-feedback").show().delay(5000).fadeOut();
+                $("#error-feedback").html("Please fill in a valid color on line " + i + " to process");
                 return false;
             }
             $("#barcodes").val($("#barcodes").val() + "" + barcode.text() + ";");
