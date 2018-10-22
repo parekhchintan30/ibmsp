@@ -11,7 +11,7 @@ var total_print_documents = 0;
 var total_barcodes_printed = 0;
 var qz_array = [];
 var finished = true;
-var allowedColors = ["GOLD","LIGHT-GOLD","DARK-GOLD","ROSE-GOLD","COPPER","RED","LIGHT-RED","MAROON","DARK-MAROON","GREEN","BOTTLE-GREEN","PISTA-GREEN","MEHENDI-GREEN","LIGHT-GREEN","PARROT-GREEN","BLUE","LIGHT-BLUE","ROYAL-BLUE","NAVY-BLUE","LIRIL","TOMATO-PINK","PINK","PINKISH-MAROON","ORANGE","PEACH","MULTI","GREY","PURPLE","BRINJAL","WINE","BLACK","YELLOW","MUSTARD","PINK-MULTI","RED-MULTI","BLUE-MULTI","GREEN-MULTI","YELLOW-MULTI","WHITE","OFF-WHITE","CREAM","SILVER","ANTIC-GOLD","SKIN","BROWN","MAGENTA"];
+var allowedColors = ["GOLD","LIGHT-GOLD","DARK-GOLD","ROSE-GOLD","COPPER","RED","LIGHT-RED","MAROON","DARK-MAROON","GREEN","BOTTLE-GREEN","PISTA-GREEN","MEHENDI-GREEN","LIGHT-GREEN","LIGHT-PINK","PARROT-GREEN","BLUE","LIGHT-BLUE","ROYAL-BLUE","NAVY-BLUE","LIRIL","TOMATO-PINK","PINK","PINKISH-MAROON","ORANGE","PEACH","MULTI","GREY","PURPLE","BRINJAL","WINE","BLACK","YELLOW","MUSTARD","PINK-MULTI","RED-MULTI","BLUE-MULTI","GREEN-MULTI","YELLOW-MULTI","WHITE","OFF-WHITE","CREAM","SILVER","ANTIC-GOLD","SKIN","BROWN","MAGENTA","MAROON-MULTI","BLACK-MULTI","RAMA-GREEN","PEACOCK-BLUE"];
 var allowedSizes = ["30", "32", "34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54", "56", "58", "60", "L", "XL", "XXL", "M", "S", "XS", "XXS", "XXXL", "4XL", "28", "FS", "14Y", "6Y", "8Y", "2Y", "4Y", "10Y", "12Y" , "NA","S/M","L/XL"];
 
 var allowedStates =["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jammu and Kashmir",
@@ -283,7 +283,7 @@ if (val == 'Maharashtra') {
     var maharashtra = ["Ahmednagar", "Akola", "Alibag", "Amaravati", "Arnala", "Aurangabad", "Aurangabad", "Bandra", "Bassain", "Belapur", "Bhiwandi", "Bhusaval", "Borliai-Mandla", "Chandrapur", "Dahanu", "Daulatabad", "Dighi (Pune)", "Dombivali", "Goa", "Jaitapur", "Jalgaon",
         "Jawaharlal Nehru (Nhava Sheva)", "Kalyan", "Karanja", "Kelwa", "Khopoli", "Kolhapur", "Lonavale", "Malegaon", "Malwan", "Manori",
         "Mira Bhayandar", "Miraj", "Mumbai", "Murad", "Nagapur", "Nagpur", "Nalasopara", "Nanded", "Nandgaon", "Nasik", "Navi Mumbai", "Nhave", "Osmanabad", "Palghar",
-        "Panvel", "Pimpri", "Pune", "Ratnagiri", "Sholapur", "Shrirampur", "Shriwardhan", "Tarapur", "Thana", "Thane", "Trombay", "Varsova", "Vengurla", "Virar", "Wada"
+        "Panvel", "Pimpri", "Pune", "Ratnagiri", "Sholapur", "Shrirampur", "Shriwardhan", "Tarapur", "Thana", "Thane", "Trombay", "Varsova", "Vengurla", "Virar", "Wada", "Kalyan"
     ];
     $(function() {
         var options = '';
@@ -399,7 +399,7 @@ if (val == 'Sikkim') {
 
 
 if (val == 'Tamil Nadu') {
-    var tn = ["Ariyalur", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", "Dindigul", "Erode", "Kanchipuram", "Kanyakumari", "Karur", "Krishnagiri", "Madurai", "Mandapam", "Nagapattinam", "Nilgiris", "Namakkal", "Perambalur", "Pudukkottai", "Ramanathapuram", "Salem", "Sivaganga", "Thanjavur", "Thiruvallur", "Tirupur",
+    var tn = ["Ariyalur", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", "Dindigul", "Erode", "Kanchipuram", "Kanyakumari", "Karur", "Krishnagiri", "Madurai", "Mandapam", "Nagapattinam", "Nilgiris", "Namakkal", "Perambalur", "Pudukkottai", "Ramanathapuram", "Salem", "Sivaganga", "Thanjavur", "Thiruvallur", "Tirupur", "Tiruvarur", "Kovilpatti", "Chidambaram",
         "Tiruchirapalli", "Theni", "Tirunelveli", "Thanjavur", "Thoothukudi", "Tiruvallur", "Tiruvannamalai", "Vellore", "Villupuram", "Viruthunagar","Kovilpatti","Trivandrum","Tiruchirapalli","Nagercoil","Podicherry"
     ];
     $(function() {
@@ -1099,7 +1099,7 @@ function copyInwardsContent() {
                 $("#error-feedback").html("Please fill in a valid size on line " + i + " to process");
                 return false;
             }
-            if (allowedColors.indexOf(color.text()) < 0) {
+            if (allowedColors.indexOf(color.text().toUpperCase()) < 0) {
                 $("#error-feedback").show().delay(5000).fadeOut();
                 $("#error-feedback").html("Please fill in a valid color on line " + i + " to process");
                 return false;
