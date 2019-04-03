@@ -711,7 +711,8 @@ function calculateTotal() {
     var sgst_6 = 0;
     var igst_5 = 0;
     var igst_12 = 0;
-
+    var cgst_0_05 = 0;
+    var igst_0_1 =  0;
 
 
 
@@ -735,23 +736,39 @@ function calculateTotal() {
         taxable_value = parseFloat(bill_amt - discount_amt);
         //alert(taxable_value); alert(selling_rate);
         if(gst_type == "S"){
-        if(selling_rate <= 1000){
-            gst_rate = parseFloat(5).toFixed(2);
-            cgst_2_5 += taxable_value;
+
+            if(against_h_form == 1){
+                gst_rate = parseFloat(0.1).toFixed(2);
+                cgst_0_05 += taxable_value;
+            }else{
+
+                if(selling_rate <= 1000){
+                gst_rate = parseFloat(5).toFixed(2);
+                cgst_2_5 += taxable_value;
+                }
+                else{
+                gst_rate = parseFloat(12).toFixed(2);
+                cgst_6 += taxable_value;
+                } 
+
             }
-        else{
-            gst_rate = parseFloat(12).toFixed(2);
-            cgst_6 += taxable_value;
-            }
+
+        
         }else{
-             if(selling_rate <= 1000){
-            gst_rate = parseFloat(5).toFixed(2);
-            igst_5 += taxable_value;
-        }
-        else{
-            gst_rate = parseFloat(12).toFixed(2);
-            igst_12 += taxable_value;
-        }
+
+            if(against_h_form == 1){
+                gst_rate = parseFloat(0.1).toFixed(2);
+                igst_0_1 += taxable_value;
+            }else{
+                if(selling_rate <= 1000){
+                gst_rate = parseFloat(5).toFixed(2);
+                igst_5 += taxable_value;
+                }
+                else{
+                gst_rate = parseFloat(12).toFixed(2);
+                igst_12 += taxable_value;
+                }
+            }
         }
         
             
@@ -773,13 +790,13 @@ function calculateTotal() {
         i++;
         barcode = $("#element-" + i + " .barcode").val();
     }
-    if(cgst_2_5 > 0 || cgst_6 > 0)
-        cgst_sum += parseFloat(+percentage(cgst_2_5, 2.5) + +percentage(cgst_6, 6));
+    if(cgst_2_5 > 0 || cgst_6 > 0 || cgst_0_05 > 0)
+        cgst_sum += parseFloat(+percentage(cgst_2_5, 2.5) + +percentage(cgst_6, 6) + +percentage(cgst_0_05, 0.05));
     
     sgst_sum = cgst_sum;
     
-    if(igst_5 > 0 || igst_12 > 0){
-    igst_sum = parseFloat(+percentage(igst_5, 5) + +percentage(igst_12, 12));
+    if(igst_5 > 0 || igst_12 > 0 || igst_0_1 > 0){
+    igst_sum = parseFloat(+percentage(igst_5, 5) + +percentage(igst_12, 12) + +percentage(igst_0_1, 0.1));
     }
     
     //alert(igst_sum);alert(cgst_sum);alert(sgst_sum);
