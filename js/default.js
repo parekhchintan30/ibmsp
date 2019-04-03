@@ -11,7 +11,7 @@ var total_print_documents = 0;
 var total_barcodes_printed = 0;
 var qz_array = [];
 var finished = true;
-var allowedColors = ["GOLD","LIGHT-GOLD","DARK-GOLD","ROSE-GOLD","COPPER","RED","LIGHT-RED","MAROON","DARK-MAROON","GREEN","BOTTLE-GREEN","PISTA-GREEN","MEHENDI-GREEN","LIGHT-GREEN","LIGHT-PINK","PARROT-GREEN","BLUE","LIGHT-BLUE","ROYAL-BLUE","NAVY-BLUE","LIRIL","TOMATO-PINK","PINK","PINKISH-MAROON","ORANGE","PEACH","MULTI","GREY","PURPLE","BRINJAL","WINE","BLACK","YELLOW","MUSTARD","PINK-MULTI","RED-MULTI","BLUE-MULTI","GREEN-MULTI","YELLOW-MULTI","WHITE","OFF-WHITE","CREAM","SILVER","ANTIC-GOLD","SKIN","BROWN","MAGENTA","MAROON-MULTI","BLACK-MULTI","RAMA-GREEN","PEACOCK-BLUE","NEON-MULTI","FIROZI","YELLOW-GOLD","SKY-BLUE","LIGHT-ORANGE","DARK-COPPER","ONION-PINK","TEAL","BEIGE","FUSHSIA","DARK-PINK"];
+var allowedColors = ["GOLD","LIGHT-GOLD","DARK-GOLD","ROSE-GOLD","COPPER","RED","LIGHT-RED","MAROON","DARK-MAROON","GREEN","BOTTLE-GREEN","PISTA-GREEN","MEHENDI-GREEN","LIGHT-GREEN","LIGHT-PINK","PARROT-GREEN","BLUE","LIGHT-BLUE","ROYAL-BLUE","NAVY-BLUE","LIRIL","TOMATO-PINK","PINK","PINKISH-MAROON","ORANGE","PEACH","MULTI","GREY","PURPLE","BRINJAL","WINE","BLACK","YELLOW","MUSTARD","PINK-MULTI","RED-MULTI","BLUE-MULTI","GREEN-MULTI","YELLOW-MULTI","WHITE","OFF-WHITE","CREAM","SILVER","ANTIC-GOLD","SKIN","BROWN","MAGENTA","MAROON-MULTI","BLACK-MULTI","RAMA-GREEN","PEACOCK-BLUE","NEON-MULTI","FIROZI","YELLOW-GOLD","SKY-BLUE","LIGHT-ORANGE","DARK-COPPER","ONION-PINK","TEAL","BEIGE","FUSHSIA","DARK-PINK","OLIVE-GREEN","MINT-GREEN","LIME-YELLOW"];
 var allowedSizes = ["30", "32", "34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54", "56", "58", "60", "L", "XL", "XXL", "M", "S", "XS", "XXS", "XXXL", "4XL", "28", "FS", "14Y", "6Y", "8Y", "2Y", "4Y", "10Y", "12Y" , "NA","S/M","L/XL"];
 
 var allowedStates =["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jammu and Kashmir",
@@ -580,6 +580,23 @@ if (val == 'West Bengal') {
 
     });
 
+    $(".barcodeScanner_approval").scroll(function() {
+        var divend = $(this)[0].scrollHeight //+ $(this).offset().top; // full height of div (from top and actual div height).
+        var pagescroll = $(this).scrollTop() + $(this).height(); // Total page scrolled.
+        if (divend <= pagescroll) {
+            var newId = $('.barcodeScanner_approval table tr:last').data('id') + 1;
+            var newRow = '<tr id="element-' + newId + '" data-id="' + newId + '">';
+            newRow += '<td>' + newId + '</td>';
+            newRow += '<td style="width:150px"><input type="text" class="barcode barcode_field" id="barcode-' + newId + '" autocomplete="off" value=""></td>';
+            newRow += '<td class="design"></td>';
+            newRow += '<td class="color"></td>';
+            newRow += '<td class="size"></td>';
+            newRow += '<td class="mrp"></td>';
+            $('.barcodeScanner_approval table').append(newRow);
+        }
+
+    });
+
 
     $(".orderScanner").scroll(function() {
         var divend = $(this)[0].scrollHeight
@@ -685,9 +702,18 @@ function calculateTotal() {
     var bill_amt ;
     var gst_type = $("#gst_type").val();
     var type_client = $("#type_client").val();
-    var unstitched = $("#unstitched").val();
     var against_h_form = $("#against_h_form").val();
     var transport_charges = $("#transport_charge").val();
+    
+    var cgst_2_5 = 0;
+    var sgst_2_5 = 0;
+    var cgst_6 = 0;
+    var sgst_6 = 0;
+    var igst_5 = 0;
+    var igst_12 = 0;
+
+
+
 
     while (barcode != "" && barcode != null) {
         mrp = parseFloat($("#element-" + i + " .mrp").data("val")).toFixed(2);
@@ -706,73 +732,61 @@ function calculateTotal() {
             discount_amt = discount * quantity;
         }
         
-            taxable_value = parseFloat(bill_amt - discount_amt).toFixed(2);
-        if(unstitched == 1)
-        {    
-            if(gst_type == "S")       
-                gst_rate = parseFloat(2.5).toFixed(2);
-            else 
-                gst_rate = parseFloat(5).toFixed(2);
-        }else if(against_h_form == 1){
-            if(gst_type == "S")       
-                gst_rate = parseFloat(0.05).toFixed(2);
-            else 
-                gst_rate = parseFloat(0.1).toFixed(2);
+        taxable_value = parseFloat(bill_amt - discount_amt);
+        //alert(taxable_value); alert(selling_rate);
+        if(gst_type == "S"){
+        if(selling_rate <= 1000){
+            gst_rate = parseFloat(5).toFixed(2);
+            cgst_2_5 += taxable_value;
+            }
+        else{
+            gst_rate = parseFloat(12).toFixed(2);
+            cgst_6 += taxable_value;
+            }
+        }else{
+             if(selling_rate <= 1000){
+            gst_rate = parseFloat(5).toFixed(2);
+            igst_5 += taxable_value;
         }
         else{
-            if(gst_type == "S"){
-            if(selling_rate <= 1000){
-                gst_rate = parseFloat(2.5).toFixed(2);
-                }
-            else{
-                gst_rate = parseFloat(6).toFixed(2);
-                }
-            }else{
-                 if(selling_rate <= 1000)
-                gst_rate = parseFloat(5).toFixed(2);
-            else
-                gst_rate = parseFloat(12).toFixed(2);
-            }
+            gst_rate = parseFloat(12).toFixed(2);
+            igst_12 += taxable_value;
         }
-            sgst = cgst = igst = 0;
-            if(gst_type == "S"){
-            sgst = parseFloat(taxable_value * gst_rate / 100).toFixed(2);
-            cgst = parseFloat(sgst).toFixed(2);
-            total = (parseFloat(taxable_value) + parseFloat(sgst) + parseFloat(cgst)).toFixed(2);
-            }else{
-            igst = parseFloat(taxable_value * gst_rate / 100).toFixed(2);
-            total = (parseFloat(taxable_value) + parseFloat(igst)).toFixed(2);
-            }
-            //quantity = parseFloat(1).toFixed(2);
+        }
+        
+            
             net = total;
-            //alertt(net);
             
             $("#element-" + i + " .mrp").text(mrp);
             $("#element-" + i + " .discount_rate").text(discount_rate); 
             $("#element-" + i + " .discount").text(discount_amt);  
             $("#element-" + i + " .taxable_value").text(taxable_value);
             $("#element-" + i + " .gst_rate").text(gst_rate);
-            $("#element-" + i + " .sgst").text(sgst);
-            $("#element-" + i + " .cgst").text(cgst);
-            $("#element-" + i + " .igst").text(igst);
-            $("#element-" + i + " .total").text(total);
             $("#element-" + i + " .quantity").val(quantity);
-            $("#element-" + i + " .net").text(net); 
+        
+        quantity_sum = parseFloat(quantity_sum) + parseFloat($("#element-" + i + " .quantity").val());
+        bill_sum = bill_sum + parseFloat(bill_amt);
+         
 
         sum =  parseFloat(sum) + parseFloat($("#element-" + i + " .mrp").html());
         discount_sum = parseFloat(discount_sum) + parseFloat($("#element-" + i + " .discount").html());
-        sgst_sum = parseFloat(sgst_sum) + parseFloat($("#element-" + i + " .sgst").html());
-        igst_sum = parseFloat(igst_sum) + parseFloat($("#element-" + i + " .igst").html());
-        cgst_sum = parseFloat(cgst_sum) + parseFloat($("#element-" + i + " .cgst").html());
-        net_sum = parseFloat(net_sum) + parseFloat($("#element-" + i + " .net").html());
-        quantity_sum = parseFloat(quantity_sum) + parseFloat($("#element-" + i + " .quantity").val());
-        bill_sum = bill_sum + parseFloat(bill_amt);
         i++;
         barcode = $("#element-" + i + " .barcode").val();
     }
+    if(cgst_2_5 > 0 || cgst_6 > 0)
+        cgst_sum += parseFloat(+percentage(cgst_2_5, 2.5) + +percentage(cgst_6, 6));
+    
+    sgst_sum = cgst_sum;
+    
+    if(igst_5 > 0 || igst_12 > 0){
+    igst_sum = parseFloat(+percentage(igst_5, 5) + +percentage(igst_12, 12));
+    }
+    
+    //alert(igst_sum);alert(cgst_sum);alert(sgst_sum);
+    net_sum = bill_sum - discount_sum + sgst_sum + cgst_sum + igst_sum;
     if(transport_charges)
-    net_sum = net_sum + parseFloat(transport_charges);  
-
+        net_sum = net_sum + parseFloat(transport_charges);  
+ 
     $('#billing_amount').val(bill_sum.toFixed(2));
     $('#quantity').val(quantity_sum.toFixed(2));
     $('#sgst').val(sgst_sum.toFixed(2));
@@ -780,10 +794,12 @@ function calculateTotal() {
     $('#igst').val(igst_sum.toFixed(2));
     $('#discount').val(discount_sum.toFixed(2));
     $('#total').val(net_sum.toFixed(2));
-    
 }
 
-
+function percentage(number, percent)
+{
+  return parseFloat((number/100)*percent).toFixed(2);
+}
 
 
 function reinitializeFields() {
@@ -920,12 +936,7 @@ function copySalesContent() {
                 $("#taxable_amounts").val($("#taxable_amounts").val() + "" + taxable_amount.text() + ";");
                 $("#descriptions").val($("#descriptions").val() + "" + description.text() + ";");
                 
-                $("#cgst_rates").val($("#cgst_rates").val() + "" + gst_rate.text() + ";");
-                $("#sgst_rates").val($("#sgst_rates").val() + "" + gst_rate.text() + ";");
-                $("#igst_rates").val($("#igst_rates").val() + "" + gst_rate.text() + ";");
-                                   
-
-
+                $("#gst_rates").val($("#gst_rates").val() + "" + gst_rate.text() + ";");
                 $("#sgst_amounts").val($("#sgst_amounts").val() + "" + sgst.text() + ";");
                 $("#cgst_amounts").val($("#cgst_amounts").val() + "" + cgst.text() + ";");
                 $("#igst_amounts").val($("#igst_amounts").val() + "" + igst.text() + ";");
@@ -1539,6 +1550,7 @@ function pBNoMRP(key, value, date_string) {
     var color = value['color'];
     var size = value['size'];
     var mrp = value['mrp'];
+    var wsp = value['wsp'];
     var identifier = value['identifier'];
     var category = value['category'];
     if (odd) {
