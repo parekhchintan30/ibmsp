@@ -714,6 +714,8 @@ function calculateTotal() {
     var cgst_0_05 = 0;
     var igst_0_1 =  0;
 
+    var round_up = 0;
+
 
 
     while (barcode != "" && barcode != null) {
@@ -777,7 +779,7 @@ function calculateTotal() {
             $("#element-" + i + " .mrp").text(mrp);
             $("#element-" + i + " .discount_rate").text(discount_rate); 
             $("#element-" + i + " .discount").text(discount_amt);  
-            $("#element-" + i + " .taxable_value").text(taxable_value);
+            $("#element-" + i + " .taxable_value").text(taxable_value.toFixed(2));
             $("#element-" + i + " .gst_rate").text(gst_rate);
             $("#element-" + i + " .quantity").val(quantity);
         
@@ -803,14 +805,17 @@ function calculateTotal() {
     net_sum = bill_sum - discount_sum + sgst_sum + cgst_sum + igst_sum;
     if(transport_charges)
         net_sum = net_sum + parseFloat(transport_charges);  
- 
+    
+    var temp_round_up = net_sum.toFixed(0);
+    round_up = temp_round_up - net_sum;
     $('#billing_amount').val(bill_sum.toFixed(2));
     $('#quantity').val(quantity_sum.toFixed(2));
     $('#sgst').val(sgst_sum.toFixed(2));
     $('#cgst').val(cgst_sum.toFixed(2));
     $('#igst').val(igst_sum.toFixed(2));
     $('#discount').val(discount_sum.toFixed(2));
-    $('#total').val(net_sum.toFixed(2));
+    $('#round_up').val(round_up.toFixed(2));
+    $('#total').val(net_sum.toFixed(0));
 }
 
 function percentage(number, percent)
@@ -1847,6 +1852,40 @@ function getPath() {
     var path = window.location.href;
     return path.substring(0, path.lastIndexOf("/")) + "/";
 }
+
+function intToFormat(nStr)
+    {
+     nStr += '';
+     x = nStr.split('.');
+     x1 = x[0];
+     x2 = x.length > 1 ? '.' + x[1] : '';
+     var rgx = /(\d+)(\d{3})/;
+     var z = 0;
+     var len = String(x1).length;
+     var num = parseInt((len/2)-1);
+ 
+      while (rgx.test(x1))
+      {
+        if(z > 0)
+        {
+          x1 = x1.replace(rgx, '$1' + ',' + '$2');
+        }
+        else
+        {
+          x1 = x1.replace(rgx, '$1' + ',' + '$2');
+          rgx = /(\d+)(\d{2})/;
+        }
+        z++;
+        num--;
+        if(num == 0)
+        {
+          break;
+        }
+      }
+     return x1 + x2;
+    }
+
+
 
 function tableNavigate(e) {
     var curr_tr_2 = $("#tblDataBodyN").find("tr.warning").first();
