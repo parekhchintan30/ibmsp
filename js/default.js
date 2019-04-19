@@ -820,7 +820,9 @@ function calculateTotal() {
 
 function percentage(number, percent)
 {
-  return parseFloat((number/100)*percent).toFixed(2);
+    var percentageValue = (number*percent*0.01);
+    percentageValue = (Math.round( percentageValue * 100 ) / 100).toFixed(2);
+    return percentageValue;
 }
 
 
