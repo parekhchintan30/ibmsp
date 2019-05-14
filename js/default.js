@@ -11,7 +11,7 @@ var total_print_documents = 0;
 var total_barcodes_printed = 0;
 var qz_array = [];
 var finished = true;
-var allowedColors = ["GOLD","LIGHT-GOLD","DARK-GOLD","ROSE-GOLD","COPPER","RED","LIGHT-RED","MAROON","DARK-MAROON","GREEN","BOTTLE-GREEN","PISTA-GREEN","MEHENDI-GREEN","LIGHT-GREEN","LIGHT-PINK","PARROT-GREEN","BLUE","LIGHT-BLUE","ROYAL-BLUE","NAVY-BLUE","LIRIL","TOMATO-PINK","PINK","PINKISH-MAROON","ORANGE","PEACH","MULTI","GREY","PURPLE","BRINJAL","WINE","BLACK","YELLOW","MUSTARD","PINK-MULTI","RED-MULTI","BLUE-MULTI","GREEN-MULTI","YELLOW-MULTI","WHITE","OFF-WHITE","CREAM","SILVER","ANTIC-GOLD","SKIN","BROWN","MAGENTA","MAROON-MULTI","BLACK-MULTI","RAMA-GREEN","PEACOCK-BLUE","NEON-MULTI","FIROZI","YELLOW-GOLD","SKY-BLUE","LIGHT-ORANGE","DARK-COPPER","ONION-PINK","TEAL","BEIGE","FUSHSIA","DARK-PINK","OLIVE-GREEN","MINT-GREEN","LIME-YELLOW"];
+var allowedColors = ["GOLD","LIGHT-GOLD","DARK-GOLD","ROSE-GOLD","COPPER","RED","LIGHT-RED","MAROON","DARK-MAROON","GREEN","BOTTLE-GREEN","PISTA-GREEN","MEHENDI-GREEN","LIGHT-GREEN","LIGHT-PINK","PARROT-GREEN","BLUE","LIGHT-BLUE","ROYAL-BLUE","NAVY-BLUE","LIRIL","TOMATO-PINK","PINK","PINKISH-MAROON","ORANGE","PEACH","MULTI","GREY","PURPLE","BRINJAL","WINE","BLACK","YELLOW","MUSTARD","PINK-MULTI","RED-MULTI","BLUE-MULTI","GREEN-MULTI","YELLOW-MULTI","WHITE","OFF-WHITE","CREAM","SILVER","ANTIC-GOLD","SKIN","BROWN","MAGENTA","MAROON-MULTI","BLACK-MULTI","RAMA-GREEN","PEACOCK-BLUE","NEON-MULTI","FIROZI","YELLOW-GOLD","SKY-BLUE","LIGHT-ORANGE","DARK-COPPER","ONION-PINK","TEAL","BEIGE","FUSHSIA","DARK-PINK","OLIVE-GREEN","MINT-GREEN","LIME-YELLOW","PASTEL-BLUE","PASTEL-GREEN"];
 var allowedSizes = ["30", "32", "34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54", "56", "58", "60", "L", "XL", "XXL", "M", "S", "XS", "XXS", "XXXL", "4XL", "28", "FS", "14Y", "6Y", "8Y", "2Y", "4Y", "10Y", "12Y" , "NA","S/M","L/XL"];
 
 var allowedStates =["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jammu and Kashmir",
@@ -23,6 +23,8 @@ var selectedSubOrders = new Array;
 jQuery(function($) {
 
     /* Initializing Accordion Menu */
+    
+    alert(percentage(39622.499999999985, 5));
 
 
     var active_tab = $("#active_tab").val();
@@ -779,7 +781,7 @@ function calculateTotal() {
             $("#element-" + i + " .mrp").text(mrp);
             $("#element-" + i + " .discount_rate").text(discount_rate); 
             $("#element-" + i + " .discount").text(discount_amt);  
-            $("#element-" + i + " .taxable_value").text(taxable_value.toFixed(2));
+            $("#element-" + i + " .taxable_value").text(taxable_value);
             $("#element-" + i + " .gst_rate").text(gst_rate);
             $("#element-" + i + " .quantity").val(quantity);
         
@@ -817,10 +819,9 @@ function calculateTotal() {
     $('#round_up').val(round_up.toFixed(2));
     $('#total').val(net_sum.toFixed(0));
 }
-
 function percentage(number, percent)
 {
-    var percentageValue = (number*percent*0.01);
+    var percentageValue = (number.toFixed(2)*percent*0.01);
     percentageValue = (Math.round( percentageValue * 100 ) / 100).toFixed(2);
     return percentageValue;
 }
