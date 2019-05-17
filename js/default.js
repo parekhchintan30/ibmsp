@@ -24,9 +24,6 @@ jQuery(function($) {
 
     /* Initializing Accordion Menu */
     
-    alert(percentage(39622.499999999985, 5));
-
-
     var active_tab = $("#active_tab").val();
     var active_tab1 = active_tab.split("-");
     var currentTab = "tab" + active_tab1[0];
