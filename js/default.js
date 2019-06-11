@@ -483,8 +483,12 @@ if (val == 'West Bengal') {
     $('.from-datetimepicker').datetimepicker({
         defaultDate: from,
     });
-    $('.bill-datetimepicker').datetimepicker({
-        defaultDate: from,
+    $('.bill-datetimepicker1').datetimepicker({
+        defaultDate: to,
+        format: 'DD/MM/YYYY'
+    });
+    $('.bill-datetimepicker2').datetimepicker({
+        defaultDate: to,
         format: 'DD/MM/YYYY'
     });
 
