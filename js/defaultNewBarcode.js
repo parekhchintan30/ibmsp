@@ -936,7 +936,7 @@ function pB_tags(key, value, date_string) {
         qz.append('^FO30,495^FD3,Jamuna Bhaiya Chawl,^FS');
         qz.append('^FO30,520^FDPestom Sagar Road No.3^FS');
         qz.append('^FO30,545^FDMumbai - 400089^FS');
-        qz.append('^FO30,570^FDContact No:25253808^FS');
+        qz.append('^FO30,570^FDContact No:25020792^FS');
         qz.append('^FO30,595^FDEmail:support@vamas.in^FS');
         qz.append('^FO80,620^FDwww.vamas.in^FS');
         qz.append('^XZ');

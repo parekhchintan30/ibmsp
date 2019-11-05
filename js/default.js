@@ -11,8 +11,8 @@ var total_print_documents = 0;
 var total_barcodes_printed = 0;
 var qz_array = [];
 var finished = true;
-var allowedColors = ["GOLD","LIGHT-GOLD","DARK-GOLD","ROSE-GOLD","COPPER","RED","LIGHT-RED","MAROON","DARK-MAROON","GREEN","BOTTLE-GREEN","PISTA-GREEN","MEHENDI-GREEN","LIGHT-GREEN","LIGHT-PINK","PARROT-GREEN","BLUE","LIGHT-BLUE","ROYAL-BLUE","NAVY-BLUE","LIRIL","TOMATO-PINK","PINK","PINKISH-MAROON","ORANGE","PEACH","MULTI","GREY","PURPLE","BRINJAL","WINE","BLACK","YELLOW","MUSTARD","PINK-MULTI","RED-MULTI","BLUE-MULTI","GREEN-MULTI","YELLOW-MULTI","WHITE","OFF-WHITE","CREAM","SILVER","ANTIC-GOLD","SKIN","BROWN","MAGENTA","MAROON-MULTI","BLACK-MULTI","RAMA-GREEN","PEACOCK-BLUE","NEON-MULTI","FIROZI","YELLOW-GOLD","SKY-BLUE","LIGHT-ORANGE","DARK-COPPER","ONION-PINK","TEAL","BEIGE","FUCHSIA","DARK-PINK","OLIVE-GREEN","MINT-GREEN","LIME-YELLOW","PASTEL-BLUE","LIME-GREEN","PASTEL-GREEN"];
-var allowedSizes = ["30", "32", "34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54", "56", "58", "60", "L", "XL", "XXL", "M", "S", "XS", "XXS", "XXXL", "4XL", "28", "FS", "14Y", "6Y", "8Y", "2Y", "4Y", "10Y", "12Y" , "NA","S/M","L/XL"];
+var allowedColors = ["GOLD","LIGHT-GOLD","DARK-GOLD","ROSE-GOLD","COPPER","RED","LIGHT-RED","MAROON","DARK-MAROON","GREEN","BOTTLE-GREEN","PISTA-GREEN","MEHENDI-GREEN","LIGHT-GREEN","LIGHT-PINK","PARROT-GREEN","BLUE","LIGHT-BLUE","ROYAL-BLUE","NAVY-BLUE","LIRIL","TOMATO-PINK","PINK","PINKISH-MAROON","ORANGE","PEACH","MULTI","GREY","PURPLE","BRINJAL","WINE","BLACK","YELLOW","MUSTARD","PINK-MULTI","RED-MULTI","BLUE-MULTI","GREEN-MULTI","YELLOW-MULTI","WHITE","OFF-WHITE","CREAM","SILVER","ANTIC-GOLD","SKIN","BROWN","MAGENTA","MAROON-MULTI","BLACK-MULTI","RAMA-GREEN","PEACOCK-BLUE","NEON-MULTI","FIROZI","YELLOW-GOLD","SKY-BLUE","LIGHT-ORANGE","DARK-COPPER","ONION-PINK","TEAL","BEIGE","FUCHSIA","DARK-PINK","OLIVE-GREEN","MINT-GREEN","LIME-YELLOW","PASTEL-BLUE","LIME-GREEN","PASTEL-GREEN","DUSTY-BLUE","DUSTY-PEACH","DARK-GREEN","DUSTY-GREEN","S-PINK","GERMAN-GREEN","FIRE-BLUE","DARK-GRAY","GERMAN-BLUE","DARK-BRINJAL"];
+var allowedSizes = ["26","28","30", "32", "34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54", "56", "58", "60", "L", "XL", "XXL", "M", "S", "XS", "XXS", "XXXL", "4XL", "28", "FS", "14Y", "6Y", "8Y", "2Y", "4Y", "10Y", "12Y" , "NA","S/M","L/XL"];
 
 var allowedStates =["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jammu and Kashmir",
 "Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Orissa","Punjab","Rajasthan","Sikkim",
@@ -282,7 +282,7 @@ if (val == 'Maharashtra') {
     var maharashtra = ["Ahmednagar", "Akola", "Alibag", "Amaravati", "Arnala", "Aurangabad", "Aurangabad", "Bandra", "Bassain", "Belapur", "Bhiwandi", "Bhusaval", "Borliai-Mandla", "Chandrapur", "Dahanu", "Daulatabad", "Dighi (Pune)", "Dombivali", "Goa", "Jaitapur", "Jalgaon",
         "Jawaharlal Nehru (Nhava Sheva)", "Kalyan", "Karanja", "Kelwa", "Khopoli", "Kolhapur", "Lonavale", "Malegaon", "Malwan", "Manori",
         "Mira Bhayandar", "Miraj", "Mumbai", "Murad", "Nagapur", "Nagpur", "Nalasopara", "Nanded", "Nandgaon", "Nasik", "Navi Mumbai", "Nhave", "Osmanabad", "Palghar",
-        "Panvel", "Pimpri", "Pune", "Ratnagiri", "Sholapur", "Shrirampur", "Shriwardhan", "Tarapur", "Thana", "Thane", "Trombay", "Varsova", "Vengurla", "Virar", "Wada", "Kalyan"
+        "Panvel", "Pimpri", "Pune", "Ratnagiri", "Sholapur", "Shrirampur", "Shriwardhan", "Tarapur", "Thana", "Thane", "Trombay", "Varsova", "Vengurla", "Virar", "Wada", "Kalyan","SANGLI"
     ];
     $(function() {
         var options = '';
@@ -787,7 +787,7 @@ function calculateTotal() {
             $("#element-" + i + " .mrp").text(mrp);
             $("#element-" + i + " .discount_rate").text(discount_rate); 
             $("#element-" + i + " .discount").text(discount_amt);  
-            $("#element-" + i + " .taxable_value").text(taxable_value);
+            $("#element-" + i + " .taxable_value").text(taxable_value.toFixed(2));
             $("#element-" + i + " .gst_rate").text(gst_rate);
             $("#element-" + i + " .quantity").val(quantity);
         
@@ -1588,6 +1588,7 @@ function pBNoMRP(key, value, date_string) {
         qz_array.push('B325,20,0,1A,2,2,70,B,"' + key + '"\n');
         qz_array.push('A325,125,0,3,1,1,N,"' + category + '"\n');
         qz_array.push('A325,150,0,4,1,1,N,"' + design + '"\n');
+        //qz_array.push('A325,150,0,3,1,1,N,"' + design + '_' + 'F00' + wsp + '00V' + '"\n');
         qz_array.push('A325,182,0,3,1,1,N,"' + color + '"\n');
         qz_array.push('A545,182,0,3,1,1,N,"' + size + '"\n');
         qz_array.push('A325,205,0,3,1,1,N,"' + identifier + '"\n');
@@ -1614,6 +1615,9 @@ function pBNoMRP(key, value, date_string) {
 
             qz_array.push('A0,150,0,4,1,1,N,"' + design + '"\n');
             qz_array.push('A325,150,0,4,1,1,N,"' + design + '"\n');
+            
+            //qz_array.push('A0,150,0,3,1,1,N,"' + design + '_' + 'F00' + wsp + '00V' + '"\n');
+            //qz_array.push('A325,150,0,3,1,1,N,"' + design + '_' + 'F00' + wsp + '00V' + '"\n');
 
             qz_array.push('A0,182,0,3,1,1,N,"' + color + '"\n');
             qz_array.push('A325,182,0,3,1,1,N,"' + color + '"\n');
@@ -1643,6 +1647,7 @@ function pBNoMRP(key, value, date_string) {
             qz_array.push('B0,20,0,1A,2,2,70,B,"' + key + '"\n');
             qz_array.push('A0,125,0,3,1,1,N,"' + category + '"\n');
             qz_array.push('A0,150,0,4,1,1,N,"' + design + '"\n');
+            //qz_array.push('A0,150,0,3,1,1,N,"' + design + '_' + 'F00' + wsp + '00V' + '"\n');
             qz_array.push('A0,182,0,3,1,1,N,"' + color + '"\n');
             qz_array.push('A190,182,0,3,1,1,N,"' + size + '"\n');
             qz_array.push('A0,205,0,3,1,1,N,"' + identifier + '"\n');
