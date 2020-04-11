@@ -39,7 +39,7 @@ jQuery(function($) {
             });
     }
     /* End of accordion menu initalization */
-
+    
     $('body').on('keypress', function(e) {
         if (e.which == 13)
             return false;
@@ -638,6 +638,8 @@ if (val == 'West Bengal') {
         }
     });
 
+    $(document).bind('keydown', 'shift+s', submitPage);
+    $(document).bind('keydown', 'shift+x', updateContent);
 
 
 });
@@ -800,9 +802,10 @@ function calculateTotal() {
         i++;
         barcode = $("#element-" + i + " .barcode").val();
     }
-    if(cgst_2_5 > 0 || cgst_6 > 0 || cgst_0_05 > 0)
+    if(cgst_2_5 > 0 || cgst_6 > 0 || cgst_0_05 > 0){
         cgst_sum += parseFloat(+percentage(cgst_2_5, 2.5) + +percentage(cgst_6, 6) + +percentage(cgst_0_05, 0.05));
-    
+        alert("a:"+cgst_sum);
+    }
     sgst_sum = cgst_sum;
     
     if(igst_5 > 0 || igst_12 > 0 || igst_0_1 > 0){
@@ -1899,7 +1902,10 @@ function intToFormat(nStr)
      return x1 + x2;
     }
 
-
+function submitPage(){
+            $('form').submit();
+        }
+        
 
 function tableNavigate(e) {
     var curr_tr_2 = $("#tblDataBodyN").find("tr.warning").first();
